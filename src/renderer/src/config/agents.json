@@ -1,0 +1,18 @@
+[
+  {
+    "id": "1",
+    "name": "Default Assistant",
+    "model": "gpt-4",
+    "icon": "assistant",
+    "description": "General purpose AI assistant",
+    "prompt": "You are a helpful assistant.",
+    "group": [
+      "general"
+    ],
+    "systemPrompt": "You are a helpful AI assistant.",
+    "temperature": 0.7,
+    "maxTokens": 8192,
+    "createdAt": "2025-06-01T12:50:16.018Z",
+    "updatedAt": "2025-06-01T12:50:16.019Z"
+  }
+]

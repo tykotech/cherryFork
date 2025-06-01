@@ -1,0 +1,361 @@
+import { isMac } from '@renderer/config/constant'
+import { useDefaultAssistant, useDefaultModel } from '@renderer/hooks/useAssistant'
+import { useSettings } from '@renderer/hooks/useSettings'
+import i18n from '@renderer/i18n'
+import { fetchChatCompletion } from '@renderer/services/ApiService'
+import { getDefaultAssistant, getDefaultModel } from '@renderer/services/AssistantService'
+import { getAssistantMessage, getUserMessage } from '@renderer/services/MessagesService'
+import store from '@renderer/store'
+import { upsertManyBlocks } from '@renderer/store/messageBlock'
+import { updateOneBlock, upsertOneBlock } from '@renderer/store/messageBlock'
+import { newMessagesActions } from '@renderer/store/newMessage'
+import { Chunk, ChunkType } from '@renderer/types/chunk'
+import { AssistantMessageStatus } from '@renderer/types/newMessage'
+import { MessageBlockStatus } from '@renderer/types/newMessage'
+import { createMainTextBlock } from '@renderer/utils/messageUtils/create'
+import { defaultLanguage } from '@shared/config/constant'
+import { IpcChannel } from '@shared/IpcChannel'
+import { Divider } from 'antd'
+import dayjs from 'dayjs'
+import { isEmpty } from 'lodash'
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
+import { useHotkeys } from 'react-hotkeys-hook'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
+
+import ChatWindow from '../chat/ChatWindow'
+import TranslateWindow from '../translate/TranslateWindow'
+import ClipboardPreview from './components/ClipboardPreview'
+import FeatureMenus, { FeatureMenusRef } from './components/FeatureMenus'
+import Footer from './components/Footer'
+import InputBar from './components/InputBar'
+
+const HomeWindow: FC = () => {
+  const [route, setRoute] = useState<'home' | 'chat' | 'translate' | 'summary' | 'explanation'>('home')
+  const [isFirstMessage, setIsFirstMessage] = useState(true)
+  const [clipboardText, setClipboardText] = useState('')
+  const [selectedText, setSelectedText] = useState('')
+  const [text, setText] = useState('')
+  const [lastClipboardText, setLastClipboardText] = useState<string | null>(null)
+  const textChange = useState(() => {})[1]
+  const { defaultAssistant } = useDefaultAssistant()
+  const topic = defaultAssistant.topics[0]
+  const { defaultModel: model } = useDefaultModel()
+  const { language, readClipboardAtStartup, windowStyle, theme } = useSettings()
+  const { t } = useTranslation()
+  const inputBarRef = useRef<HTMLDivElement>(null)
+  const featureMenusRef = useRef<FeatureMenusRef>(null)
+  const referenceText = selectedText || clipboardText || text
+
+  const content = isFirstMessage ? (referenceText === text ? text : `${referenceText}\n\n${text}`).trim() : text.trim()
+
+  const readClipboard = useCallback(async () => {
+    if (!readClipboardAtStartup) return
+
+    const text = await navigator.clipboard.readText().catch(() => null)
+    if (text && text !== lastClipboardText) {
+      setLastClipboardText(text)
+      setClipboardText(text.trim())
+    }
+  }, [readClipboardAtStartup, lastClipboardText])
+
+  const focusInput = () => {
+    if (inputBarRef.current) {
+      const input = inputBarRef.current.querySelector('input')
+      if (input) {
+        input.focus()
+      }
+    }
+  }
+
+  const onWindowShow = useCallback(async () => {
+    featureMenusRef.current?.resetSelectedIndex()
+    readClipboard().then()
+    focusInput()
+  }, [readClipboard])
+
+  useEffect(() => {
+    readClipboard()
+  }, [readClipboard])
+
+  useEffect(() => {
+    i18n.changeLanguage(language || navigator.language || defaultLanguage)
+  }, [language])
+
+  const onCloseWindow = () => window.api.miniWindow.hide()
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // When using an indirect input method (e.g., Chinese, Japanese IME), there's an input method composition process
+    // There should be no response during the composition process
+    // Example: In Chinese IME, pressing `Enter` during candidate selection commits the letters directly
+    // In Japanese IME, pressing `Enter` during kana input commits the kana
+    // The IME can be terminated with `Esc` during candidate selection
+    // The shortcut assistants for `Enter` and `Esc` in these examples should not respond
+    if (e.key === 'Process') {
+      return
+    }
+
+    switch (e.code) {
+      case 'Enter':
+      case 'NumpadEnter':
+        {
+          e.preventDefault()
+          if (content) {
+            if (route === 'home') {
+              featureMenusRef.current?.useFeature()
+            } else {
+              // Currently, the text box only allows continuous input in 'chat' mode, which is equivalent to route === 'chat'
+              setRoute('chat')
+              onSendMessage().then()
+              focusInput()
+            }
+          }
+        }
+        break
+      case 'Backspace':
+        {
+          textChange(() => {
+            if (text.length === 0) {
+              clearClipboard()
+            }
+          })
+        }
+        break
+      case 'ArrowUp':
+        {
+          if (route === 'home') {
+            e.preventDefault()
+            featureMenusRef.current?.prevFeature()
+          }
+        }
+        break
+      case 'ArrowDown':
+        {
+          if (route === 'home') {
+            e.preventDefault()
+            featureMenusRef.current?.nextFeature()
+          }
+        }
+        break
+      case 'Escape':
+        {
+          setText('')
+          setRoute('home')
+          route === 'home' && onCloseWindow()
+        }
+        break
+    }
+  }
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setText(e.target.value)
+  }
+
+  const onSendMessage = useCallback(
+    async (prompt?: string) => {
+      if (isEmpty(content)) {
+        return
+      }
+
+      const messageParams = {
+        role: 'user',
+        content: prompt ? `${prompt}\n\n${content}` : content,
+        assistant: defaultAssistant,
+        topic,
+        createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+        status: 'success'
+      }
+      const topicId = topic.id
+      const { message: userMessage, blocks } = getUserMessage(messageParams)
+
+      store.dispatch(newMessagesActions.addMessage({ topicId, message: userMessage }))
+      store.dispatch(upsertManyBlocks(blocks))
+
+      const assistant = getDefaultAssistant()
+      let blockId: string | null = null
+      let blockContent: string = ''
+
+      const assistantMessage = getAssistantMessage({ assistant, topic: assistant.topics[0] })
+      store.dispatch(newMessagesActions.addMessage({ topicId, message: assistantMessage }))
+
+      fetchChatCompletion({
+        messages: [userMessage],
+        assistant: { ...assistant, model: getDefaultModel() },
+        onChunkReceived: (chunk: Chunk) => {
+          if (chunk.type === ChunkType.TEXT_DELTA) {
+            blockContent += chunk.text
+            if (!blockId) {
+              const block = createMainTextBlock(assistantMessage.id, chunk.text, {
+                status: MessageBlockStatus.STREAMING
+              })
+              blockId = block.id
+              store.dispatch(
+                newMessagesActions.updateMessage({
+                  topicId,
+                  messageId: assistantMessage.id,
+                  updates: { blockInstruction: { id: block.id } }
+                })
+              )
+              store.dispatch(upsertOneBlock(block))
+            } else {
+              store.dispatch(updateOneBlock({ id: blockId, changes: { content: blockContent } }))
+            }
+          }
+          if (chunk.type === ChunkType.TEXT_COMPLETE) {
+            blockId && store.dispatch(updateOneBlock({ id: blockId, changes: { status: MessageBlockStatus.SUCCESS } }))
+            store.dispatch(
+              newMessagesActions.updateMessage({
+                topicId,
+                messageId: assistantMessage.id,
+                updates: { status: AssistantMessageStatus.SUCCESS }
+              })
+            )
+          }
+        }
+      })
+
+      setIsFirstMessage(false)
+      setText('') // Clear input field content
+    },
+    [content, defaultAssistant, topic]
+  )
+
+  const clearClipboard = () => {
+    setClipboardText('')
+    setSelectedText('')
+    focusInput()
+  }
+
+  // If the input is focused, the `Esc` callback will not be triggered here.
+  useHotkeys('esc', () => {
+    if (route === 'home') {
+      onCloseWindow()
+    } else {
+      setRoute('home')
+      setText('')
+    }
+  })
+
+  useEffect(() => {
+    window.electron.ipcRenderer.on(IpcChannel.ShowMiniWindow, onWindowShow)
+
+    return () => {
+      window.electron.ipcRenderer.removeAllListeners(IpcChannel.ShowMiniWindow)
+    }
+  }, [onWindowShow, onSendMessage, setRoute])
+
+  // When route is 'home', initialize isFirstMessage to true
+  useEffect(() => {
+    if (route === 'home') {
+      setIsFirstMessage(true)
+    }
+  }, [route])
+
+  const backgroundColor = () => {
+    // ONLY MAC: when transparent style + light theme: use vibrancy effect
+    // because the dark style under mac's vibrancy effect has not been implemented
+    if (
+      isMac &&
+      windowStyle === 'transparent' &&
+      theme === 'light' &&
+      !window.matchMedia('(prefers-color-scheme: dark)').matches
+    ) {
+      return 'transparent'
+    }
+
+    return 'var(--color-background)'
+  }
+
+  if (['chat', 'summary', 'explanation'].includes(route)) {
+    return (
+      <Container style={{ backgroundColor: backgroundColor() }}>
+        {route === 'chat' && (
+          <>
+            <InputBar
+              text={text}
+              model={model}
+              referenceText={referenceText}
+              placeholder={t('miniwindow.input.placeholder.empty', { model: model.name })}
+              handleKeyDown={handleKeyDown}
+              handleChange={handleChange}
+              ref={inputBarRef}
+            />
+            <Divider style={{ margin: '10px 0' }} />
+          </>
+        )}
+        {['summary', 'explanation'].includes(route) && (
+          <div style={{ marginTop: 10 }}>
+            <ClipboardPreview referenceText={referenceText} clearClipboard={clearClipboard} t={t} />
+          </div>
+        )}
+        <ChatWindow route={route} assistant={defaultAssistant} />
+        <Divider style={{ margin: '10px 0' }} />
+        <Footer route={route} onExit={() => setRoute('home')} />
+      </Container>
+    )
+  }
+
+  if (route === 'translate') {
+    return (
+      <Container style={{ backgroundColor: backgroundColor() }}>
+        <TranslateWindow text={referenceText} />
+        <Divider style={{ margin: '10px 0' }} />
+        <Footer route={route} onExit={() => setRoute('home')} />
+      </Container>
+    )
+  }
+
+  return (
+    <Container style={{ backgroundColor: backgroundColor() }}>
+      <InputBar
+        text={text}
+        model={model}
+        referenceText={referenceText}
+        placeholder={
+          referenceText && route === 'home'
+            ? t('miniwindow.input.placeholder.title')
+            : t('miniwindow.input.placeholder.empty', { model: model.name })
+        }
+        handleKeyDown={handleKeyDown}
+        handleChange={handleChange}
+        ref={inputBarRef}
+      />
+      <Divider style={{ margin: '10px 0' }} />
+      <ClipboardPreview referenceText={referenceText} clearClipboard={clearClipboard} t={t} />
+      <Main>
+        <FeatureMenus setRoute={setRoute} onSendMessage={onSendMessage} text={content} ref={featureMenusRef} />
+      </Main>
+      <Divider style={{ margin: '10px 0' }} />
+      <Footer
+        route={route}
+        canUseBackspace={text.length > 0 || clipboardText.length == 0}
+        clearClipboard={clearClipboard}
+        onExit={() => {
+          setRoute('home')
+          setText('')
+          onCloseWindow()
+        }}
+      />
+    </Container>
+  )
+}
+
+const Container = styled.div`
+  display: flex;
+  flex: 1;
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+  -webkit-app-region: drag;
+  padding: 8px 10px;
+`
+
+const Main = styled.main`
+  display: flex;
+  flex-direction: column;
+
+  flex: 1;
+  overflow: hidden;
+`
+
+export default HomeWindow
