@@ -181,7 +181,7 @@ export const initialState: SettingsState = {
   webdavHost: '',
   webdavUser: '',
   webdavPass: '',
-  webdavPath: '/cherry-studio',
+  webdavPath: '/tykotech-fork',
   webdavAutoSync: false,
   webdavSyncInterval: 0,
   webdavMaxBackups: 0,
@@ -198,8 +198,9 @@ export const initialState: SettingsState = {
   narrowMode: false,
   enableQuickAssistant: false,
   clickTrayToShowQuickAssistant: false,
+  enableBackspaceDeleteModel: false, // Added missing property
+  multiModelMessageStyle: 'horizontal',
   readClipboardAtStartup: true,
-  multiModelMessageStyle: 'fold',
   notionDatabaseID: '',
   notionApiKey: '',
   notionPageNameKey: 'Name',
@@ -227,7 +228,6 @@ export const initialState: SettingsState = {
   minappsOpenLinkExternal: false,
   enableDataCollection: false,
   enableQuickPanelTriggers: false,
-  enableBackspaceDeleteModel: true,
   exportMenuOptions: {
     image: true,
     markdown: true,
@@ -511,14 +511,14 @@ const settingsSlice = createSlice({
     setEnableDataCollection: (state, action: PayloadAction<boolean>) => {
       state.enableDataCollection = action.payload
     },
-    setExportMenuOptions: (state, action: PayloadAction<typeof initialState.exportMenuOptions>) => {
-      state.exportMenuOptions = action.payload
-    },
     setEnableQuickPanelTriggers: (state, action: PayloadAction<boolean>) => {
       state.enableQuickPanelTriggers = action.payload
     },
     setEnableBackspaceDeleteModel: (state, action: PayloadAction<boolean>) => {
       state.enableBackspaceDeleteModel = action.payload
+    },
+    setExportMenuOptions: (state, action: PayloadAction<typeof initialState.exportMenuOptions>) => {
+      state.exportMenuOptions = action.payload
     }
   }
 })

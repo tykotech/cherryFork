@@ -1,76 +1,62 @@
-name: 🤔 其他问题 (中文)
-description: 提交不属于错误报告或功能需求的问题
-title: '[其他]: '
+name: 🤔 Other Questions (Chinese)
+description: Submit questions that don't fit into bug reports or feature requests
+title: "[Other]: "
 body:
   - type: markdown
     attributes:
       value: |
-        感谢您花时间提出问题！
-        在提交此问题之前，请确保您已经了解了[常见问题](https://docs.cherry-ai.com/question-contact/questions)和[知识科普](https://docs.cherry-ai.com/question-contact/knowledge)
-
+        Thank you for taking the time to ask a question!
+        Before submitting this issue, please make sure you've reviewed the [FAQ](https://github.com/TykoTech/TykoTech-Fork/wiki/FAQ) and [Knowledge Base](https://github.com/TykoTech/TykoTech-Fork/wiki)
   - type: checkboxes
     id: checklist
     attributes:
-      label: 提交前检查
+      label: Pre-submission Checklist
       description: |
-        在提交 Issue 前请确保您已经完成了以下所有步骤
+        Please ensure you've completed all the steps below before submitting your issue
       options:
-        - label: 我理解 Issue 是用于反馈和解决问题的，而非吐槽评论区，将尽可能提供更多信息帮助问题解决。
+        - label: I understand that Issues are for feedback and problem-solving, not for complaints, and I will provide as much information as possible to help resolve the issue.
           required: true
-        - label: 我已经查看了置顶 Issue 并搜索了现有的 [开放Issue](https://github.com/CherryHQ/cherry-studio/issues)和[已关闭Issue](https://github.com/CherryHQ/cherry-studio/issues?q=is%3Aissue%20state%3Aclosed%20)，没有找到类似的问题。
+        - label: I have checked the pinned Issues and searched through existing [open Issues](https://github.com/TykoTech/TykoTech-Fork/issues) and [closed Issues](https://github.com/TykoTech/TykoTech-Fork/issues?q=is%3Aissue+state%3Aclosed%20) and didn't find similar questions.
           required: true
-        - label: 我填写了简短且清晰明确的标题，以便开发者在翻阅 Issue 列表时能快速确定大致问题。而不是"一个问题"、"求助"等。
+        - label: I have written a short and clear title that helps developers quickly understand the nature of my question, rather than vague titles like "A question" or "Help needed".
           required: true
-        - label: 我的问题不属于错误报告或功能需求类别。
+        - label: My question doesn't fall under bug reports or feature requests categories.
           required: true
-
   - type: dropdown
     id: platform
     attributes:
-      label: 平台
-      description: 您正在使用哪个平台？
+      label: Platform
+      description: Which platform are you using?
       options:
         - Windows
         - macOS
         - Linux
     validations:
       required: true
-
   - type: input
     id: version
     attributes:
-      label: 版本
-      description: 您正在运行的 Cherry Studio 版本是什么？
-      placeholder: 例如 v1.0.0
+      label: Version
+      description: What version of TykoTech Fork are you running?
+      placeholder: e.g., v1.0.0
     validations:
       required: true
-
   - type: textarea
     id: question
     attributes:
-      label: 问题描述
-      description: 请详细描述您的问题或疑问
-      placeholder: 我想了解有关...的更多信息
+      label: Your Question
+      description: Please describe your question in detail.
+      placeholder: Please state your question as clearly as possible...
     validations:
       required: true
-
   - type: textarea
-    id: context
+    id: screenshots
     attributes:
-      label: 相关背景
-      description: 请提供与您的问题相关的任何背景信息或上下文
-      placeholder: 我尝试实现...时遇到了疑问
-    validations:
-      required: true
-
-  - type: textarea
-    id: attempts
-    attributes:
-      label: 您已尝试的方法
-      description: 请描述您为解决问题已经尝试过的方法（如果有）
-
+      label: Screenshots
+      description: If applicable, add screenshots to help explain your question.
+      placeholder: You can drag and drop images here.
   - type: textarea
     id: additional
     attributes:
-      label: 附加信息
-      description: 任何能让我们对您的问题有更多了解的信息，包括截图或相关链接
+      label: Additional Context
+      description: Add any other context about the question here.

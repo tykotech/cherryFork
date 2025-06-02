@@ -8,8 +8,8 @@
   },
   "description": "A powerful AI assistant for producer.",
   "main": "./out/main/index.js",
-  "author": "support@cherry-ai.com",
-  "homepage": "https://github.com/CherryHQ/cherry-studio",
+  "author": "support@tykotech-fork.com",
+  "homepage": "https://github.com/TykoTech/TykoTech-Fork",
   "workspaces": {
     "packages": [
       "packages/*"
@@ -150,7 +150,6 @@
     "@types/tinycolor2": "^1",
     "@types/ws": "^8",
     "@vitejs/plugin-react-swc": "^3.9.0",
-    "dotenv": "^16.0.0",
     "@vitest/coverage-v8": "^3.1.1",
     "@vitest/ui": "^3.1.1",
     "@xyflow/react": "^12.4.4",
@@ -162,6 +161,7 @@
     "dayjs": "^1.11.11",
     "dexie": "^4.0.8",
     "dexie-react-hooks": "^1.1.7",
+    "dotenv": "^16.0.0",
     "dotenv-cli": "^7.4.2",
     "electron": "31.7.6",
     "electron-builder": "26.0.15",
@@ -230,7 +230,9 @@
     "app-builder-lib@npm:26.0.13": "patch:app-builder-lib@npm%3A26.0.13#~/.yarn/patches/app-builder-lib-npm-26.0.13-a064c9e1d0.patch",
     "shiki": "3.2.2",
     "openai@npm:^4.87.3": "patch:openai@npm%3A4.96.0#~/.yarn/patches/openai-npm-4.96.0-0665b05cb9.patch",
-    "registry-js": "1.15.0"
+    "registry-js": "1.15.0",
+    "cross-spawn": "7.0.5",
+    "tar-fs": "2.1.2"
   },
   "packageManager": "yarn@4.6.0",
   "lint-staged": {

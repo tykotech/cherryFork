@@ -119,7 +119,7 @@ class McpService {
       }
     }
     // Create new client instance for each connection
-    const client = new Client({ name: 'Cherry Studio', version: app.getVersion() }, { capabilities: {} })
+    const client = new Client({ name: 'TykoTech Fork', version: app.getVersion() }, { capabilities: {} })
 
     const args = [...(server.args || [])]
 

@@ -1,149 +1,154 @@
 <h1 align="center">
-  <a href="https://github.com/CherryHQ/cherry-studio/releases">
-    <img src="https://github.com/CherryHQ/cherry-studio/blob/main/build/icon.png?raw=true" width="150" height="150" alt="banner" />
+  <a href="https://github.com/TykoTech/TykoTech-Fork/releases">
+    <img src="https://github.com/TykoTech/TykoTech-Fork/blob/main/build/icon.png?raw=true" width="150" height="150" alt="banner" />
   </a>
 </h1>
 <p align="center">
-  <a href="https://github.com/CherryHQ/cherry-studio">English</a> | <a href="./README.zh.md">中文</a> | 日本語 <br>
+  <a href="https://github.com/TykoTech/TykoTech-Fork">English</a> | <a href="./README.zh.md">中文</a> | 日本語 <br>
 </p>
 <div align="center">
- <a href="https://trendshift.io/repositories/11772" target="_blank"><img src="https://trendshift.io/api/badge/repositories/11772" alt="kangfenmao%2Fcherry-studio | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
- <a href="https://www.producthunt.com/posts/cherry-studio?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-cherry&#0045;studio" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=496640&theme=light" alt="Cherry&#0032;Studio - AI&#0032;Chatbots&#0044;&#0032;AI&#0032;Desktop&#0032;Client | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
+ <!-- Links to original project's promotional sites removed -->
 </div>
-# 🍒 Cherry Studio
+# 🍒 TykoTech Fork
 
-Cherry Studio は、複数の LLM プロバイダーをサポートするデスクトップクライアントで、Windows、Mac、Linux で利用可能です。
+TykoTech Fork is a desktop client that supports multiple LLM providers,
+available on Windows, Mac, and Linux.
 
-👏 [Telegram](https://t.me/CherryStudioAI)｜[Discord](https://discord.gg/wez8HtpxqQ) | [QQグループ(575014769)](https://qm.qq.com/q/lo0D4qVZKi)
+<!-- Community links removed/placeholders for TykoTech Fork -->
+<!-- 👏 [Telegram](placeholder_telegram_link)｜[Discord](placeholder_discord_link) | [QQ Group](placeholder_qq_link) -->
 
-❤️ Cherry Studio をお気に入りにしましたか？小さな星をつけてください 🌟 または [スポンサー](sponsor.md) をして開発をサポートしてください！❤️
+<!-- Sponsorship link removed/placeholder for TykoTech Fork -->
+<!-- ❤️ Did you like TykoTech Fork? Please give it a star 🌟 or [Sponsor](placeholder_sponsor_link) to support development! ❤️ -->
 
-# 📖 ガイド
+# 📖 Guide
 
-https://docs.cherry-ai.com
+<!-- Documentation link removed/placeholder for TykoTech Fork -->
+<!-- https://docs.tykotech-fork.com -->
 
-# 🌠 スクリーンショット
+Documentation coming soon.
+
+# 🌠 Screenshots
 
 ![](https://github.com/user-attachments/assets/082efa42-c4df-4863-a9cb-80435cecce0f)
 ![](https://github.com/user-attachments/assets/f8411a65-c51f-47d3-9273-62ae384cc6f1)
 ![](https://github.com/user-attachments/assets/0d235b3e-65ae-45ab-987f-8dbe003c52be)
 
-# 🌟 主な機能
+# 🌟 Main Features
 
-1. **多様な LLM サービス対応**：
+1. **Diverse LLM Service Support**:
+   - ☁️ Supports major LLM cloud services: OpenAI, Gemini, Anthropic, etc.
+   - 🔗 Integrates AI Web services: Claude, Perplexity, Poe, etc.
+   - 💻 Supports local model execution with Ollama, LM Studio.
 
-- ☁️ 主要な LLM クラウドサービス対応：OpenAI、Gemini、Anthropic など
-- 🔗 AI Web サービス統合：Claude、Peplexity、Poe など
-- 💻 Ollama、LM Studio によるローカルモデル実行対応
+2. **AI Assistants and Conversations**:
+   - 📚 300+ pre-configured AI assistants.
+   - 🤖 Create custom AI assistants.
+   - 💬 Simultaneous conversation function with multiple models.
 
-2. **AI アシスタントと対話**：
+3. **Document and Data Processing**:
+   - 📄 Supports various formats like text, images, Office, PDF, etc.
+   - ☁️ File management and backup with WebDAV.
+   - 📊 Chart creation with Mermaid.
+   - 💻 Code highlighting function.
+   - 🌐 Web page summarization and Q&A.
+   - 🗂️ Knowledge base Q&A based on your local documents.
 
-- 📚 300+ の事前設定済み AI アシスタント
-- 🤖 カスタム AI アシスタントの作成
-- 💬 複数モデルでの同時対話機能
+4. **Enhanced User Experience**:
+   - 🎨 Multiple themes, supports custom themes.
+   - 🌍 Multilingual interface.
+   - ⌨️ Customizable global shortcut keys.
+   - 🔧 Powerful plugin system.
+   - 🖼️ Mini floating window for quick Q&A.
 
-3. **文書とデータ処理**：
+5. **Privacy and Security**:
+   - 🔒 All data is stored locally by default.
+   - 🛡️ Supports setting up proxy servers.
 
-- 📄 テキスト、画像、Office、PDF など多様な形式対応
-- ☁️ WebDAV によるファイル管理とバックアップ
-- 📊 Mermaid による図表作成
-- 💻 コードハイライト機能
+# 🛠️ Installation
 
-4. **実用的なツール統合**：
+Visit the [Releases Page](https://github.com/TykoTech/TykoTech-Fork/releases) to
+download the installation package for your OS.
 
-- 🔍 グローバル検索機能
-- 📝 トピック管理システム
-- 🔤 AI による翻訳機能
-- 🎯 ドラッグ＆ドロップによる整理
-- 🔌 ミニプログラム対応
-- ⚙️ MCP（モデルコンテキストプロトコル） サービス
+**Windows**:
 
-5. **優れたユーザー体験**：
+- Download the `.exe` installer and follow the instructions.
+- Or download the portable version (`-portable.exe`).
 
-- 🖥️ Windows、Mac、Linux のクロスプラットフォーム対応
-- 📦 環境構築不要ですぐに使用可能
-- 🎨 ライト/ダークテーマと透明ウィンドウ対応
-- 📝 完全な Markdown レンダリング
-- 🤲 簡単な共有機能
+**macOS**:
 
-# 📝 TODO
+- Download the `.dmg` file.
+- Supports both Intel and Apple Silicon chips.
 
-- [x] クイックポップアップ（クリップボードの読み取り、簡単な質問、説明、翻訳、要約）
-- [x] 複数モデルの回答の比較
-- [x] サービスプロバイダーが提供する SSO を使用したログインをサポート
-- [x] すべてのモデルがネットワークをサポート
-- [x] 最初の公式バージョンのリリース
-- [ ] 錯誤修復と改善 (開発中...)
-- [ ] プラグイン機能（JavaScript）
-- [ ] ブラウザ拡張機能（テキストをハイライトして翻訳、要約、ナレッジベースに追加）
-- [ ] iOS & Android クライアント
-- [ ] AIノート
-- [ ] 音声入出力（AI コール）
-- [ ] データバックアップはカスタムバックアップコンテンツをサポート
+**Linux**:
 
-# 🌈 テーマ
+- Download the `.AppImage` file.
+- Or download the `.deb` package.
 
-- テーマギャラリー: https://cherrycss.com
-- Aero テーマ: https://github.com/hakadao/CherryStudio-Aero
-- PaperMaterial テーマ: https://github.com/rainoffallingstar/CherryStudio-PaperMaterial
-- Claude テーマ: https://github.com/bjl101501/CherryStudio-Claudestyle-dynamic
-- メープルネオンテーマ: https://github.com/BoningtonChen/CherryStudio_themes
+# 🖥️ Development
 
-より多くのテーマのPRを歓迎します
+**Prerequisites**:
 
-# 🖥️ 開発
+- Node.js >= 18
+- Yarn >= 4 (Corepack recommended: `corepack enable`)
 
-参考[開発ドキュメント](dev.md)
+**Steps**:
 
-# 🤝 貢献
+1. Clone the repository:
+   `git clone https://github.com/TykoTech/TykoTech-Fork.git`
+2. Navigate to the project directory: `cd TykoTech-Fork`
+3. Install dependencies: `yarn install`
+4. Run in development mode: `yarn dev`
 
-Cherry Studio への貢献を歓迎します！以下の方法で貢献できます：
+**Build**:
 
-1. **コードの貢献**：新機能を開発するか、既存のコードを最適化します。
-2. **バグの修正**：見つけたバグを修正します。
-3. **問題の管理**：GitHub の問題を管理するのを手伝います。
-4. **製品デザイン**：デザインの議論に参加します。
-5. **ドキュメントの作成**：ユーザーマニュアルやガイドを改善します。
-6. **コミュニティの参加**：ディスカッションに参加し、ユーザーを支援します。
-7. **使用の促進**：Cherry Studio を広めます。
+- Build for current platform: `yarn build:current_os` (e.g., `yarn build:win` on
+  Windows)
+- Build for all platforms: `yarn build` (Note: Cross-platform building for macOS
+  requires a macOS environment)
 
-## 始め方
+For more details, please refer to the [Development Guide](dev.md).
 
-1. **リポジトリをフォーク**：フォークしてローカルマシンにクローンします。
-2. **ブランチを作成**：変更のためのブランチを作成します。
-3. **変更を提出**：変更をコミットしてプッシュします。
-4. **プルリクエストを開く**：変更内容と理由を説明します。
+# 🤝 Contribution
 
-詳細なガイドラインについては、[貢献ガイド](../CONTRIBUTING.md)をご覧ください。
+We welcome all forms of contribution! Please refer to the
+[Contributor Guide](../CONTRIBUTING.md) for details.
 
-ご支援と貢献に感謝します！
+- Submit bug reports or feature requests via
+  [Issues](https://github.com/TykoTech/TykoTech-Fork/issues).
+- Participate in code contributions via
+  [Pull Requests](https://github.com/TykoTech/TykoTech-Fork/pulls).
+- Help improve documentation.
+- Translate and localize for more languages.
 
-## 関連頁版
+# 🚀 Contributors
 
-- [one-api](https://github.com/songquanpeng/one-api)：LLM API の管理・配信システム。OpenAI、Azure、Anthropic などの主要モデルに対応し、統一 API インターフェースを提供。API キー管理と再配布に利用可能。
-
-# 🚀 コントリビューター
-
-<a href="https://github.com/CherryHQ/cherry-studio/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=kangfenmao/cherry-studio" />
+<a href="https://github.com/TykoTech/TykoTech-Fork/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=TykoTech/TykoTech-Fork" />
 </a>
 
-# コミュニティ
+# Community
 
-[Telegram](https://t.me/CherryStudioAI) | [Email](mailto:support@cherry-ai.com) | [Twitter](https://x.com/kangfenmao)
+<!-- Community links removed/placeholders for TykoTech Fork -->
+<!-- [Telegram](placeholder_telegram_link) | [Email](mailto:support@tykotech-fork.com) | [Twitter](placeholder_twitter_link) -->
 
-# スポンサー
+Community channels coming soon.
 
-[Buy Me a Coffee](sponsor.md)
+# Sponsor
 
-# 📃 ライセンス
+<!-- Sponsorship link removed/placeholder for TykoTech Fork -->
+<!-- [Buy Me a Coffee](placeholder_sponsor_link) -->
+
+Sponsorship details coming soon.
+
+# 📃 License
 
 [LICENSE](../LICENSE)
 
-# ✉️ お問い合わせ
+# ✉️ Contact Us
 
-yinsenho@cherry-ai.com
+yinsenho@cherry-ai.com (Note: This email might need to be updated for TykoTech
+Fork)
 
-# ⭐️ スター履歴
+# ⭐️ Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=kangfenmao/cherry-studio&type=Timeline)](https://star-history.com/#kangfenmao/cherry-studio&Timeline)
+[![Star History Chart](https://api.star-history.com/svg?repos=TykoTech/TykoTech-Fork&type=Timeline)](https://star-history.com/#TykoTech/TykoTech-Fork&Timeline)

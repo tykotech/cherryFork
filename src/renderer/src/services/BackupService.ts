@@ -7,7 +7,7 @@ import { setWebDAVSyncState } from '@renderer/store/backup'
 import dayjs from 'dayjs'
 
 export async function backup() {
-  const filename = `cherry-studio.${dayjs().format('YYYYMMDDHHmm')}.zip`
+  const filename = `tykotech-fork.${dayjs().format('YYYYMMDDHHmm')}.zip`
   const fileContnet = await getBackupData()
   const selectFolder = await window.api.file.selectFolder()
   if (selectFolder) {
@@ -93,7 +93,7 @@ export async function backupToWebdav({
     Logger.error('[Backup] Failed to get device type or hostname:', error)
   }
   const timestamp = dayjs().format('YYYYMMDDHHmmss')
-  const backupFileName = customFileName || `cherry-studio.${timestamp}.${hostname}.${deviceType}.zip`
+  const backupFileName = customFileName || `tykotech-fork.${timestamp}.${hostname}.${deviceType}.zip`
   const finalFileName = backupFileName.endsWith('.zip') ? backupFileName : `${backupFileName}.zip`
   const backupData = await getBackupData()
 
@@ -382,14 +382,14 @@ export async function handleData(data: Record<string, any>) {
       }
     }
 
-    await localStorage.setItem('persist:cherry-studio', data.localStorage['persist:cherry-studio'])
+    await localStorage.setItem('persist:tykotech-fork', data.localStorage['persist:cherry-studio'])
     window.message.success({ content: i18n.t('message.restore.success'), key: 'restore' })
     setTimeout(() => window.api.reload(), 1000)
     return
   }
 
   if (data.version >= 2) {
-    localStorage.setItem('persist:cherry-studio', data.localStorage['persist:cherry-studio'])
+    localStorage.setItem('persist:tykotech-fork', data.localStorage['persist:cherry-studio'])
     await restoreDatabase(data.indexedDB)
 
     if (data.version === 3) {

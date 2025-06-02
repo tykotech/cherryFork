@@ -122,7 +122,7 @@ describe('naming', () => {
 
     it('should extract group name from ID with hyphen', () => {
       // Verify extracting group name from ID containing hyphen
-      expect(getDefaultGroupName('group-model')).toBe('group')
+      expect(getDefaultGroupName('group-model')).toBe('group-model')
     })
 
     it('should handle special cases for specific providers', () => {

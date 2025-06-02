@@ -1,13 +1,13 @@
 name: 🐛 Bug Report (English)
 description: Create a report to help us improve
-title: '[Bug]: '
-labels: ['kind/bug']
+title: "[Bug]: "
+labels: ["kind/bug"]
 body:
   - type: markdown
     attributes:
       value: |
         Thank you for taking the time to fill out this bug report!
-        Before submitting this issue, please make sure that you have understood the [FAQ](https://docs.cherry-ai.com/question-contact/questions) and [Knowledge Science](https://docs.cherry-ai.com/question-contact/knowledge)
+        Before submitting this issue, please make sure that you have understood the [FAQ](https://github.com/TykoTech/TykoTech-Fork/wiki/FAQ) and [Knowledge Base](https://github.com/TykoTech/TykoTech-Fork/wiki)
 
   - type: checkboxes
     id: checklist
@@ -18,9 +18,9 @@ body:
       options:
         - label: I understand that issues are for feedback and problem solving, not for complaining in the comment section, and will provide as much information as possible to help solve the problem.
           required: true
-        - label: My issue is not listed in the [FAQ](https://github.com/CherryHQ/cherry-studio/issues/3881).
+        - label: My issue is not listed in the [FAQ](https://github.com/TykoTech/TykoTech-Fork/issues?q=is%3Aissue+label%3Afaq).
           required: true
-        - label: I've looked at **pinned issues** and searched for existing [Open Issues](https://github.com/CherryHQ/cherry-studio/issues), [Closed Issues](https://github.com/CherryHQ/cherry-studio/issues?q=is%3Aissue%20state%3Aclosed), and [Discussions](https://github.com/CherryHQ/cherry-studio/discussions), no similar issue or discussion was found.
+        - label: I've looked at **pinned issues** and searched for existing [Open Issues](https://github.com/TykoTech/TykoTech-Fork/issues), [Closed Issues](https://github.com/TykoTech/TykoTech-Fork/issues?q=is%3Aissue+state%3Aclosed), and [Discussions](https://github.com/TykoTech/TykoTech-Fork/discussions), no similar issue or discussion was found.
           required: true
         - label: I've filled in short, clear headings so that developers can quickly identify a rough idea of what to expect when flipping through the list of issues. And not "a suggestion", "stuck", etc.
           required: true
@@ -41,7 +41,7 @@ body:
     id: version
     attributes:
       label: Version
-      description: What version of Cherry Studio are you running?
+      description: What version of TykoTech Fork are you running?
       placeholder: e.g. v1.0.0
     validations:
       required: true

@@ -1,30 +1,32 @@
-name: ❓ 提问 & 讨论 (中文)
-description: 寻求帮助、讨论问题、提出疑问等...
-title: '[讨论]: '
-labels: ['kind/question']
+name: ❓ Questions & Discussion (Chinese)
+description: Seeking help, discussing issues, asking questions, etc...
+title: "[Discussion]: "
+labels: ["kind/question"]
 body:
   - type: markdown
     attributes:
       value: |
-        感谢您的提问！请尽可能详细地描述您的问题，这样我们才能更好地帮助您。
+        Thank you for your question! Please describe your issue in as much detail as possible so that we can better assist you.
 
   - type: checkboxes
     id: checklist
     attributes:
-      label: Issue 检查清单
+      label: Issue Checklist
       description: |
-        在提交 Issue 前请确保您已经完成了以下所有步骤
+        Before submitting an Issue, please ensure you have completed all the following steps
       options:
-        - label: 我理解 Issue 是用于反馈和解决问题的，而非吐槽评论区，将尽可能提供更多信息帮助问题解决。
+        - label: I understand that Issues are for feedback and problem-solving, not for complaining in the comments section, and I will provide as much information as possible to help resolve the issue.
           required: true
-        - label: 我确认自己需要的是提出问题并且讨论问题，而不是 Bug 反馈或需求建议。
+        - label: I have checked the pinned Issues and searched existing [Open Issues](https://github.com/TykoTech/TykoTech-Fork/issues) and [Closed Issues](https://github.com/TykoTech/TykoTech-Fork/issues?q=is%3Aissue+state%3Aclosed), and no similar question was found.
+          required: true
+        - label: I confirm that I am here to ask questions and discuss issues, not to report bugs or request features.
           required: true
 
   - type: dropdown
     id: platform
     attributes:
-      label: 平台
-      description: 您正在使用哪个平台？
+      label: Platform
+      description: What platform are you using?
       options:
         - Windows
         - macOS
@@ -35,43 +37,42 @@ body:
   - type: input
     id: version
     attributes:
-      label: 版本
-      description: 您正在运行的 Cherry Studio 版本是什么？
-      placeholder: 例如 v1.0.0
+      label: Version
+      description: What version of TykoTech Fork are you running?
+      placeholder: e.g. v1.0.0
     validations:
       required: true
 
   - type: textarea
     id: question
     attributes:
-      label: 您的问题
-      description: 请详细描述您的问题
-      placeholder: 请尽可能清楚地说明您的问题...
+      label: Your Question
+      description: Please describe your question in detail.
+      placeholder: Please state your question as clearly as possible...
     validations:
       required: true
 
   - type: textarea
-    id: context
+    id: screenshots
     attributes:
-      label: 相关背景
-      description: 请提供一些背景信息，帮助我们更好地理解您的问题
-      placeholder: 例如：使用场景、已尝试的解决方案等
+      label: Screenshots
+      description: If applicable, add screenshots to help explain your question.
+      placeholder: You can drag and drop images here.
 
   - type: textarea
     id: additional
     attributes:
-      label: 补充信息
-      description: 任何其他相关的信息、截图或代码示例
-      render: shell
+      label: Additional Context
+      description: Add any other context about the question here.
 
   - type: dropdown
     id: priority
     attributes:
-      label: 优先级
-      description: 这个问题对您来说有多紧急？
+      label: Priority
+      description: How urgent is this issue for you?
       options:
-        - 低 (有空再看)
-        - 中 (希望尽快得到答复)
-        - 高 (阻碍工作进行)
+        - Low (Can look into it later)
+        - Medium (Hope to get a reply soon)
+        - High (Blocking work progress)
     validations:
       required: true

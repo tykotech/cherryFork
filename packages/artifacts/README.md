@@ -1,1 +1,1 @@
-# Cherry Studio Artifacts
+# TykoTech Fork Artifacts

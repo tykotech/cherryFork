@@ -1,6 +1,7 @@
 # 🌿 Branching Strategy
 
-Cherry Studio follows a structured branching strategy to maintain code quality and streamline the development process:
+TykoTech Fork follows a structured branching strategy to maintain code quality
+and streamline the development process:
 
 ## Main Branches
 
@@ -17,7 +18,7 @@ Cherry Studio follows a structured branching strategy to maintain code quality a
 
 ## Contributing Branches
 
-When contributing to Cherry Studio, please follow these guidelines:
+When contributing to TykoTech Fork, please follow these guidelines:
 
 1. **For bug fixes:**
 
@@ -44,9 +45,13 @@ When contributing to Cherry Studio, please follow these guidelines:
 
 ## Pull Request Guidelines
 
-- Always create pull requests against the `develop` branch unless fixing a critical production issue
-- Ensure your branch is up to date with the latest `develop` changes before submitting
+- Always create pull requests against the `develop` branch unless fixing a
+  critical production issue
+- Ensure your branch is up to date with the latest `develop` changes before
+  submitting
 - Include relevant issue numbers in your PR description
 - Make sure all tests pass and code meets our quality standards
-- Critical hotfixes may be submitted against `main` but must also be merged into `develop`
-- Add a photo to show what is different if you add a new feature or modify a component in the UI.
+- Critical hotfixes may be submitted against `main` but must also be merged into
+  `develop`
+- Add a photo to show what is different if you add a new feature or modify a
+  component in the UI.

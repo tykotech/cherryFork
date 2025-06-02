@@ -69,8 +69,8 @@ const NutstoreSettings: FC = () => {
           setNutstoreUsername(decrypted.username)
           setNutstorePass(decrypted.access_token)
           if (!nutstorePath) {
-            dispatch(setNutstorePath('/cherry-studio'))
-            setStoragePath('/cherry-studio')
+            dispatch(setNutstorePath('/tykotech-fork'))
+            setStoragePath('/tykotech-fork')
           }
         }
       }

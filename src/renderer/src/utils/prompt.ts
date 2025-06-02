@@ -148,6 +148,11 @@ ${availableTools}
 }
 
 export const buildSystemPrompt = (userSystemPrompt: string, tools?: MCPTool[]): string => {
+  // Handle null or undefined userSystemPrompt
+  if (!userSystemPrompt) {
+    userSystemPrompt = ''
+  }
+
   if (tools && tools.length > 0) {
     return SYSTEM_PROMPT.replace('{{ USER_SYSTEM_PROMPT }}', userSystemPrompt)
       .replace('{{ TOOL_USE_EXAMPLES }}', ToolUseExamples)

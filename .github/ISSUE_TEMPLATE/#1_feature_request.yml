@@ -1,76 +1,68 @@
-name: 💡 功能建议 (中文)
-description: 为项目提出新的想法
-title: '[功能]: '
-labels: ['kind/enhancement']
+name: 💡 Feature Request (Chinese)
+description: Suggest an idea for this project
+title: "[Feature]: "
+labels: ["kind/enhancement"]
 body:
   - type: markdown
     attributes:
       value: |
-        感谢您花时间提出新的功能建议!
-        在提交此问题之前，请确保您已经了解了[项目规划](https://docs.cherry-ai.com/cherrystudio/planning)和[功能介绍](https://docs.cherry-ai.com/cherrystudio/preview)
-
+        Thank you for taking the time to submit a feature request!
+        Before submitting this issue, please make sure you have reviewed the [Project Roadmap](https://github.com/TykoTech/TykoTech-Fork/wiki/Roadmap) and the [Feature Overview](https://github.com/TykoTech/TykoTech-Fork/wiki/Features).
   - type: checkboxes
     id: checklist
     attributes:
-      label: 提交前检查
+      label: Pre-submission Checklist
       description: |
-        在提交 Issue 前请确保您已经完成了以下所有步骤
+        Before submitting an Issue, please ensure you have completed all the following steps
       options:
-        - label: 我理解 Issue 是用于反馈和解决问题的，而非吐槽评论区，将尽可能提供更多信息帮助问题解决。
+        - label: I understand that Issues are for feedback and problem-solving, not for complaining in the comments section, and I will provide as much information as possible to help resolve the issue.
           required: true
-        - label: 我已经查看了置顶 Issue 并搜索了现有的 [开放Issue](https://github.com/CherryHQ/cherry-studio/issues)和[已关闭Issue](https://github.com/CherryHQ/cherry-studio/issues?q=is%3Aissue%20state%3Aclosed%20)，没有找到类似的建议。
+        - label: I have checked the pinned Issues and searched existing [Open Issues](https://github.com/TykoTech/TykoTech-Fork/issues) and [Closed Issues](https://github.com/TykoTech/TykoTech-Fork/issues?q=is%3Aissue+state%3Aclosed), and no similar suggestion was found.
           required: true
-        - label: 我填写了简短且清晰明确的标题，以便开发者在翻阅 Issue 列表时能快速确定大致问题。而不是“一个建议”、“卡住了”等。
+        - label: I have filled in a short and clear title so that developers can quickly identify the general problem when browsing the Issue list, not "a suggestion," "stuck," etc.
           required: true
-        - label: 最新的 Cherry Studio 版本没有实现我所提出的功能。
+        - label: The latest version of TykoTech Fork does not include the feature I am suggesting.
           required: true
-
   - type: dropdown
     id: platform
     attributes:
-      label: 平台
-      description: 您正在使用哪个平台？
+      label: Platform
+      description: What platform are you using?
       options:
         - Windows
         - macOS
         - Linux
     validations:
       required: true
-
   - type: input
     id: version
     attributes:
-      label: 版本
-      description: 您正在运行的 Cherry Studio 版本是什么？
-      placeholder: 例如 v1.0.0
+      label: Version
+      description: What version of TykoTech Fork are you running?
+      placeholder: e.g. v1.0.0
     validations:
       required: true
-
   - type: textarea
     id: problem
     attributes:
-      label: 您的功能建议是否与某个问题/issue相关?
-      description: 请简明扼要地描述您遇到的问题
-      placeholder: 我总是感到沮丧,因为...
+      label: Is your feature request related to a problem? Please describe.
+      description: A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
     validations:
       required: true
-
   - type: textarea
     id: solution
     attributes:
-      label: 请描述您希望实现的解决方案
-      description: 请简明扼要地描述您希望发生的情况
+      label: Describe the solution you'd like
+      description: A clear and concise description of what you want to happen.
     validations:
       required: true
-
   - type: textarea
     id: alternatives
     attributes:
-      label: 请描述您考虑过的其他方案
-      description: 请简明扼要地描述您考虑过的任何其他解决方案或功能
-
+      label: Describe alternatives you've considered
+      description: A clear and concise description of any alternative solutions or features you've considered.
   - type: textarea
     id: additional
     attributes:
-      label: 其他补充信息
-      description: 在此添加任何其他与功能建议相关的上下文或截图
+      label: Additional Context
+      description: Add any other context or screenshots about the feature request here.
