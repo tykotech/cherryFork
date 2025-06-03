@@ -1,4 +1,4 @@
-name: 🐛 Bug Report (Chinese)
+name: 🐛 Bug Report
 description: Create a report to help us improve
 title: "[Bug]: "
 labels: ["kind/bug"]
@@ -6,28 +6,28 @@ body:
   - type: markdown
     attributes:
       value: |
-        感谢您花时间填写此错误报告！
-        在提交此问题之前，请确保您已经了解了[常见问题](https://github.com/TykoTech/TykoTech-Fork/wiki/FAQ)和[知识科普](https://github.com/TykoTech/TykoTech-Fork/wiki)
+        Thank you for taking the time to fill out this bug report!
+        Before submitting this issue, please make sure you have reviewed the [FAQ](https://github.com/TykoTech/TykoTech-Fork/wiki/FAQ) and [Knowledge Base](https://github.com/TykoTech/TykoTech-Fork/wiki)
   - type: checkboxes
     id: checklist
     attributes:
-      label: 提交前检查
+      label: Submission Checklist
       description: |
-        在提交 Issue 前请确保您已经完成了以下所有步骤
+        Before submitting an issue, please ensure you have completed all of the following steps
       options:
-        - label: 我理解 Issue 是用于反馈和解决问题的，而非吐槽评论区，将尽可能提供更多信息帮助问题解决。
+        - label: I understand that Issues are for reporting and solving problems, not for complaints, and I will provide as much information as possible to help resolve the problem.
           required: true
-        - label: 我的问题不是 [常见问题](https://github.com/TykoTech/TykoTech-Fork/issues?q=is%3Aissue+label%3Afaq) 中的内容。
+        - label: My issue is not covered in the [FAQ](https://github.com/TykoTech/TykoTech-Fork/issues?q=is%3Aissue+label%3Afaq).
           required: true
-        - label: 我已经查看了 **置顶 Issue** 并搜索了现有的 [开放Issue](https://github.com/TykoTech/TykoTech-Fork/issues)和[已关闭Issue](https://github.com/TykoTech/TykoTech-Fork/issues?q=is%3Aissue+state%3Aclosed)，没有找到类似的问题。
+        - label: I have reviewed the **pinned Issues** and searched through existing [open Issues](https://github.com/TykoTech/TykoTech-Fork/issues) and [closed Issues](https://github.com/TykoTech/TykoTech-Fork/issues?q=is%3Aissue+state%3Aclosed), and did not find any similar issues.
           required: true
-        - label: 我填写了简短且清晰明确的标题，以便开发者在翻阅 Issue 列表时能快速确定大致问题。而不是“一个建议”、“卡住了”等。
+        - label: I have entered a concise and clear title so that developers can quickly identify the issue when browsing the Issue list, rather than using vague titles like "A suggestion" or "Stuck", etc.
           required: true
   - type: dropdown
     id: platform
     attributes:
-      label: 平台
-      description: 您正在使用哪个平台？
+      label: Platform
+      description: Which platform are you using?
       options:
         - Windows
         - macOS
@@ -37,56 +37,56 @@ body:
   - type: input
     id: version
     attributes:
-      label: 版本
-      description: 您正在运行的 TykoTech Fork 版本是什么？
-      placeholder: 例如 v1.0.0
+      label: Version
+      description: What version of TykoTech Fork are you running?
+      placeholder: e.g., v1.0.0
     validations:
       required: true
   - type: textarea
     id: description
     attributes:
-      label: 错误描述
-      description: 描述问题时请尽可能详细。
-      placeholder: 清晰简洁地描述您所遇到的错误。
+      label: Bug Description
+      description: Please be as detailed as possible when describing the issue.
+      placeholder: Clearly and concisely describe the bug you encountered.
     validations:
       required: true
   - type: textarea
     id: steps
     attributes:
-      label: 重现步骤
-      description: 如何重现此问题？
+      label: Steps to Reproduce
+      description: How can this issue be reproduced?
       placeholder: |
-        1. 转到 '...'
-        2. 点击 '....'
-        3. 向下滚动到 '....'
-        4. 看到错误
+        1. Go to '...'
+        2. Click '....'
+        3. Scroll down to '....'
+        4. See the error
     validations:
       required: true
   - type: textarea
     id: expected
     attributes:
-      label: 预期行为
-      description: 您期望发生什么？
-      placeholder: 清晰简洁地描述您期望的结果。
+      label: Expected Behavior
+      description: What did you expect to happen?
+      placeholder: Clearly and concisely describe what you expected to happen.
     validations:
       required: true
   - type: textarea
     id: actual
     attributes:
-      label: 实际行为
-      description: 实际发生了什么？
-      placeholder: 清晰简洁地描述实际结果。
+      label: Actual Behavior
+      description: What actually happened?
+      placeholder: Clearly and concisely describe the actual results.
     validations:
       required: true
   - type: textarea
     id: screenshots
     attributes:
-      label: 截图
-      description: （如适用）添加截图以帮助解释您的问题。
-      placeholder: 您可以在此拖放图片。
+      label: Screenshots
+      description: (If applicable) Add screenshots to help explain your problem.
+      placeholder: You can drag and drop images here.
   - type: textarea
     id: additional
     attributes:
-      label: 附加信息
-      description: 在此添加有关问题的其他上下文信息。
-      placeholder: 例如系统信息、错误日志等。
+      label: Additional Information
+      description: Add any other context about the problem here.
+      placeholder: For example, system information, error logs, etc.

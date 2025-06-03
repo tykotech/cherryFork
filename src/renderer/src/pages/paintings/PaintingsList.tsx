@@ -68,16 +68,16 @@ const PaintingsList: FC<PaintingsListProps> = ({
 
 const Container = styled(Scrollbar)`
   display: flex;
-  flex: 1;
+  flex: 0 0 100px; /* Use flex-basis for fixed width */
   flex-direction: column;
   align-items: center;
   gap: 10px;
   padding: 10px;
-  background-color: var(--color-background);
-  max-width: 100px;
-  border-left: 0.5px solid var(--color-border);
-  height: calc(100vh - var(--navbar-height));
+  background-color: var(--color-background, #ffffff);
+  border-left: 0.5px solid var(--color-border, rgba(0, 0, 0, 0.1));
+  height: calc(100vh - var(--navbar-height, 60px));
   overflow-x: hidden;
+  overflow-y: auto;
 `
 
 const CanvasWrapper = styled.div`
@@ -93,19 +93,19 @@ const CanvasWrapper = styled.div`
 const Canvas = styled.div`
   width: 80px;
   height: 80px;
-  background-color: var(--color-background-soft);
+  background-color: var(--color-background-soft, #f5f5f5);
   cursor: pointer;
   transition: background-color 0.2s ease;
-  border: 1px solid var(--color-background-soft);
+  border: 1px solid var(--color-background-soft, #f5f5f5);
   overflow: hidden;
   position: relative;
 
   &.selected {
-    border: 1px solid var(--color-primary);
+    border: 1px solid var(--color-primary, #1890ff);
   }
 
   &:hover {
-    background-color: var(--color-background-mute);
+    background-color: var(--color-background-mute, #f0f0f0);
   }
 `
 
@@ -125,8 +125,8 @@ const DeleteButton = styled.div.attrs({ className: 'delete-button' })`
   border-radius: 50%;
   padding: 4px;
   cursor: pointer;
-  color: var(--color-error);
-  background-color: var(--color-background-soft);
+  color: var(--color-error, #ff4d4f);
+  background-color: var(--color-background-soft, #f5f5f5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -136,19 +136,19 @@ const NewPaintingButton = styled.div`
   width: 80px;
   height: 80px;
   min-height: 80px;
-  background-color: var(--color-background-soft);
+  background-color: var(--color-background-soft, #f5f5f5);
   cursor: pointer;
   transition: background-color 0.2s ease;
-  border: 1px dashed var(--color-border);
+  border: 1px dashed var(--color-border, rgba(0, 0, 0, 0.1));
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-text-2);
+  color: var(--color-text-2, #666666);
 
   &:hover {
-    background-color: var(--color-background-mute);
-    border-color: var(--color-primary);
-    color: var(--color-primary);
+    background-color: var(--color-background-mute, #f0f0f0);
+    border-color: var(--color-primary, #1890ff);
+    color: var(--color-primary, #1890ff);
   }
 `
 

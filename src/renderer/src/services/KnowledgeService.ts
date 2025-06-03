@@ -160,10 +160,10 @@ export const processKnowledgeSearch = async (
         processdResults.map(async (item, index) => {
           // const baseItem = base.items.find((i) => i.uniqueId === item.metadata.uniqueLoaderId)
           return {
-            id: index + 1, // 搜索多个库会导致ID重复
+            id: index + 1, // Searching multiple bases may cause duplicate IDs
             content: item.pageContent,
             sourceUrl: await getKnowledgeSourceUrl(item),
-            type: 'file' // 需要映射 baseItem.type是'localPathLoader' -> 'file'
+            type: 'file' // Needs mapping: baseItem.type 'localPathLoader' -> 'file'
           } as KnowledgeReference
         })
       )
@@ -176,7 +176,7 @@ export const processKnowledgeSearch = async (
   const resultsPerBase = await Promise.all(referencesPromises)
 
   const allReferencesRaw = resultsPerBase.flat().filter((ref): ref is KnowledgeReference => !!ref)
-  // 重新为引用分配ID
+  // Reassign IDs to references
   return allReferencesRaw.map((ref, index) => ({
     ...ref,
     id: index + 1

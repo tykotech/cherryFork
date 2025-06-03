@@ -25,7 +25,7 @@ import ImportAgentPopup from './components/ImportAgentPopup'
 const AgentsPage: FC = () => {
   const [search, setSearch] = useState('')
   const [searchInput, setSearchInput] = useState('')
-  const [activeGroup, setActiveGroup] = useState('我的')
+  const [activeGroup, setActiveGroup] = useState('My Agents')
   const [agentGroups, setAgentGroups] = useState<Record<string, Agent[]>>({})
   const systemAgents = useSystemAgents()
   const { agents: userAgents } = useAgents()

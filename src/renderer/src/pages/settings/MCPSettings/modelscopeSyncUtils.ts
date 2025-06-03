@@ -24,7 +24,6 @@ export const hasModelScopeToken = (): boolean => {
 interface ModelScopeServer {
   id: string
   name: string
-  chinese_name?: string
   description?: string
   operational_urls?: { url: string }[]
   tags?: string[]
@@ -98,7 +97,7 @@ export const syncModelScopeServers = async (
 
         const mcpServer: MCPServer = {
           id: `@modelscope/${server.id}`,
-          name: server.chinese_name || server.name || `ModelScope Server ${nanoid()}`,
+          name: server.name || `ModelScope Server ${nanoid()}`,
           description: server.description || '',
           type: 'sse',
           baseUrl: server.operational_urls[0].url,

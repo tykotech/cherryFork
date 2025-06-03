@@ -7,43 +7,43 @@ import type { CitationMessageBlock, MessageBlock } from '@renderer/types/newMess
 import { MessageBlockType } from '@renderer/types/newMessage'
 import type OpenAI from 'openai'
 
-import type { RootState } from './index' // 确认 RootState 从 store/index.ts 导出
+import type { RootState } from './index' // Ensure RootState is exported from store/index.ts
 
-// 1. 创建实体适配器 (Entity Adapter)
-// 我们使用块的 `id` 作为唯一标识符。
+// 1. Create Entity Adapter
+// We use the block's `id` as the unique identifier.
 const messageBlocksAdapter = createEntityAdapter<MessageBlock>()
 
-// 2. 使用适配器定义初始状态 (Initial State)
-// 如果需要，可以在规范化实体的旁边添加其他状态属性。
+// 2. Define Initial State using the adapter
+// You can add other state properties alongside the normalized entities if needed.
 const initialState = messageBlocksAdapter.getInitialState({
   loadingState: 'idle' as 'idle' | 'loading' | 'succeeded' | 'failed',
   error: null as string | null
 })
 
-// 3. 创建 Slice
+// 3. Create Slice
 const messageBlocksSlice = createSlice({
   name: 'messageBlocks',
   initialState,
   reducers: {
-    // 使用适配器的 reducer 助手进行 CRUD 操作。
-    // 这些 reducer 会自动处理规范化的状态结构。
+    // Use the adapter's reducer helpers for CRUD operations.
+    // These reducers automatically handle the normalized state structure.
 
-    /** 添加或更新单个块 (Upsert)。 */
-    upsertOneBlock: messageBlocksAdapter.upsertOne, // 期望 MessageBlock 作为 payload
+    /** Add or update a single block (Upsert). */
+    upsertOneBlock: messageBlocksAdapter.upsertOne, // Expects MessageBlock as payload
 
-    /** 添加或更新多个块。用于加载消息。 */
-    upsertManyBlocks: messageBlocksAdapter.upsertMany, // 期望 MessageBlock[] 作为 payload
+    /** Add or update multiple blocks. Used for loading messages. */
+    upsertManyBlocks: messageBlocksAdapter.upsertMany, // Expects MessageBlock[] as payload
 
-    /** 根据 ID 移除单个块。 */
-    removeOneBlock: messageBlocksAdapter.removeOne, // 期望 EntityId (string) 作为 payload
+    /** Remove a single block by ID. */
+    removeOneBlock: messageBlocksAdapter.removeOne, // Expects EntityId (string) as payload
 
-    /** 根据 ID 列表移除多个块。用于清理话题。 */
-    removeManyBlocks: messageBlocksAdapter.removeMany, // 期望 EntityId[] (string[]) 作为 payload
+    /** Remove multiple blocks by a list of IDs. Used for cleaning up topics. */
+    removeManyBlocks: messageBlocksAdapter.removeMany, // Expects EntityId[] (string[]) as payload
 
-    /** 移除所有块。用于完全重置。 */
+    /** Remove all blocks. Used for a full reset. */
     removeAllBlocks: messageBlocksAdapter.removeAll,
 
-    // 你可以为其他状态属性（如加载/错误）添加自定义 reducer
+    // You can add custom reducers for other state properties (like loading/error)
     setMessageBlocksLoading: (state, action: PayloadAction<'idle' | 'loading'>) => {
       state.loadingState = action.payload
       state.error = null
@@ -52,13 +52,13 @@ const messageBlocksSlice = createSlice({
       state.loadingState = 'failed'
       state.error = action.payload
     },
-    // 注意：如果只想更新现有块，也可以使用 `updateOne`
-    updateOneBlock: messageBlocksAdapter.updateOne // 期望 { id: EntityId, changes: Partial<MessageBlock> }
+    // Note: If you only want to update an existing block, you can also use `updateOne`
+    updateOneBlock: messageBlocksAdapter.updateOne // Expects { id: EntityId, changes: Partial<MessageBlock> }
   }
-  // 如果需要处理其他 slice 的 action，可以在这里添加 extraReducers。
+  // If you need to handle actions from other slices, you can add extraReducers here.
 })
 
-// 4. 导出 Actions 和 Reducer
+// 4. Export Actions and Reducer
 export const {
   upsertOneBlock,
   upsertManyBlocks,
@@ -219,7 +219,7 @@ const formatCitationsFromBlock = (block: CitationMessageBlock | undefined): Cita
         let title = result.sourceUrl
         const showFavicon = true
 
-        // 如果匹配文件链接格式 [filename](http://file/xxx)
+        // If matches file link format [filename](http://file/xxx)
         if (fileMatch) {
           title = fileMatch[1]
           url = `http://file/${fileMatch[2]}`

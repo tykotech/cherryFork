@@ -11,9 +11,8 @@ import GeminiProvider from './GeminiProvider'
 import OpenAIProvider from './OpenAIProvider'
 import OpenAIResponseProvider from './OpenAIResponseProvider'
 
-/**
- * AihubmixProvider - 根据模型类型自动选择合适的提供商
- * 使用装饰器模式实现
+/** AihubmixProvider - Automatically select the appropriate provider based on model type
+ * Implemented using decorator pattern
  */
 export default class AihubmixProvider extends BaseProvider {
   private providers: Map<string, BaseProvider> = new Map()
@@ -23,19 +22,19 @@ export default class AihubmixProvider extends BaseProvider {
   constructor(provider: Provider) {
     super(provider)
 
-    // 初始化各个提供商
+    // Initialize individual providers
     this.providers.set('claude', new AnthropicProvider(provider))
     this.providers.set('gemini', new GeminiProvider({ ...provider, apiHost: 'https://aihubmix.com/gemini' }))
     this.providers.set('openai', new OpenAIResponseProvider(provider))
     this.providers.set('default', new OpenAIProvider(provider))
 
-    // 设置默认提供商
+    // Set default provider
     this.defaultProvider = this.providers.get('default')!
     this.currentProvider = this.defaultProvider
   }
 
   /**
-   * 根据模型获取合适的提供商
+   * Get the appropriate provider based on the model
    */
   private getProvider(model: Model): BaseProvider {
     const id = model.id.toLowerCase()
@@ -53,7 +52,7 @@ export default class AihubmixProvider extends BaseProvider {
     return this.defaultProvider
   }
 
-  // 直接使用默认提供商的方法
+  // Methods directly using the default provider
   public async models(): Promise<OpenAI.Models.Model[]> {
     return this.defaultProvider.models()
   }

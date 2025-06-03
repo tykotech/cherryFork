@@ -2,12 +2,12 @@ import Logger from '@renderer/config/logger'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
-// 记录失败的URL的缓存键前缀
+// Cache key prefix for failed URLs
 const FAILED_FAVICON_CACHE_PREFIX = 'failed_favicon_'
-// 失败URL的缓存时间 (24小时)
+// Cache duration for failed URLs (24 hours)
 const FAILED_FAVICON_CACHE_DURATION = 24 * 60 * 60 * 1000
 
-// 检查URL是否在失败缓存中
+// Check if the URL is in the failed cache recently
 const isUrlFailedRecently = (url: string): boolean => {
   const cacheKey = `${FAILED_FAVICON_CACHE_PREFIX}${url}`
   const cachedTimestamp = localStorage.getItem(cacheKey)
@@ -17,17 +17,17 @@ const isUrlFailedRecently = (url: string): boolean => {
   const timestamp = parseInt(cachedTimestamp, 10)
   const now = Date.now()
 
-  // 如果时间戳在缓存期内，则认为URL仍处于失败状态
+  // If the timestamp is within the cache period, consider the URL still failed
   if (now - timestamp < FAILED_FAVICON_CACHE_DURATION) {
     return true
   }
 
-  // 清除过期的缓存
+  // Remove expired cache
   localStorage.removeItem(cacheKey)
   return false
 }
 
-// 记录失败的URL到缓存
+// Mark the URL as failed in the cache
 const markUrlAsFailed = (url: string): void => {
   const cacheKey = `${FAILED_FAVICON_CACHE_PREFIX}${url}`
   localStorage.setItem(cacheKey, Date.now().toString())
@@ -60,10 +60,10 @@ const FallbackFavicon: React.FC<FallbackFaviconProps> = ({ hostname, alt }) => {
       `https://${hostname}/favicon.ico`
     ]
 
-    // 过滤掉最近已失败的URL
+    // Filter out URLs that have recently failed
     const validFaviconUrls = faviconUrls.filter((url) => !isUrlFailedRecently(url))
 
-    // 如果所有URL都被缓存为失败，使用第一个URL
+    // If all URLs are cached as failed, use the first URL
     if (validFaviconUrls.length === 0) {
       setFaviconState({ status: 'loaded', src: faviconUrls[0] })
       return
@@ -84,7 +84,7 @@ const FallbackFavicon: React.FC<FallbackFaviconProps> = ({ hostname, alt }) => {
           if (response.ok) {
             return url
           }
-          // 记录4xx或5xx失败
+          // Record 4xx or 5xx failures
           if (response.status >= 400) {
             markUrlAsFailed(url)
           }
@@ -133,7 +133,7 @@ const FallbackFavicon: React.FC<FallbackFaviconProps> = ({ hostname, alt }) => {
 
   const handleError = () => {
     if (faviconState.status === 'loaded') {
-      // 记录图片加载失败的URL
+      // Mark the URL of the failed image load
       markUrlAsFailed(faviconState.src)
     }
     setFaviconState({ status: 'failed' })

@@ -56,7 +56,7 @@ export const builtinMCPServers: MCPServer[] = [
   {
     id: nanoid(),
     name: '@cherry/mcp-auto-install',
-    description: '自动安装 MCP 服务（测试版）https://docs.cherry-ai.com/advanced-basic/mcp/auto-install',
+    description: 'Automatically install MCP service (Beta) https://docs.cherry-ai.com/advanced-basic/mcp/auto-install',
     type: 'stdio',
     command: 'npx',
     args: ['-y', '@mcpmarket/mcp-auto-install', 'connect', '--json'],
@@ -68,7 +68,7 @@ export const builtinMCPServers: MCPServer[] = [
     name: '@cherry/memory',
     type: 'inMemory',
     description:
-      '基于本地知识图谱的持久性记忆基础实现。这使得模型能够在不同对话间记住用户的相关信息。需要配置 MEMORY_FILE_PATH 环境变量。https://github.com/modelcontextprotocol/servers/tree/main/src/memory',
+      'A persistent memory implementation based on local knowledge graph. This allows the model to remember relevant user information across different conversations. Requires MEMORY_FILE_PATH environment variable. https://github.com/modelcontextprotocol/servers/tree/main/src/memory',
     isActive: true,
     env: {
       MEMORY_FILE_PATH: 'YOUR_MEMORY_FILE_PATH'
@@ -79,7 +79,8 @@ export const builtinMCPServers: MCPServer[] = [
     id: nanoid(),
     name: '@cherry/sequentialthinking',
     type: 'inMemory',
-    description: '一个 MCP 服务器实现，提供了通过结构化思维过程进行动态和反思性问题解决的工具',
+    description:
+      'An MCP server implementation that provides tools for dynamic and reflective problem solving through structured thinking processes',
     isActive: true,
     provider: 'CherryAI'
   },
@@ -88,7 +89,7 @@ export const builtinMCPServers: MCPServer[] = [
     name: '@cherry/brave-search',
     type: 'inMemory',
     description:
-      '一个集成了Brave 搜索 API 的 MCP 服务器实现，提供网页与本地搜索双重功能。需要配置 BRAVE_API_KEY 环境变量',
+      'An MCP server implementation integrated with Brave Search API, providing both web and local search functionality. Requires BRAVE_API_KEY environment variable',
     isActive: false,
     env: {
       BRAVE_API_KEY: 'YOUR_API_KEY'
@@ -99,7 +100,7 @@ export const builtinMCPServers: MCPServer[] = [
     id: nanoid(),
     name: '@cherry/fetch',
     type: 'inMemory',
-    description: '用于获取 URL 网页内容的 MCP 服务器',
+    description: 'An MCP server for fetching URL web page content',
     isActive: true,
     provider: 'CherryAI'
   },
@@ -107,7 +108,7 @@ export const builtinMCPServers: MCPServer[] = [
     id: nanoid(),
     name: '@cherry/filesystem',
     type: 'inMemory',
-    description: '实现文件系统操作的模型上下文协议（MCP）的 Node.js 服务器',
+    description: 'A Node.js server for Model Context Protocol (MCP) implementing file system operations',
     isActive: false,
     provider: 'CherryAI'
   },
@@ -115,7 +116,7 @@ export const builtinMCPServers: MCPServer[] = [
     id: nanoid(),
     name: '@cherry/dify-knowledge',
     type: 'inMemory',
-    description: 'Dify 的 MCP 服务器实现，提供了一个简单的 API 来与 Dify 进行交互',
+    description: 'Dify MCP server implementation, providing a simple API to interact with Dify',
     isActive: false,
     env: {
       DIFY_KEY: 'YOUR_DIFY_KEY'

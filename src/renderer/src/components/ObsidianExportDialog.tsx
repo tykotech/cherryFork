@@ -12,7 +12,7 @@ interface ObsidianExportDialogProps {
   open: boolean
   onClose: (success: boolean) => void
   obsidianTags: string | null
-  processingMethod: string | '3' //默认新增（存在就覆盖）
+  processingMethod: string | '3' //default append (overwrite if exists)
 }
 
 interface FileInfo {
@@ -21,7 +21,7 @@ interface FileInfo {
   name: string
 }
 
-// 转换文件信息数组为树形结构
+// Convert file info array to tree structure
 const convertToTreeData = (files: FileInfo[]) => {
   const treeData: any[] = [
     {
@@ -32,32 +32,32 @@ const convertToTreeData = (files: FileInfo[]) => {
     }
   ]
 
-  // 记录已创建的节点路径
+  // Record created node paths
   const pathMap: Record<string, any> = {
     '': treeData[0]
   }
 
-  // 先按类型分组，确保先处理文件夹
+  // Group by type, process folders first
   const folders = files.filter((file) => file.type === 'folder')
   const mdFiles = files.filter((file) => file.type === 'markdown')
 
-  // 按路径排序，确保父文件夹先被创建
+  // Sort by path, ensure parent folders are created first
   const sortedFolders = [...folders].sort((a, b) => a.path.split('/').length - b.path.split('/').length)
 
-  // 先处理所有文件夹，构建目录结构
+  // Process all folders first, build directory structure
   for (const folder of sortedFolders) {
     const parts = folder.path.split('/')
     let currentPath = ''
     let parentPath = ''
 
-    // 遍历文件夹路径的每一部分，确保创建完整路径
+    // Traverse each part of the folder path, ensure full path is created
     for (let i = 0; i < parts.length; i++) {
       const part = parts[i]
 
-      // 构建当前路径
+      // Build current path
       currentPath = currentPath ? `${currentPath}/${part}` : part
 
-      // 如果这个路径节点还没创建
+      // If this path node hasn't been created
       if (!pathMap[currentPath]) {
         const node = {
           title: part,
@@ -68,7 +68,7 @@ const convertToTreeData = (files: FileInfo[]) => {
           children: []
         }
 
-        // 获取父节点，将当前节点添加到父节点的children中
+        // Get parent node, add current node to parent's children
         const parentNode = pathMap[parentPath]
         if (parentNode) {
           if (!parentNode.children) {
@@ -80,21 +80,21 @@ const convertToTreeData = (files: FileInfo[]) => {
         pathMap[currentPath] = node
       }
 
-      // 更新父路径为当前路径，为下一级做准备
+      // Update parent path for next level
       parentPath = currentPath
     }
   }
 
-  // 然后处理md文件
+  // Then process md files
   for (const file of mdFiles) {
     const fullPath = file.path
     const dirPath = fullPath.substring(0, fullPath.lastIndexOf('/'))
     const fileName = file.name
 
-    // 获取父文件夹节点
+    // Get parent folder node
     const parentNode = pathMap[dirPath] || pathMap['']
 
-    // 创建文件节点
+    // Create file node
     const fileNode = {
       title: fileName,
       value: fullPath,
@@ -103,7 +103,7 @@ const convertToTreeData = (files: FileInfo[]) => {
       icon: <span style={{ marginRight: 4 }}>📄</span>
     }
 
-    // 添加到父节点
+    // Add to parent node
     if (!parentNode.children) {
       parentNode.children = []
     }
@@ -131,7 +131,7 @@ const ObsidianExportDialog: React.FC<ObsidianExportDialogProps> = ({
     folder: ''
   })
 
-  // 是否手动编辑过标题
+  // Whether the title has been manually edited
   const [hasTitleBeenManuallyEdited, setHasTitleBeenManuallyEdited] = useState(false)
   const [vaults, setVaults] = useState<Array<{ path: string; name: string }>>([])
   const [files, setFiles] = useState<FileInfo[]>([])
@@ -140,7 +140,7 @@ const ObsidianExportDialog: React.FC<ObsidianExportDialogProps> = ({
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
 
-  // 处理文件数据转为树形结构
+  // Handle file data conversion to tree structure
   useEffect(() => {
     if (files.length > 0) {
       const treeData = convertToTreeData(files)
@@ -157,7 +157,7 @@ const ObsidianExportDialog: React.FC<ObsidianExportDialogProps> = ({
     }
   }, [files])
 
-  // 组件加载时获取Vault列表
+  // Fetch vault list on component mount
   useEffect(() => {
     const fetchVaults = async () => {
       try {
@@ -173,17 +173,17 @@ const ObsidianExportDialog: React.FC<ObsidianExportDialogProps> = ({
 
         setVaults(vaultsData)
 
-        // 如果没有选择的vault，使用默认值或第一个
+        // Use default or first vault if none selected
         const vaultToUse = defaultObsidianVault || vaultsData[0]?.name
         if (vaultToUse) {
           setSelectedVault(vaultToUse)
 
-          // 获取选中vault的文件和文件夹
+          // Fetch files and folders of the selected vault
           const filesData = await window.obsidian.getFiles(vaultToUse)
           setFiles(filesData)
         }
       } catch (error) {
-        console.error('获取Obsidian Vault失败:', error)
+        console.error('Failed to fetch Obsidian Vault:', error)
         setError(i18n.t('chat.topics.export.obsidian_fetch_error'))
       } finally {
         setLoading(false)
@@ -193,7 +193,7 @@ const ObsidianExportDialog: React.FC<ObsidianExportDialogProps> = ({
     fetchVaults()
   }, [defaultObsidianVault])
 
-  // 当选择的vault变化时，获取其文件和文件夹
+  // Fetch files and folders of the selected vault
   useEffect(() => {
     if (selectedVault) {
       const fetchFiles = async () => {
@@ -203,7 +203,7 @@ const ObsidianExportDialog: React.FC<ObsidianExportDialogProps> = ({
           const filesData = await window.obsidian.getFiles(selectedVault)
           setFiles(filesData)
         } catch (error) {
-          console.error('获取Obsidian文件失败:', error)
+          console.error('Failed to fetch Obsidian files:', error)
           setError(i18n.t('chat.topics.export.obsidian_fetch_folders_error'))
         } finally {
           setLoading(false)
@@ -220,7 +220,7 @@ const ObsidianExportDialog: React.FC<ObsidianExportDialogProps> = ({
       return
     }
 
-    //构建content 并复制到粘贴板
+    // Build content and copy to clipboard
     let content = ''
     if (state.processingMethod !== '3') {
       content = `\n---\n${markdown}`
@@ -239,7 +239,7 @@ const ObsidianExportDialog: React.FC<ObsidianExportDialogProps> = ({
 
     await navigator.clipboard.writeText(content)
 
-    // 导出到Obsidian
+    // Export to Obsidian
     exportMarkdownToObsidian({
       ...state,
       folder: state.folder,
@@ -257,7 +257,7 @@ const ObsidianExportDialog: React.FC<ObsidianExportDialogProps> = ({
     setState((prevState) => ({ ...prevState, [key]: value }))
   }
 
-  // 处理title输入变化
+  // Handle title input change
   const handleTitleInputChange = (newTitle: string) => {
     handleChange('title', newTitle)
     setHasTitleBeenManuallyEdited(true)
@@ -265,36 +265,36 @@ const ObsidianExportDialog: React.FC<ObsidianExportDialogProps> = ({
 
   const handleVaultChange = (value: string) => {
     setSelectedVault(value)
-    // 文件夹会通过useEffect自动获取
+    // Folder will be fetched automatically via useEffect
     setState((prevState) => ({
       ...prevState,
       folder: ''
     }))
   }
 
-  // 处理文件选择
+  // Handle file selection
   const handleFileSelect = (value: string) => {
-    // 更新folder值
+    // Update folder value
     handleChange('folder', value)
 
-    // 检查是否选中md文件
+    // Check if an md file is selected
     if (value) {
       const selectedFile = files.find((file) => file.path === value)
       if (selectedFile) {
         if (selectedFile.type === 'markdown') {
-          // 如果是md文件，自动设置标题为文件名并设置处理方式为1(追加)
+          // If it's an md file, auto-set title to filename and processing method to 1 (append)
           const fileName = selectedFile.name
           const titleWithoutExt = fileName.endsWith('.md') ? fileName.substring(0, fileName.length - 3) : fileName
           handleChange('title', titleWithoutExt)
-          // 重置手动编辑标记，因为这是非用户设置的title
+          // Reset manual edit flag, as this is a non-user-set title
           setHasTitleBeenManuallyEdited(false)
           handleChange('processingMethod', '1')
         } else {
-          // 如果是文件夹，自动设置标题为话题名并设置处理方式为3(新建)
+          // If it's a folder, auto-set title to topic name and processing method to 3 (new)
           handleChange('processingMethod', '3')
-          // 仅当用户未手动编辑过 title 时，才将其重置为 props.title
+          // Only reset to props.title if the user hasn't manually edited the title
           if (!hasTitleBeenManuallyEdited) {
-            // title 是 props.title
+            // title is props.title
             handleChange('title', title)
           }
         }

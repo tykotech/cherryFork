@@ -33,17 +33,17 @@ export const useKnowledge = (baseId: string) => {
   const dispatch = useDispatch()
   const base = useSelector((state: RootState) => state.knowledge.bases.find((b) => b.id === baseId))
 
-  // 重命名知识库
+  // Rename knowledge base
   const renameKnowledgeBase = (name: string) => {
     dispatch(renameBase({ baseId, name }))
   }
 
-  // 更新知识库
+  // Update knowledge base
   const updateKnowledgeBase = (base: KnowledgeBase) => {
     dispatch(updateBase(base))
   }
 
-  // 批量添加文件
+  // Batch add files
   const addFiles = (files: FileType[]) => {
     const filesItems: KnowledgeItem[] = files.map((file) => ({
       id: uuidv4(),
@@ -60,7 +60,7 @@ export const useKnowledge = (baseId: string) => {
     setTimeout(() => KnowledgeQueue.checkAllBases(), 0)
   }
 
-  // 添加URL
+  // Add URL
   const addUrl = (url: string) => {
     const newUrlItem: KnowledgeItem = {
       id: uuidv4(),
@@ -77,7 +77,7 @@ export const useKnowledge = (baseId: string) => {
     setTimeout(() => KnowledgeQueue.checkAllBases(), 0)
   }
 
-  // 添加笔记
+  // Add note
   const addNote = async (content: string) => {
     const noteId = uuidv4()
     const note: KnowledgeItem = {
@@ -88,15 +88,15 @@ export const useKnowledge = (baseId: string) => {
       updated_at: Date.now()
     }
 
-    // 存储完整笔记到数据库
+    // Store complete note in database
     await db.knowledge_notes.add(note)
 
-    // 在 store 中只存储引用
+    // Only store reference in the store
     const noteRef: KnowledgeItem = {
       id: noteId,
       baseId,
       type: 'note',
-      content: '', // store中不需要存储实际内容
+      content: '', // No need to store actual content in the store
       created_at: Date.now(),
       updated_at: Date.now(),
       processingStatus: 'pending',
@@ -109,7 +109,7 @@ export const useKnowledge = (baseId: string) => {
     setTimeout(() => KnowledgeQueue.checkAllBases(), 0)
   }
 
-  // 更新笔记内容
+  // Update note content
   const updateNoteContent = async (noteId: string, content: string) => {
     const note = await db.knowledge_notes.get(noteId)
     if (note) {
@@ -125,7 +125,7 @@ export const useKnowledge = (baseId: string) => {
     noteItem && refreshItem(noteItem)
   }
 
-  // 获取笔记内容
+  // Get note content
   const getNoteContent = async (noteId: string) => {
     return await db.knowledge_notes.get(noteId)
   }
@@ -134,7 +134,7 @@ export const useKnowledge = (baseId: string) => {
     dispatch(updateItemAction({ baseId, item }))
   }
 
-  // 移除项目
+  // Remove item
   const removeItem = async (item: KnowledgeItem) => {
     dispatch(removeItemAction({ baseId, item }))
     if (base) {
@@ -150,7 +150,7 @@ export const useKnowledge = (baseId: string) => {
       await FileManager.deleteFile(item.content.id)
     }
   }
-  // 刷新项目
+  // Refresh item
   const refreshItem = async (item: KnowledgeItem) => {
     const status = getProcessingStatus(item.id)
 
@@ -175,7 +175,7 @@ export const useKnowledge = (baseId: string) => {
     }
   }
 
-  // 更新处理状态
+  // Update processing status
   const updateItemStatus = (itemId: string, status: ProcessingStatus, progress?: number, error?: string) => {
     dispatch(
       updateItemProcessingStatus({
@@ -188,17 +188,17 @@ export const useKnowledge = (baseId: string) => {
     )
   }
 
-  // 获取特定项目的处理状态
+  // Get processing status of a specific item
   const getProcessingStatus = (itemId: string) => {
     return base?.items.find((item) => item.id === itemId)?.processingStatus
   }
 
-  // 获取特定类型的所有处理项
+  // Get all processing items of a specific type
   const getProcessingItemsByType = (type: 'file' | 'url' | 'note') => {
     return base?.items.filter((item) => item.type === type && item.processingStatus !== undefined) || []
   }
 
-  // 获取目录处理进度
+  // Get directory processing progress
   const getDirectoryProcessingPercent = (itemId?: string) => {
     const [percent, setPercent] = useState<number>(0)
 
@@ -224,17 +224,17 @@ export const useKnowledge = (baseId: string) => {
     return percent
   }
 
-  // 清除已完成的项目
+  // Clear completed items
   const clearCompleted = () => {
     dispatch(clearCompletedProcessing({ baseId }))
   }
 
-  // 清除所有处理状态
+  // Clear all processing statuses
   const clearAll = () => {
     dispatch(clearAllProcessing({ baseId }))
   }
 
-  // 添加 Sitemap
+  // Add Sitemap
   const addSitemap = (url: string) => {
     const newSitemapItem: KnowledgeItem = {
       id: uuidv4(),

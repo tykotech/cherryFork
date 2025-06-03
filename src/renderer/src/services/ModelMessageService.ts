@@ -43,19 +43,19 @@ function interleaveUserAndAssistantMessages(messages: ChatCompletionMessageParam
 
 // Process postsuffix for Qwen3 model
 export function processPostsuffixQwen3Model(
-  // content 類型：string | ChatCompletionContentPart[] | null
+  // content type: string | ChatCompletionContentPart[] | null
   content: string | ChatCompletionContentPart[] | null,
   postsuffix: string,
   qwenThinkModeEnabled: boolean
 ): string | ChatCompletionContentPart[] | null {
   if (typeof content === 'string') {
     if (qwenThinkModeEnabled) {
-      // 思考模式启用，移除 postsuffix
+      // Think mode enabled, remove postsuffix
       if (content.endsWith(postsuffix)) {
         return content.substring(0, content.length - postsuffix.length).trimEnd()
       }
     } else {
-      // 思考模式未启用，添加 postsuffix
+      // Think mode not enabled, add postsuffix
       if (!content.endsWith(postsuffix)) {
         return content + ' ' + postsuffix
       }
@@ -72,29 +72,29 @@ export function processPostsuffixQwen3Model(
     if (lastTextPartIndex !== -1) {
       const textPart = content[lastTextPartIndex] as ChatCompletionContentPartText
       if (qwenThinkModeEnabled) {
-        // 思考模式启用，移除 postsuffix
+        // Think mode enabled, remove postsuffix
         if (textPart.text.endsWith(postsuffix)) {
           textPart.text = textPart.text.substring(0, textPart.text.length - postsuffix.length).trimEnd()
-          // 可選：如果 textPart.text 變為空，可以考慮是否移除該 part
+          // Optional: If textPart.text becomes empty, consider removing this part
         }
       } else {
-        // 思考模式未启用，添加 postsuffix
+        // Think mode not enabled, add postsuffix
         if (!textPart.text.endsWith(postsuffix)) {
           textPart.text += postsuffix
         }
       }
     } else {
-      // 數組中沒有文本部分
+      // No text part in the array
       if (!qwenThinkModeEnabled) {
-        // 思考模式未啓用，需要添加 postsuffix
-        // 如果沒有文本部分，則添加一個新的文本部分
+        // Think mode not enabled, need to add postsuffix
+        // If there is no text part, add a new text part
         content.push({ type: 'text', text: postsuffix })
       }
     }
   } else {
-    // currentContent 是 null
+    // currentContent is null
     if (!qwenThinkModeEnabled) {
-      // 思考模式未启用，需要添加 postsuffix
+      // Think mode not enabled, need to add postsuffix
       return content
     }
   }

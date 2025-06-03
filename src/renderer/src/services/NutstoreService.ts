@@ -185,10 +185,10 @@ export async function startNutstoreAutoSync() {
       return
     }
 
-    // 用户指定的自动备份时间间隔（毫秒）
+    // User-specified auto backup interval (milliseconds)
     const requiredInterval = nutstoreSyncInterval * 60 * 1000
 
-    // 如果存在最后一次同步WebDAV的时间，以它为参考计算下一次同步的时间
+    // If last WebDAV sync time exists, use it to calculate next sync time
     const timeUntilNextSync = nutstoreSyncState?.lastSyncTime
       ? Math.max(1000, nutstoreSyncState.lastSyncTime + requiredInterval - Date.now())
       : requiredInterval

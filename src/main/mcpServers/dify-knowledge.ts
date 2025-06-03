@@ -110,7 +110,7 @@ class DifyKnowledgeServer {
             const parsed = SearchKnowledgeArgsSchema.safeParse(args)
             if (!parsed.success) {
               const errorDetails = JSON.stringify(parsed.error.format(), null, 2)
-              throw new Error(`无效的参数:\n${errorDetails}`)
+              throw new Error(`Invalid parameters:\n${errorDetails}`)
             }
             return await this.performSearchKnowledge(
               parsed.data.id,
@@ -145,7 +145,7 @@ class DifyKnowledgeServer {
 
       if (!response.ok) {
         const errorText = await response.text()
-        throw new Error(`API 请求失败，状态码 ${response.status}: ${errorText}`)
+        throw new Error(`API request failed, status code ${response.status}: ${errorText}`)
       }
 
       const apiResponse = await response.json()
@@ -162,15 +162,15 @@ class DifyKnowledgeServer {
           ? knowledges.map((k) => `- **${k.name}** (ID: ${k.id})\n  ${k.description || 'No Description'}`).join('\n')
           : '- No knowledges found.'
 
-      const formattedText = `### 可用知识库:\n\n${listText}`
+      const formattedText = `### Available Knowledge Bases:\n\n${listText}`
 
       return {
         content: [{ type: 'text', text: formattedText }]
       }
     } catch (error) {
-      console.error('获取知识库列表时出错:', error)
+      console.error('Error occurred while fetching knowledge list:', error)
       const errorMessage = error instanceof Error ? error.message : String(error)
-      // 返回包含错误信息的 MCP 响应
+      // Return MCP response containing error message
       return {
         content: [{ type: 'text', text: `Accessing Knowledge Error: ${errorMessage}` }],
         isError: true
@@ -207,13 +207,13 @@ class DifyKnowledgeServer {
 
       if (!response.ok) {
         const errorText = await response.text()
-        throw new Error(`API 请求失败，状态码 ${response.status}: ${errorText}`)
+        throw new Error(`API request failed, status code ${response.status}: ${errorText}`)
       }
 
       const searchResponse: DifySearchKnowledgeResponse = await response.json()
 
       if (!searchResponse || !Array.isArray(searchResponse.records)) {
-        throw new Error(`从 Dify API 收到的响应格式无效: ${JSON.stringify(searchResponse)}`)
+        throw new Error(`Invalid response format from Dify API: ${JSON.stringify(searchResponse)}`)
       }
 
       const header = `### Query: ${query}\n\n`
@@ -247,7 +247,7 @@ class DifyKnowledgeServer {
         content: [{ type: 'text', text: formattedText }]
       }
     } catch (error) {
-      console.error('搜索知识库时出错:', error)
+      console.error('Error occurred while searching knowledge base:', error)
       const errorMessage = error instanceof Error ? error.message : String(error)
       return {
         content: [{ type: 'text', text: `Search Knowledge Error: ${errorMessage}` }],

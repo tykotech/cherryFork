@@ -40,7 +40,7 @@ interface AssistantItemProps {
 
 const AssistantItem: FC<AssistantItemProps> = ({ assistant, isActive, onSwitch, onDelete, addAgent, addAssistant }) => {
   const { t } = useTranslation()
-  const { removeAllTopics } = useAssistant(assistant.id) // 使用当前助手的ID
+  const { removeAllTopics } = useAssistant(assistant.id) // Use the current assistant's ID
   const { clickAssistantToShowTopic, topicPosition, assistantIconType, setAssistantIconType } = useSettings()
   const defaultModel = getDefaultModel()
   const { assistants, updateAssistants } = useAssistants()
@@ -77,13 +77,13 @@ const AssistantItem: FC<AssistantItemProps> = ({ assistant, isActive, onSwitch, 
   const getMenuItems = useCallback(
     (assistant: Assistant): ItemType[] => [
       {
-        label: t('assistants.edit.title'),
+        label: t('assistants.edit.title', 'Edit'),
         key: 'edit',
         icon: <EditOutlined />,
         onClick: () => AssistantSettingsPopup.show({ assistant })
       },
       {
-        label: t('assistants.copy.title'),
+        label: t('assistants.copy.title', 'Duplicate'),
         key: 'duplicate',
         icon: <CopyIcon />,
         onClick: async () => {
@@ -93,21 +93,21 @@ const AssistantItem: FC<AssistantItemProps> = ({ assistant, isActive, onSwitch, 
         }
       },
       {
-        label: t('assistants.clear.title'),
+        label: t('assistants.clear.title', 'Clear'),
         key: 'clear',
         icon: <MinusCircleOutlined />,
         onClick: () => {
           window.modal.confirm({
-            title: t('assistants.clear.title'),
-            content: t('assistants.clear.content'),
+            title: t('assistants.clear.title', 'Clear'),
+            content: t('assistants.clear.content', 'Are you sure you want to clear all topics?'),
             centered: true,
             okButtonProps: { danger: true },
-            onOk: () => removeAllTopics() // 使用当前助手的removeAllTopics
+            onOk: () => removeAllTopics() // Use the current assistant's removeAllTopics
           })
         }
       },
       {
-        label: t('assistants.save.title'),
+        label: t('assistants.save.title', 'Save to Agent'),
         key: 'save-to-agent',
         icon: <SaveOutlined />,
         onClick: async () => {
@@ -116,28 +116,28 @@ const AssistantItem: FC<AssistantItemProps> = ({ assistant, isActive, onSwitch, 
           agent.type = 'agent'
           addAgent(agent)
           window.message.success({
-            content: t('assistants.save.success'),
+            content: t('assistants.save.success', 'Saved to agent successfully'),
             key: 'save-to-agent'
           })
         }
       },
       {
-        label: t('assistants.icon.type'),
+        label: t('assistants.icon.type', 'Icon Type'),
         key: 'icon-type',
         icon: <SmileOutlined />,
         children: [
           {
-            label: t('settings.assistant.icon.type.model'),
+            label: t('settings.assistant.icon.type.model', 'Model'),
             key: 'model',
             onClick: () => setAssistantIconType('model')
           },
           {
-            label: t('settings.assistant.icon.type.emoji'),
+            label: t('settings.assistant.icon.type.emoji', 'Emoji'),
             key: 'emoji',
             onClick: () => setAssistantIconType('emoji')
           },
           {
-            label: t('settings.assistant.icon.type.none'),
+            label: t('settings.assistant.icon.type.none', 'None'),
             key: 'none',
             onClick: () => setAssistantIconType('none')
           }
@@ -145,27 +145,27 @@ const AssistantItem: FC<AssistantItemProps> = ({ assistant, isActive, onSwitch, 
       },
       { type: 'divider' },
       {
-        label: t('common.sort.pinyin.asc'),
+        label: t('common.sort.pinyin.asc', 'Sort by Pinyin Ascending'),
         key: 'sort-asc',
         icon: <SortAscendingOutlined />,
         onClick: () => sortByPinyinAsc()
       },
       {
-        label: t('common.sort.pinyin.desc'),
+        label: t('common.sort.pinyin.desc', 'Sort by Pinyin Descending'),
         key: 'sort-desc',
         icon: <SortDescendingOutlined />,
         onClick: () => sortByPinyinDesc()
       },
       { type: 'divider' },
       {
-        label: t('common.delete'),
+        label: t('common.delete', 'Delete'),
         key: 'delete',
         icon: <DeleteOutlined />,
         danger: true,
         onClick: () => {
           window.modal.confirm({
-            title: t('assistants.delete.title'),
-            content: t('assistants.delete.content'),
+            title: t('assistants.delete.title', 'Delete'),
+            content: t('assistants.delete.content', 'Are you sure you want to delete this assistant?'),
             centered: true,
             okButtonProps: { danger: true },
             onOk: () => onDelete(assistant)
@@ -201,7 +201,7 @@ const AssistantItem: FC<AssistantItemProps> = ({ assistant, isActive, onSwitch, 
     }
   }, [clickAssistantToShowTopic, onSwitch, assistant, topicPosition])
 
-  const assistantName = assistant.name || t('chat.default.name')
+  const assistantName = assistant.name || t('chat.default.name', 'Default Assistant')
   const fullAssistantName = assistant.emoji ? `${assistant.emoji} ${assistantName}` : assistantName
 
   return (

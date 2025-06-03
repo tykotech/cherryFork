@@ -26,7 +26,7 @@ const SelectModelButton: FC<Props> = ({ assistant }) => {
     event.currentTarget.blur()
     const selectedModel = await SelectModelPopup.show({ model })
     if (selectedModel) {
-      // 避免更新数据造成关闭弹框的卡顿
+      // Avoid the lag in closing the popup caused by data update
       setTimeout(() => {
         const enabledWebSearch = isWebSearchModel(selectedModel)
         updateAssistant({

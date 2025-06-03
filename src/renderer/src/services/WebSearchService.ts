@@ -9,11 +9,11 @@ import { ExtractResults } from '@renderer/utils/extract'
 import { fetchWebContents } from '@renderer/utils/fetch'
 import dayjs from 'dayjs'
 /**
- * 提供网络搜索相关功能的服务类
+ * Service class providing web search related functions
  */
 class WebSearchService {
   /**
-   * 是否暂停
+   * Whether it is paused
    */
   private signal: AbortSignal | null = null
 
@@ -31,18 +31,18 @@ class WebSearchService {
   }
 
   /**
-   * 获取当前存储的网络搜索状态
+   * Get the current stored web search state
    * @private
-   * @returns 网络搜索状态
+   * @returns Web search state
    */
   private getWebSearchState(): WebSearchState {
     return store.getState().websearch
   }
 
   /**
-   * 检查网络搜索功能是否启用
+   * Check if web search is enabled
    * @public
-   * @returns 如果默认搜索提供商已启用则返回true，否则返回false
+   * @returns Returns true if the default search provider is enabled, otherwise false
    */
   public isWebSearchEnabled(providerId?: WebSearchProvider['id']): boolean {
     const { providers } = this.getWebSearchState()
@@ -68,11 +68,11 @@ class WebSearchService {
   }
 
   /**
-   * @deprecated 支持在快捷菜单中自选搜索供应商，所以这个不再适用
+   * @deprecated Support for selecting search providers in the context menu, so this is no longer applicable
    *
-   * 检查是否启用覆盖搜索
+   * Check if overwrite search is enabled
    * @public
-   * @returns 如果启用覆盖搜索则返回true，否则返回false
+   * @returns Returns true if overwrite search is enabled, otherwise false
    */
   public isOverwriteEnabled(): boolean {
     const { overwrite } = this.getWebSearchState()
@@ -80,9 +80,9 @@ class WebSearchService {
   }
 
   /**
-   * 获取当前默认的网络搜索提供商
+   * Get the current default web search provider
    * @public
-   * @returns 网络搜索提供商
+   * @returns Web search provider
    */
   public getWebSearchProvider(providerId?: string): WebSearchProvider | undefined {
     const { providers } = this.getWebSearchState()
@@ -92,11 +92,11 @@ class WebSearchService {
   }
 
   /**
-   * 使用指定的提供商执行网络搜索
+   * Perform web search using the specified provider
    * @public
-   * @param provider 搜索提供商
-   * @param query 搜索查询
-   * @returns 搜索响应
+   * @param provider Search provider
+   * @param query Search query
+   * @returns Search response
    */
   public async search(
     provider: WebSearchProvider,
@@ -107,7 +107,7 @@ class WebSearchService {
     const webSearchEngine = new WebSearchEngineProvider(provider)
 
     let formattedQuery = query
-    // FIXME: 有待商榷，效果一般
+    // FIXME: To be discussed, effect is average
     if (websearch.searchWithTime) {
       formattedQuery = `today is ${dayjs().format('YYYY-MM-DD')} \r\n ${query}`
     }
@@ -121,16 +121,16 @@ class WebSearchService {
   }
 
   /**
-   * 检查搜索提供商是否正常工作
+   * Check if the search provider is working properly
    * @public
-   * @param provider 要检查的搜索提供商
-   * @returns 如果提供商可用返回true，否则返回false
+   * @param provider The search provider to check
+   * @returns Returns true if the provider is available, otherwise false
    */
   public async checkSearch(provider: WebSearchProvider): Promise<{ valid: boolean; error?: any }> {
     try {
       const response = await this.search(provider, 'test query')
       Logger.log('[checkSearch] Search response:', response)
-      // 优化的判断条件：检查结果是否有效且没有错误
+      // Optimized judgment condition: check if the result is valid and there is no error
       return { valid: response.results !== undefined, error: undefined }
     } catch (error) {
       return { valid: false, error }
@@ -141,7 +141,7 @@ class WebSearchService {
     webSearchProvider: WebSearchProvider,
     extractResults: ExtractResults
   ): Promise<WebSearchProviderResponse> {
-    // 检查 websearch 和 question 是否有效
+    // Check if websearch and question are valid
     if (!extractResults.websearch?.question || extractResults.websearch.question.length === 0) {
       Logger.log('[processWebsearch] No valid question found in extractResults.websearch')
       return { results: [] }

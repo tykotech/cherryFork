@@ -13,7 +13,7 @@ import styled from 'styled-components'
 
 import Markdown from '../../Markdown/Markdown'
 
-// HTML实体编码辅助函数
+// HTML entity encoding helper function
 const encodeHTML = (str: string): string => {
   const entities: { [key: string]: string } = {
     '&': '&amp;',
@@ -85,7 +85,7 @@ const MainTextBlock: React.FC<Props> = ({ block, citationBlockId, role, mentions
 
             if (support.segment) {
               const text = support.segment.text!
-              // 生成引用标记
+              // Generate citation mark
               const basicTag = citationNums
                 .map((citationNum) => {
                   const citation = formattedCitations.find((c) => c.number === citationNum + 1)
@@ -93,7 +93,7 @@ const MainTextBlock: React.FC<Props> = ({ block, citationBlockId, role, mentions
                 })
                 .join('')
 
-              // 在文本后面添加引用标记，而不是替换
+              // Add citation mark after the text, instead of replacing
               if (text && basicTag) {
                 processedContent = processedContent.replace(text, `${text}${basicTag}`)
               }
@@ -120,7 +120,7 @@ const MainTextBlock: React.FC<Props> = ({ block, citationBlockId, role, mentions
         break
       }
       default: {
-        // FIXME：性能问题，需要优化
+        // FIXME: Performance issue, needs optimization
         // Replace all citation numbers and pre-formatted links with formatted citations
         formattedCitations.forEach((citation) => {
           const citationNum = citation.number

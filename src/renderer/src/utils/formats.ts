@@ -3,18 +3,18 @@ import type { Message } from '@renderer/types/newMessage'
 import { findImageBlocks, getMainTextContent } from './messageUtils/find'
 
 /**
- * 清理Markdown内容
- * @param text 要清理的文本
- * @returns 清理后的文本
+ * Clean up Markdown content
+ * @param text The text to clean
+ * @returns Cleaned text
  */
 export function cleanMarkdownContent(text: string): string {
   if (!text) return ''
-  let cleaned = text.replace(/!\[.*?]\(.*?\)/g, '') // 移除图片
-  cleaned = cleaned.replace(/\[(.*?)]\(.*?\)/g, '$1') // 替换链接为纯文本
-  cleaned = cleaned.replace(/https?:\/\/\S+/g, '') // 移除URL
-  cleaned = cleaned.replace(/[-—–_=+]{3,}/g, ' ') // 替换分隔符为空格
-  cleaned = cleaned.replace(/[￥$€£¥%@#&*^()[\]{}<>~`'"\\|/_.]+/g, '') // 移除特殊字符
-  cleaned = cleaned.replace(/\s+/g, ' ').trim() // 规范化空白
+  let cleaned = text.replace(/!\[.*?]\(.*?\)/g, '') // Remove images
+  cleaned = cleaned.replace(/\[(.*?)]\(.*?\)/g, '$1') // Replace links with plain text
+  cleaned = cleaned.replace(/https?:\/\/\S+/g, '') // Remove URLs
+  cleaned = cleaned.replace(/[-—–_=+]{3,}/g, ' ') // Replace separators with space
+  cleaned = cleaned.replace(/[￥$€£¥%@#&*^()[\]{}<>~`'"\\|/_.]+/g, '') // Remove special characters
+  cleaned = cleaned.replace(/\s+/g, ' ').trim() // Normalize whitespace
   return cleaned
 }
 
@@ -54,7 +54,7 @@ $$
 }
 
 export function extractTitle(html: string): string | null {
-  // 处理标准闭合的标题标签
+  // Handle standard closed title tags
   const titleRegex = /<title>(.*?)<\/title>/i
   const match = html.match(titleRegex)
 
@@ -62,7 +62,7 @@ export function extractTitle(html: string): string | null {
     return match[1] ? match[1].trim() : ''
   }
 
-  // 处理未闭合的标题标签
+  // Handle unclosed title tags
   const malformedTitleRegex = /<title>(.*?)($|<(?!\/title))/i
   const malformedMatch = html.match(malformedTitleRegex)
 
@@ -74,11 +74,11 @@ export function extractTitle(html: string): string | null {
 }
 
 export function removeSvgEmptyLines(text: string): string {
-  // 用正则表达式匹配 <svg> 标签内的内容
+  // Use regex to match content inside <svg> tags
   const svgPattern = /(<svg[\s\S]*?<\/svg>)/g
 
   return text.replace(svgPattern, (svgMatch) => {
-    // 将 SVG 内容按行分割,过滤掉空行,然后重新组合
+    // Split SVG content by line, filter out empty lines, then rejoin
     return svgMatch
       .split('\n')
       .filter((line) => line.trim() !== '')

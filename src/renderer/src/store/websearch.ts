@@ -4,28 +4,28 @@ export interface SubscribeSource {
   key: number
   url: string
   name: string
-  blacklist?: string[] // 存储从该订阅源获取的黑名单
+  blacklist?: string[] // Store the blacklist obtained from this subscription source
 }
 
 export interface WebSearchState {
-  // 默认搜索提供商的ID
-  /** @deprecated 支持在快捷菜单中自选搜索供应商，所以这个不再适用 */
+  // Default search provider ID
+  /** @deprecated Support for selecting search providers in the context menu, so this is no longer applicable */
   defaultProvider: string
-  // 所有可用的搜索提供商列表
+  // List of all available search providers
   providers: WebSearchProvider[]
-  // 是否在搜索查询中添加当前日期
+  // Whether to add the current date to the search query
   searchWithTime: boolean
-  // 搜索结果的最大数量
+  // Maximum number of search results
   maxResults: number
-  // 要排除的域名列表
+  // List of domains to exclude
   excludeDomains: string[]
-  // 订阅源列表
+  // List of subscription sources
   subscribeSources: SubscribeSource[]
-  // 是否覆盖服务商搜索
-  /** @deprecated 支持在快捷菜单中自选搜索供应商，所以这个不再适用 */
+  // Whether to overwrite provider search
+  /** @deprecated Support for selecting search providers in the context menu, so this is no longer applicable */
   overwrite: boolean
   contentLimit?: number
-  // 具体供应商的配置
+  // Configuration for specific providers
   providerConfig: Record<string, any>
 }
 
@@ -111,7 +111,7 @@ const websearchSlice = createSlice({
     setExcludeDomains: (state, action: PayloadAction<string[]>) => {
       state.excludeDomains = action.payload
     },
-    // 添加订阅源
+    // Add subscription source
     addSubscribeSource: (state, action: PayloadAction<Omit<SubscribeSource, 'key'>>) => {
       state.subscribeSources = state.subscribeSources || []
       const newKey =
@@ -123,18 +123,18 @@ const websearchSlice = createSlice({
         blacklist: action.payload.blacklist
       })
     },
-    // 删除订阅源
+    // Remove subscription source
     removeSubscribeSource: (state, action: PayloadAction<number>) => {
       state.subscribeSources = state.subscribeSources.filter((source) => source.key !== action.payload)
     },
-    // 更新订阅源的黑名单
+    // Update the blacklist of a subscription source
     updateSubscribeBlacklist: (state, action: PayloadAction<{ key: number; blacklist: string[] }>) => {
       const source = state.subscribeSources.find((s) => s.key === action.payload.key)
       if (source) {
         source.blacklist = action.payload.blacklist
       }
     },
-    // 更新订阅源列表
+    // Update the list of subscription sources
     setSubscribeSources: (state, action: PayloadAction<SubscribeSource[]>) => {
       state.subscribeSources = action.payload
     },

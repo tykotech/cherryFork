@@ -4,14 +4,14 @@ import { createRoot } from 'react-dom/client'
 interface ObsidianExportOptions {
   title: string
   markdown: string
-  processingMethod: string | '3' // 默认新增（存在就覆盖）
+  processingMethod: string | '3' // Default is to add (overwrite if exists)
 }
 
 /**
- * 配置Obsidian 笔记属性弹窗
- * @param options.title 标题
- * @param options.markdown markdown内容
- * @param options.processingMethod 处理方式
+ * Configure Obsidian note properties dialog
+ * @param options.title Title
+ * @param options.markdown Markdown content
+ * @param options.processingMethod Processing method
  * @returns
  */
 const showObsidianExportDialog = async (options: ObsidianExportOptions): Promise<boolean> => {
@@ -25,7 +25,7 @@ const showObsidianExportDialog = async (options: ObsidianExportOptions): Promise
       document.body.removeChild(div)
       resolve(success)
     }
-    // 不再从store中获取tag配置
+    // No longer get tag configuration from store
     root.render(
       <ObsidianExportDialog
         title={options.title}

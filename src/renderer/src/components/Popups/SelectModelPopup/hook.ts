@@ -4,7 +4,7 @@ import { initialScrollState, scrollReducer } from './reducer'
 import { FlatListItem, ScrollTrigger } from './types'
 
 /**
- * 管理滚动和焦点状态的 hook
+ * Hook to manage scroll and focus state
  */
 export function useScrollState() {
   const [state, dispatch] = useReducer(scrollReducer, initialScrollState)
@@ -28,13 +28,13 @@ export function useScrollState() {
   )
 
   return {
-    // 状态
+    // State
     focusedItemKey: state.focusedItemKey,
     scrollTrigger: state.scrollTrigger,
     lastScrollOffset: state.lastScrollOffset,
     stickyGroup: state.stickyGroup,
     isMouseOver: state.isMouseOver,
-    // 操作
+    // Actions
     ...actions
   }
 }

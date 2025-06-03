@@ -281,7 +281,7 @@ export default class GeminiProvider extends BaseProvider {
     if (isGeminiReasoningModel(model)) {
       const reasoningEffort = assistant?.settings?.reasoning_effort
 
-      // 如果thinking_budget是undefined，不思考
+      // If thinking_budget is undefined, do not think
       if (reasoningEffort === undefined) {
         return {
           thinkingConfig: {
@@ -298,7 +298,7 @@ export default class GeminiProvider extends BaseProvider {
 
       const { max } = findTokenLimit(model.id) || { max: 0 }
 
-      // 如果thinking_budget是明确设置的值（包括0），使用该值
+      // If thinking_budget is explicitly set (including 0), use that value
       return {
         thinkingConfig: {
           thinkingBudget: Math.floor(max * effortRatio),
@@ -622,7 +622,7 @@ export default class GeminiProvider extends BaseProvider {
           await processToolResults(toolResults, idx)
         }
 
-        // FIXME: 由于递归，会发送n次
+        // FIXME: Due to recursion, it will send n times
         onChunk({
           type: ChunkType.BLOCK_COMPLETE,
           response: {
@@ -866,9 +866,9 @@ export default class GeminiProvider extends BaseProvider {
   }
 
   /**
-   * 处理Gemini图像响应
+   * Process Gemini image response
    * @param chunk
-   * @param onChunk - 处理生成块的回调
+   * @param onChunk - Callback to handle generated chunk
    */
   private processGeminiImageResponse(
     chunk: GenerateContentResponse,
@@ -878,14 +878,14 @@ export default class GeminiProvider extends BaseProvider {
     if (!parts) {
       return
     }
-    // 提取图像数据
+    // Extract image data
     const images = parts
       .filter((part: Part) => part.inlineData)
       .map((part: Part) => {
         if (!part.inlineData) {
           return null
         }
-        // onChunk的位置需要更改
+        // onChunk position needs to be changed
         onChunk({
           type: ChunkType.IMAGE_CREATED
         })
@@ -930,7 +930,7 @@ export default class GeminiProvider extends BaseProvider {
             maxOutputTokens: 1
           }
         })
-        // 等待整个流式响应结束
+        // Wait for the entire streaming response to finish
         let hasContent = false
         for await (const chunk of response) {
           if (chunk.text && chunk.text.length > 0) {

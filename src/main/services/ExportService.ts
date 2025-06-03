@@ -103,7 +103,7 @@ export class ExportService {
       const token = tokens[i]
       switch (token.type) {
         case 'heading_open':
-          // 获取标题级别 (h1 -> h6)
+          // Get heading level (h1 -> h6)
           const level = parseInt(token.tag.slice(1)) as 1 | 2 | 3 | 4 | 5 | 6
           const headingText = tokens[i + 1].content
           elements.push(
@@ -116,7 +116,7 @@ export class ExportService {
               }
             })
           )
-          i += 2 // 跳过内容标记和闭合标记
+          i += 2 // Skip content and close tag
           break
 
         case 'paragraph_open':
@@ -158,7 +158,7 @@ export class ExportService {
           i += 3
           break
 
-        case 'fence': // 代码块
+        case 'fence': // Code block
           const codeLines = token.content.split('\n')
           elements.push(
             new Paragraph({
@@ -227,7 +227,7 @@ export class ExportService {
           i += 3
           break
 
-        // 表格处理
+        // Table handling
         case 'table_open':
           tableRows = [] // Reset table rows for new table
           break
@@ -250,7 +250,7 @@ export class ExportService {
             tableHeader: isHeaderRow
           })
           tableRows.push(row)
-          // 计算表格有多少列（针对第一行）
+          // Calculate number of columns (for first row)
           if (tableColumnCount === 0) {
             tableColumnCount = currentRowCells.length
           }
@@ -258,7 +258,7 @@ export class ExportService {
 
         case 'th_open':
         case 'td_open':
-          const isFirstColumn = currentRowCells.length === 0 // 判断是否是第一列
+          const isFirstColumn = currentRowCells.length === 0 // Check if first column
           const borders = {
             top: {
               style: BorderStyle.NONE
@@ -293,7 +293,7 @@ export class ExportService {
             borders: borders
           }
           currentRowCells.push(new TableCell(cellOptions))
-          i += 2 // 跳过内容和结束标记
+          i += 2 // Skip content and close tag
           break
         case 'table_close':
           // Create table with the collected rows - avoid using protected properties
@@ -370,7 +370,7 @@ export class ExportService {
       const buffer = await Packer.toBuffer(doc)
 
       const filePath = dialog.showSaveDialogSync({
-        title: '保存文件',
+        title: 'Save File',
         filters: [{ name: 'Word Document', extensions: ['docx'] }],
         defaultPath: fileName
       })

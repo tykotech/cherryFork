@@ -5,18 +5,18 @@ import { ModalFuncProps } from 'antd/es/modal/interface'
 import { v4 as uuidv4 } from 'uuid'
 
 /**
- * 异步执行一个函数。
- * @param fn 要执行的函数
- * @returns Promise<void> 执行结果
+ * Asynchronously execute a function.
+ * @param fn The function to execute
+ * @returns Promise<void> The result of execution
  */
 export const runAsyncFunction = async (fn: () => void) => {
   await fn()
 }
 
 /**
- * 创建一个延迟的 Promise，在指定秒数后解析。
- * @param seconds 延迟的秒数
- * @returns Promise<any> 在指定秒数后解析的 Promise
+ * Create a delayed Promise that resolves after a specified number of seconds.
+ * @param seconds Number of seconds to delay
+ * @returns Promise<any> A Promise that resolves after the specified seconds
  */
 export const delay = (seconds: number) => {
   return new Promise((resolve) => {
@@ -27,7 +27,7 @@ export const delay = (seconds: number) => {
 }
 
 /**
- * Waiting fn return true
+ * Wait until fn returns true
  **/
 export const waitAsyncFunction = (fn: () => Promise<any>, interval = 200, stopTimeout = 60000) => {
   let timeout = false
@@ -62,9 +62,9 @@ export async function isDev() {
 }
 
 /**
- * 从错误对象中提取错误信息。
- * @param error 错误对象或字符串
- * @returns string 提取的错误信息，如果没有则返回空字符串
+ * Extract error message from an error object.
+ * @param error Error object or string
+ * @returns string The extracted error message, or an empty string if none
  */
 export function getErrorMessage(error: any) {
   if (!error) {
@@ -96,8 +96,8 @@ export function removeSpecialCharacters(str: string) {
 }
 
 /**
- * is valid proxy url
- * @param url proxy url
+ * Check if the proxy url is valid
+ * @param url Proxy url
  * @returns boolean
  */
 export const isValidProxyUrl = (url: string) => {
@@ -105,9 +105,9 @@ export const isValidProxyUrl = (url: string) => {
 }
 
 /**
- * 动态加载 JavaScript 脚本。
- * @param url 脚本的 URL 地址
- * @returns Promise<void> 脚本加载成功或失败的 Promise
+ * Dynamically load a JavaScript script.
+ * @param url The URL of the script
+ * @returns Promise<void> A Promise that resolves or rejects when the script loads or fails
  */
 export function loadScript(url: string) {
   return new Promise((resolve, reject) => {
@@ -123,9 +123,9 @@ export function loadScript(url: string) {
 }
 
 /**
- * 检查 URL 是否包含路径部分。
- * @param url 输入 URL 字符串
- * @returns boolean 如果 URL 包含路径则返回 true，否则返回 false
+ * Check if a URL contains a path part.
+ * @param url Input URL string
+ * @returns boolean Returns true if the URL contains a path, otherwise false
  */
 export function hasPath(url: string): boolean {
   try {
@@ -138,10 +138,10 @@ export function hasPath(url: string): boolean {
 }
 
 /**
- * 比较两个版本号字符串。
- * @param v1 第一个版本号
- * @param v2 第二个版本号
- * @returns number 比较结果，1 表示 v1 大于 v2，-1 表示 v1 小于 v2，0 表示相等
+ * Compare two version strings.
+ * @param v1 First version string
+ * @param v2 Second version string
+ * @returns number Comparison result: 1 if v1 > v2, -1 if v1 < v2, 0 if equal
  */
 export const compareVersions = (v1: string, v2: string): number => {
   const v1Parts = v1.split('.').map(Number)
@@ -157,9 +157,9 @@ export const compareVersions = (v1: string, v2: string): number => {
 }
 
 /**
- * 显示确认模态框。
- * @param params 模态框参数
- * @returns Promise<boolean> 用户确认返回 true，取消返回 false
+ * Show a confirmation modal dialog.
+ * @param params Modal dialog parameters
+ * @returns Promise<boolean> Returns true if user confirms, false if cancels
  */
 export function modalConfirm(params: ModalFuncProps) {
   return new Promise((resolve) => {
@@ -173,10 +173,10 @@ export function modalConfirm(params: ModalFuncProps) {
 }
 
 /**
- * 检查对象是否包含特定键。
- * @param obj 输入对象
- * @param key 要检查的键
- * @returns boolean 包含该键则返回 true，否则返回 false
+ * Check if an object contains a specific key.
+ * @param obj Input object
+ * @param key Key to check
+ * @returns boolean Returns true if the key exists, otherwise false
  */
 export function hasObjectKey(obj: any, key: string) {
   if (typeof obj !== 'object' || obj === null) {
@@ -187,8 +187,8 @@ export function hasObjectKey(obj: any, key: string) {
 }
 
 /**
- * 从npm readme中提取 npx mcp config
- * @param readme readme字符串
+ * Extract npx mcp config from npm readme.
+ * @param readme Readme string
  * @returns mcp config sample
  */
 export function getMcpConfigSampleFromReadme(readme: string) {

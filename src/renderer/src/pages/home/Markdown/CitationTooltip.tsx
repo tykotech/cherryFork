@@ -20,7 +20,7 @@ const CitationTooltip: React.FC<CitationTooltipProps> = ({ children, citation })
     hostname = citation.url
   }
 
-  // 自定义悬浮卡片内容
+  // Custom tooltip card content
   const tooltipContent = (
     <TooltipContentWrapper>
       <TooltipHeader onClick={() => window.open(citation.url, '_blank')}>
@@ -48,7 +48,7 @@ const CitationTooltip: React.FC<CitationTooltipProps> = ({ children, citation })
   )
 }
 
-// 使用styled-components来自定义Tooltip的样式，包括箭头
+// Use styled-components to customize Tooltip style, including arrow
 const StyledTooltip = styled(Tooltip)`
   .ant-tooltip-arrow {
     .ant-tooltip-arrow-content {

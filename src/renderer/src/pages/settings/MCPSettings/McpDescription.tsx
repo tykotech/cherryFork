@@ -16,8 +16,8 @@ const MCPDescription = ({ searchKey }: McpDescriptionProps) => {
 
   const md = useRef<MarkdownIt>(
     new MarkdownIt({
-      linkify: true, // 自动转换 URL 为链接
-      typographer: true // 启用印刷格式优化
+      linkify: true, // Automatically convert URLs to links
+      typographer: true // Enable typography format optimization
     })
   )
   const { theme } = useTheme()
@@ -25,7 +25,7 @@ const MCPDescription = ({ searchKey }: McpDescriptionProps) => {
   const getMcpInfo = useCallback(async () => {
     setLoading(true)
     const packages = await npxFinder(searchKey).finally(() => setLoading(false))
-    const readme = packages[0]?.original?.readme ?? '暂无描述'
+    const readme = packages[0]?.original?.readme ?? 'No description available'
     setRenderedMarkdown(md.current.render(readme))
   }, [md, searchKey])
 

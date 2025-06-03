@@ -10,6 +10,25 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router'
 
+// Define the missing interface that extends MCPPrompt
+interface MCPPromptWithArgs extends MCPPrompt {
+  serverId: string
+  arguments?: Array<{
+    name: string
+    description?: string
+    required?: boolean
+  }>
+}
+
+// Also add ResourceData interface that's used in handleResourceSelect
+interface ResourceData {
+  name?: string
+  text?: string
+  blob?: string
+  mimeType?: string
+  uri?: string
+}
+
 export interface MCPToolsButtonRef {
   openQuickPanel: () => void
   openPromptList: () => void
@@ -24,26 +43,7 @@ interface Props {
   ToolbarButton: any
 }
 
-// 添加类型定义
-interface PromptArgument {
-  name: string
-  description?: string
-  required?: boolean
-}
-
-interface MCPPromptWithArgs extends MCPPrompt {
-  arguments?: PromptArgument[]
-}
-
-interface ResourceData {
-  blob?: string
-  mimeType?: string
-  name?: string
-  text?: string
-  uri?: string
-}
-
-// 提取到组件外的工具函数
+// Externalize utility function
 const extractPromptContent = (response: any): string | null => {
   // Handle string response (backward compatibility)
   if (typeof response === 'string') {
@@ -118,7 +118,7 @@ const MCPToolsButton: FC<Props> = ({ ref, setInputValue, resizeTextArea, Toolbar
 
   const { updateAssistant, assistant } = useAssistant(props.assistant.id)
 
-  // 使用 useRef 存储不需要触发重渲染的值
+  // Use useRef to store values that don't trigger re-render
   const isMountedRef = useRef(true)
 
   useEffect(() => {
@@ -146,7 +146,7 @@ const MCPToolsButton: FC<Props> = ({ ref, setInputValue, resizeTextArea, Toolbar
     [assistant, assistantMcpServers, mcpServers, updateAssistant]
   )
 
-  // 使用 useRef 缓存事件处理函数
+  // Using useRef to cache event handler functions
   const handleMcpServerSelectRef = useRef(handleMcpServerSelect)
   handleMcpServerSelectRef.current = handleMcpServerSelect
 
@@ -186,7 +186,7 @@ const MCPToolsButton: FC<Props> = ({ ref, setInputValue, resizeTextArea, Toolbar
     })
   }, [menuItems, quickPanel, t])
 
-  // 使用 useCallback 优化 insertPromptIntoTextArea
+  // Using useCallback to optimize insertPromptIntoTextArea
   const insertPromptIntoTextArea = useCallback(
     (promptText: string) => {
       setInputValue((prev) => {
@@ -198,7 +198,7 @@ const MCPToolsButton: FC<Props> = ({ ref, setInputValue, resizeTextArea, Toolbar
         const selectionEndPosition = cursorPosition + promptText.length
         const newText = prev.slice(0, cursorPosition) + promptText + prev.slice(cursorPosition)
 
-        // 使用 requestAnimationFrame 优化 DOM 操作
+        // Optimize DOM manipulation using requestAnimationFrame
         requestAnimationFrame(() => {
           textArea.focus()
           textArea.setSelectionRange(selectionStart, selectionEndPosition)
@@ -376,7 +376,7 @@ const MCPToolsButton: FC<Props> = ({ ref, setInputValue, resizeTextArea, Toolbar
     [activedMcpServers, t, insertPromptIntoTextArea]
   )
 
-  // 优化 resourcesList 的状态更新
+  // Optimize resourcesList state update
   const [resourcesList, setResourcesList] = useState<QuickPanelListItem[]>([])
 
   useEffect(() => {
@@ -445,5 +445,5 @@ const MCPToolsButton: FC<Props> = ({ ref, setInputValue, resizeTextArea, Toolbar
   )
 }
 
-// 使用 React.memo 包装组件
+// Wrap component with React.memo
 export default React.memo(MCPToolsButton)

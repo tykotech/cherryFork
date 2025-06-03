@@ -214,7 +214,7 @@ export const FUNCTION_CALLING_MODELS = [
   'deepseek',
   'glm-4(?:-[\\w-]+)?',
   'learnlm(?:-[\\w-]+)?',
-  'gemini(?:-[\\w-]+)?', // 提前排除了gemini的嵌入模型
+  'gemini(?:-[\\w-]+)?', // Previously excluded gemini embedding models
   'grok-3(?:-[\\w-]+)?'
 ]
 
@@ -514,31 +514,31 @@ export const SYSTEM_MODELS: Record<string, Model[]> = {
       id: 'text-embedding-3-small',
       provider: 'o3',
       name: 'text-embedding-3-small',
-      group: '嵌入模型'
+      group: 'Embedding Model'
     },
     {
       id: 'text-embedding-ada-002',
       provider: 'o3',
       name: 'text-embedding-ada-002',
-      group: '嵌入模型'
+      group: 'Embedding Model'
     },
     {
       id: 'text-embedding-v2',
       provider: 'o3',
       name: 'text-embedding-v2',
-      group: '嵌入模型'
+      group: 'Embedding Model'
     },
     {
       id: 'Doubao-embedding',
       provider: 'o3',
       name: 'Doubao-embedding',
-      group: '嵌入模型'
+      group: 'Embedding Model'
     },
     {
       id: 'Doubao-embedding-large',
       provider: 'o3',
       name: 'Doubao-embedding-large',
-      group: '嵌入模型'
+      group: 'Embedding Model'
     }
   ],
   ollama: [],
@@ -564,14 +564,14 @@ export const SYSTEM_MODELS: Record<string, Model[]> = {
     },
     {
       id: 'meta-llama/Llama-3.3-70B-Instruct',
-      name: 'meta-llama/Llama-3.3-70B-Instruct',
       provider: 'silicon',
+      name: 'meta-llama/Llama-3.3-70B-Instruct',
       group: 'meta-llama'
     },
     {
       id: 'BAAI/bge-m3',
-      name: 'BAAI/bge-m3',
       provider: 'silicon',
+      name: 'BAAI/bge-m3',
       group: 'BAAI'
     }
   ],
@@ -1772,31 +1772,31 @@ export const SYSTEM_MODELS: Record<string, Model[]> = {
       id: 'Qwen/Qwen2.5-7B-Instruct',
       provider: 'dmxapi',
       name: 'Qwen/Qwen2.5-7B-Instruct',
-      group: '免费模型'
+      group: 'Free Model'
     },
     {
       id: 'ERNIE-Speed-128K',
       provider: 'dmxapi',
       name: 'ERNIE-Speed-128K',
-      group: '免费模型'
+      group: 'Free Model'
     },
     {
       id: 'THUDM/glm-4-9b-chat',
       provider: 'dmxapi',
       name: 'THUDM/glm-4-9b-chat',
-      group: '免费模型'
+      group: 'Free Model'
     },
     {
       id: 'glm-4-flash',
       provider: 'dmxapi',
       name: 'glm-4-flash',
-      group: '免费模型'
+      group: 'Free Model'
     },
     {
       id: 'hunyuan-lite',
       provider: 'dmxapi',
       name: 'hunyuan-lite',
-      group: '免费模型'
+      group: 'Free Model'
     },
     {
       id: 'gpt-4o',
@@ -1840,6 +1840,7 @@ export const SYSTEM_MODELS: Record<string, Model[]> = {
       id: 'sonar-reasoning-pro',
       provider: 'perplexity',
       name: 'sonar-reasoning-pro',
+
       group: 'Sonar'
     },
     {
@@ -2213,7 +2214,7 @@ export function isVisionModel(model: Model): boolean {
   if (!model) {
     return false
   }
-  // 新添字段 copilot-vision-request 后可使用 vision
+  // New field copilot-vision-request can use vision
   // if (model.provider === 'copilot') {
   //   return false
   // }
@@ -2566,17 +2567,17 @@ export function isHunyuanSearchModel(model?: Model): boolean {
 }
 
 /**
- * 按 Qwen 系列模型分组
- * @param models 模型列表
- * @returns 分组后的模型
+ * Group Qwen series models
+ * @param models Model list
+ * @returns Grouped models
  */
 export function groupQwenModels(models: Model[]): Record<string, Model[]> {
   return models.reduce(
     (groups, model) => {
-      // 匹配 Qwen 系列模型的前缀
+      // Match prefix for Qwen series models
       const prefixMatch = model.id.match(/^(qwen(?:\d+\.\d+|2(?:\.\d+)?|-\d+b|-(?:max|coder|vl)))/i)
-      // 匹配 qwen2.5、qwen2、qwen-7b、qwen-max、qwen-coder 等
-      const groupKey = prefixMatch ? prefixMatch[1] : model.group || '其他'
+      // Match qwen2.5, qwen2, qwen-7b, qwen-max, qwen-coder, etc.
+      const groupKey = prefixMatch ? prefixMatch[1] : model.group || 'Other'
 
       if (!groups[groupKey]) {
         groups[groupKey] = []

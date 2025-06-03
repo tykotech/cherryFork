@@ -55,14 +55,14 @@ const ThinkingBlock: React.FC<Props> = ({ block }) => {
     }
   }, [block.content, t])
 
-  // FIXME: 这里统计的和请求处统计的有一定误差
+  // FIXME: There is some discrepancy between the statistics here and those in the request handler
   useEffect(() => {
     if (isThinking) {
       intervalId.current = setInterval(() => {
         setThinkingTime((prev) => prev + 100)
       }, 100)
     } else if (intervalId.current) {
-      // 立即清除计时器
+      // Immediately clear the timer
       clearInterval(intervalId.current)
       intervalId.current = null
     }
@@ -123,7 +123,7 @@ const ThinkingBlock: React.FC<Props> = ({ block }) => {
             </MessageTitleLabel>
           ),
           children: (
-            //  FIXME: 临时兼容
+            //  FIXME: Temporary compatibility
             <div style={{ fontFamily, fontSize }}>
               <Markdown block={block} />
             </div>

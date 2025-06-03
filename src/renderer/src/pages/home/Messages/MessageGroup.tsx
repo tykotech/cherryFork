@@ -77,22 +77,22 @@ const MessageGroup = ({ messages, topic, hidePresetMessages }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messageLength])
 
-  // 添加对流程图节点点击事件的监听
+  // Add event listener for flowchart node click events
   useEffect(() => {
-    // 只在组件挂载和消息数组变化时添加监听器
+    // Only add listener when component mounts and messages array changes
     if (!isGrouped || messageLength <= 1) return
 
     const handleFlowNavigate = (event: CustomEvent) => {
       const { messageId } = event.detail
 
-      // 查找对应的消息在当前消息组中的索引
+      // Find the index of the corresponding message in the current message group
       const targetIndex = messages.findIndex((msg) => msg.id === messageId)
 
-      // 如果找到消息且不是当前选中的索引，则切换标签
+      // If the message is found and it's not the currently selected index, switch tabs
       if (targetIndex !== -1 && targetIndex !== selectedIndex) {
         setSelectedIndex(targetIndex)
 
-        // 使用setSelectedMessage函数来切换标签，这是处理foldSelected的关键
+        // Use setSelectedMessage function to switch tabs, this is key to handling foldSelected
         const targetMessage = messages[targetIndex]
         if (targetMessage) {
           setSelectedMessage(targetMessage)
@@ -100,34 +100,34 @@ const MessageGroup = ({ messages, topic, hidePresetMessages }: Props) => {
       }
     }
 
-    // 添加事件监听器
+    // Add event listener
     document.addEventListener('flow-navigate-to-message', handleFlowNavigate as EventListener)
 
-    // 清理函数
+    // Cleanup function
     return () => {
       document.removeEventListener('flow-navigate-to-message', handleFlowNavigate as EventListener)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages, selectedIndex, isGrouped, messageLength])
 
-  // 添加对LOCATE_MESSAGE事件的监听
+  // Add event listener for LOCATE_MESSAGE event
   useEffect(() => {
-    // 为每个消息注册一个定位事件监听器
+    // Register a locate event listener for each message
     const eventHandlers: { [key: string]: () => void } = {}
 
     messages.forEach((message) => {
       const eventName = EVENT_NAMES.LOCATE_MESSAGE + ':' + message.id
       const handler = () => {
-        // 检查消息是否处于可见状态
+        // Check if the message is visible
         const element = document.getElementById(`message-${message.id}`)
         if (element) {
           const display = window.getComputedStyle(element).display
 
           if (display === 'none') {
-            // 如果消息隐藏，先切换标签
+            // If the message is hidden, switch tab first
             setSelectedMessage(message)
           } else {
-            // 直接滚动
+            // Scroll directly
             element.scrollIntoView({ behavior: 'smooth', block: 'start' })
           }
         }
@@ -137,9 +137,9 @@ const MessageGroup = ({ messages, topic, hidePresetMessages }: Props) => {
       EventEmitter.on(eventName, handler)
     })
 
-    // 清理函数
+    // Cleanup function
     return () => {
-      // 移除所有事件监听器
+      // Remove all event listeners
       Object.entries(eventHandlers).forEach(([eventName, handler]) => {
         EventEmitter.off(eventName, handler)
       })
@@ -331,9 +331,9 @@ const MessageWrapper = styled(Scrollbar)<MessageWrapperProps>`
   }}
 
   ${({ $layout, $isInPopover, $isGrouped }) => {
-    // 如果布局是grid，并且是组消息，则设置最大高度和溢出行为（卡片不可滚动，点击展开后可滚动）
-    // 如果布局是horizontal，则设置溢出行为（卡片可滚动）
-    // 如果布局是fold、vertical，高度不限制，与正常消息流布局一致，则设置卡片不可滚动（visible）
+    // If the layout is grid, and it's a group message, set max height and overflow behavior (card not scrollable, clickable to expand and then scrollable)
+    // If the layout is horizontal, set overflow behavior (card scrollable)
+    // If the layout is fold or vertical, height is not restricted, consistent with normal message flow layout, set card not scrollable (visible)
     return $layout === 'grid' && $isGrouped
       ? css`
           max-height: ${$isInPopover ? '50vh' : '300px'};

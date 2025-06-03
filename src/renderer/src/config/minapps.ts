@@ -51,19 +51,54 @@ import OpenAiProviderLogo from '@renderer/assets/images/providers/openai.png?url
 import SiliconFlowProviderLogo from '@renderer/assets/images/providers/silicon.png?url'
 import { MinAppType } from '@renderer/types'
 
-// Load custom mini apps
+// Load custom mini apps with enhanced error handling
 const loadCustomMiniApp = async (): Promise<MinAppType[]> => {
   try {
+    // Check if window.api is available
+    if (!window.api || !window.api.file) {
+      console.warn('File API not available, returning empty custom apps array')
+      return []
+    }
+
     let content: string
     try {
       content = await window.api.file.read('custom-minapps.json')
+      console.log('Successfully loaded custom-minapps.json')
     } catch (error) {
-      // If the file doesn't exist, create an empty JSON array
-      content = '[]'
-      await window.api.file.writeWithId('custom-minapps.json', content)
+      console.warn('custom-minapps.json not found, creating with empty array:', error)
+
+      try {
+        // If the file doesn't exist, create an empty JSON array
+        content = '[]'
+        await window.api.file.writeWithId('custom-minapps.json', content)
+        console.log('Created new custom-minapps.json file')
+      } catch (writeError) {
+        console.error('Failed to create custom-minapps.json file:', writeError)
+        // Return empty array if we can't even create the file
+        return []
+      }
     }
 
-    const customApps = JSON.parse(content)
+    // Parse the JSON content
+    let customApps: any[]
+    try {
+      customApps = JSON.parse(content)
+      if (!Array.isArray(customApps)) {
+        console.warn('custom-minapps.json does not contain an array, using empty array')
+        customApps = []
+      }
+    } catch (parseError) {
+      console.error('Failed to parse custom-minapps.json, using empty array:', parseError)
+      // Try to fix corrupted file by overwriting with empty array
+      try {
+        await window.api.file.writeWithId('custom-minapps.json', '[]')
+        console.log('Fixed corrupted custom-minapps.json file')
+      } catch (fixError) {
+        console.error('Failed to fix corrupted file:', fixError)
+      }
+      return []
+    }
+
     const now = new Date().toISOString()
 
     return customApps.map((app: any) => ({
@@ -73,7 +108,7 @@ const loadCustomMiniApp = async (): Promise<MinAppType[]> => {
       addTime: app.addTime || now
     }))
   } catch (error) {
-    console.error('Failed to load custom mini apps:', error)
+    console.error('Unexpected error in loadCustomMiniApp:', error)
     return []
   }
 }
@@ -198,7 +233,7 @@ const ORIGIN_DEFAULT_MIN_APPS: MinAppType[] = [
   },
   {
     id: 'sensetime-chat',
-    name: '商量',
+    name: 'SenseTime Chat',
     logo: SensetimeAppLogo,
     url: 'https://chat.sensetime.com/wb/chat',
     bodered: true
@@ -211,7 +246,7 @@ const ORIGIN_DEFAULT_MIN_APPS: MinAppType[] = [
   },
   {
     id: 'metaso',
-    name: '秘塔AI搜索',
+    name: 'Meta AI Search',
     logo: MetasoAppLogo,
     url: 'https://metaso.cn/'
   },
@@ -255,7 +290,7 @@ const ORIGIN_DEFAULT_MIN_APPS: MinAppType[] = [
   },
   {
     id: 'bolt',
-    name: 'bolt',
+    name: 'Bolt',
     logo: BoltAppLogo,
     url: 'https://bolt.new/',
     bodered: true
@@ -422,11 +457,48 @@ const ORIGIN_DEFAULT_MIN_APPS: MinAppType[] = [
   }
 ]
 
-// Load custom mini apps and merge them with default apps
-let DEFAULT_MIN_APPS = [...ORIGIN_DEFAULT_MIN_APPS, ...(await loadCustomMiniApp())]
+// Initialize default apps safely
+let DEFAULT_MIN_APPS: MinAppType[] = [...ORIGIN_DEFAULT_MIN_APPS]
 
-function updateDefaultMinApps(param) {
+// Initialize custom apps asynchronously
+const initializeCustomApps = async () => {
+  try {
+    const customApps = await loadCustomMiniApp()
+    DEFAULT_MIN_APPS = [...ORIGIN_DEFAULT_MIN_APPS, ...customApps]
+    console.log(`Initialized ${customApps.length} custom mini apps`)
+  } catch (error) {
+    console.error('Failed to initialize custom apps, using defaults only:', error)
+    DEFAULT_MIN_APPS = [...ORIGIN_DEFAULT_MIN_APPS]
+  }
+}
+
+// Initialize on module load, but don't block
+initializeCustomApps().catch((error) => {
+  console.error('Failed to initialize custom apps during module load:', error)
+})
+
+function updateDefaultMinApps(param: MinAppType[]) {
   DEFAULT_MIN_APPS = param
 }
 
-export { DEFAULT_MIN_APPS, loadCustomMiniApp, ORIGIN_DEFAULT_MIN_APPS, updateDefaultMinApps }
+// Function to get current apps and reinitialize if needed
+const getCurrentMinApps = async (): Promise<MinAppType[]> => {
+  // If DEFAULT_MIN_APPS only contains default apps, try to reinitialize
+  if (DEFAULT_MIN_APPS.length === ORIGIN_DEFAULT_MIN_APPS.length) {
+    try {
+      await initializeCustomApps()
+    } catch (error) {
+      console.error('Failed to reinitialize custom apps:', error)
+    }
+  }
+  return DEFAULT_MIN_APPS
+}
+
+export {
+  DEFAULT_MIN_APPS,
+  getCurrentMinApps,
+  initializeCustomApps,
+  loadCustomMiniApp,
+  ORIGIN_DEFAULT_MIN_APPS,
+  updateDefaultMinApps
+}

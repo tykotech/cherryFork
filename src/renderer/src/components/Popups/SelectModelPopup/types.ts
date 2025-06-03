@@ -1,13 +1,13 @@
 import { Model } from '@renderer/types'
 import { ReactNode } from 'react'
 
-// 列表项类型，组名也作为列表项
+// List item type, group name is also a list item
 export type ListItemType = 'group' | 'model'
 
-// 滚动触发来源类型
+// Scroll trigger source type
 export type ScrollTrigger = 'initial' | 'search' | 'keyboard' | 'none'
 
-// 扁平化列表项接口
+// Flattened list item interface
 export interface FlatListItem {
   key: string
   type: ListItemType
@@ -19,7 +19,7 @@ export interface FlatListItem {
   isSelected?: boolean
 }
 
-// 滚动和焦点相关的状态类型
+// State type related to scroll and focus
 export interface ScrollState {
   focusedItemKey: string
   scrollTrigger: ScrollTrigger
@@ -28,7 +28,7 @@ export interface ScrollState {
   isMouseOver: boolean
 }
 
-// 滚动和焦点相关的 action 类型
+// Action type related to scroll and focus
 export type ScrollAction =
   | { type: 'SET_FOCUSED_ITEM_KEY'; payload: string }
   | { type: 'SET_SCROLL_TRIGGER'; payload: ScrollTrigger }

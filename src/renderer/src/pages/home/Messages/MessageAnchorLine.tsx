@@ -58,7 +58,7 @@ const MessageAnchorLine: FC<MessageLineProps> = ({ messages }) => {
     }
   }, [messages])
 
-  // 函数用于计算根据距离的变化值
+  // Function to calculate value based on distance change
   const calculateValueByDistance = useCallback(
     (itemId: string, maxValue: number) => {
       if (mouseY === null) return 0

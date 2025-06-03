@@ -53,7 +53,7 @@ export interface SettingsState {
   codeShowLineNumbers: boolean
   codeCollapsible: boolean
   codeWrappable: boolean
-  // 代码块缓存
+  // Code block cache
   codeCacheable: boolean
   codeCacheMaxSize: number
   codeCacheTTL: number
@@ -65,7 +65,7 @@ export interface SettingsState {
   gridColumns: number
   gridPopoverTrigger: 'hover' | 'click'
   messageNavigation: 'none' | 'buttons' | 'anchor'
-  // webdav 配置 host, user, pass, path
+  // webdav config host, user, pass, path
   webdavHost: string
   webdavUser: string
   webdavPass: string
@@ -106,18 +106,18 @@ export interface SettingsState {
   joplinUrl: string | null
   defaultObsidianVault: string | null
   defaultAgent: string | null
-  // 思源笔记配置
+  // SiYuan Note config
   siyuanApiUrl: string | null
   siyuanToken: string | null
   siyuanBoxId: string | null
   siyuanRootPath: string | null
-  // 订阅的助手地址
+  // Subscribed assistant address
   agentssubscribeUrl: string | null
   // MinApps
   maxKeepAliveMinapps: number
   showOpenedMinappsInSidebar: boolean
   minappsOpenLinkExternal: boolean
-  // 隐私设置
+  // Privacy settings
   enableDataCollection: boolean
   enableQuickPanelTriggers: boolean
   enableBackspaceDeleteModel: boolean
@@ -168,9 +168,9 @@ export const initialState: SettingsState = {
   codeCollapsible: false,
   codeWrappable: false,
   codeCacheable: false,
-  codeCacheMaxSize: 1000, // 缓存最大容量，千字符数
-  codeCacheTTL: 15, // 缓存过期时间，分钟
-  codeCacheThreshold: 2, // 允许缓存的最小代码长度，千字符数
+  codeCacheMaxSize: 1000, // Cache max capacity, in thousands of characters
+  codeCacheTTL: 15, // Cache expiration time, in minutes
+  codeCacheThreshold: 2, // Minimum code length allowed for caching, in thousands of characters
   mathEngine: 'KaTeX',
   messageStyle: 'plain',
   codeStyle: 'auto',

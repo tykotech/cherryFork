@@ -330,7 +330,7 @@ export default class AnthropicProvider extends BaseProvider {
       let isFirstChunk = true
 
       return new Promise<void>((resolve, reject) => {
-        // 等待接口返回流
+        // Wait for the interface to return the stream
         const toolCalls: ToolUseBlock[] = []
 
         this.sdk.messages
@@ -678,7 +678,7 @@ export default class AnthropicProvider extends BaseProvider {
     const body = {
       model: model.id,
       messages: [{ role: 'user' as const, content: 'hi' }],
-      max_tokens: 2, // api文档写的 x>1
+      max_tokens: 2, // API documentation states x>1
       stream
     }
 

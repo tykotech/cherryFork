@@ -3,8 +3,8 @@ import * as fs from 'node:fs'
 import { JsonLoader } from '@cherrystudio/embedjs'
 
 /**
- * Drafts 应用导出的笔记文件加载器
- * 原始文件是一个 JSON 数组。每条笔记只保留 content、tags、modified_at 三个字段
+ * Drafts app exported note file loader
+ * The original file is a JSON array. Only the fields content, tags, and modified_at are retained for each note.
  */
 export class DraftsExportLoader extends JsonLoader {
   constructor(filePath: string) {

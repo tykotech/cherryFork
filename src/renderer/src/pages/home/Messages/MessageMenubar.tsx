@@ -85,7 +85,7 @@ const MessageMenubar: FC<Props> = (props) => {
   // }, [message])
 
   const mainTextContent = useMemo(() => {
-    // 只处理助手消息和来自推理模型的消息
+    // Only process assistant messages and those from reasoning models
     // if (message.role === 'assistant' && message.model && isReasoningModel(message.model)) {
     // return getMainTextContent(withMessageThought(message))
     // }
@@ -120,13 +120,13 @@ const MessageMenubar: FC<Props> = (props) => {
   )
 
   const onEdit = useCallback(async () => {
-    // 禁用了助手消息的编辑，现在都是用户消息的编辑
+    // Editing of assistant messages is disabled, only user messages can be edited
     let resendMessage = false
 
     let textToEdit = ''
 
     const imageBlocks = findImageBlocks(message)
-    // 如果是包含图片的消息，添加图片的 markdown 格式
+    // If the message contains images, add the markdown format for the images
     if (imageBlocks.length > 0) {
       const imageMarkdown = imageBlocks
         .map((image, index) => `![image-${index}](file://${image?.file?.path})`)
@@ -158,12 +158,12 @@ const MessageMenubar: FC<Props> = (props) => {
     })
 
     if (editedText && editedText !== textToEdit) {
-      // 解析编辑后的文本，提取图片 URL
+      // Parse the edited text and extract image URLs
       // const imageRegex = /!\[image-\d+\]\((.*?)\)/g
       // const imageUrls: string[] = []
       // let match
       // let content = editedText
-      // TODO 按理说图片应该走上传，不应该在这改
+      // TODO Ideally, images should be uploaded, not modified here
       // while ((match = imageRegex.exec(editedText)) !== null) {
       //   imageUrls.push(match[1])
       //   content = content.replace(match[0], '')
@@ -173,7 +173,7 @@ const MessageMenubar: FC<Props> = (props) => {
       } else {
         editMessageBlocks(message.id, { id: findMainTextBlocks(message)[0].id, content: editedText })
       }
-      // // 更新消息内容，保留图片信息
+      // // Update the message content, retaining image information
       // await editMessage(message.id, {
       //   content: content.trim(),
       //   metadata: {

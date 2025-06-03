@@ -1,10 +1,13 @@
-我来详细介绍 KnowledgeService 中控制并发处理的项目数量和工作负载的部分。
+Let me provide a detailed introduction to how KnowledgeService controls the
+number of concurrently processed items and workload.
 
-## 并发控制与工作负载管理机制
+## Concurrency Control and Workload Management Mechanism
 
-KnowledgeService 实现了一个精细的任务队列系统，用于控制并发处理的项目数量和工作负载。这个系统主要通过以下几个关键部分实现：
+KnowledgeService implements a sophisticated task queue system to control the
+number of concurrently processed items and workload. This system is mainly
+implemented through the following key components:
 
-### 1. 关键变量和限制
+### 1. Key Variables and Limits
 
 ```typescript
 private workload = 0
@@ -14,43 +17,46 @@ private static MAXIMUM_WORKLOAD = 1024 * 1024 * 80  // 约80MB
 private static MAXIMUM_PROCESSING_ITEM_COUNT = 30
 ```
 
-- `workload`: 跟踪当前正在处理的总工作量（以字节为单位）
-- `processingItemCount`: 跟踪当前正在处理的项目数量
-- `MAXIMUM_WORKLOAD`: 设置最大工作负载为80MB
-- `MAXIMUM_PROCESSING_ITEM_COUNT`: 设置最大并发处理项目数为30个
+- `workload`: Tracks the total workload currently being processed (in bytes)
+- `processingItemCount`: Tracks the number of items currently being processed
+- `MAXIMUM_WORKLOAD`: Sets the maximum workload to 80MB
+- `MAXIMUM_PROCESSING_ITEM_COUNT`: Sets the maximum number of concurrently
+  processed items to 30
 
-### 2. 工作负载评估
+### 2. Workload Evaluation
 
-每个任务都有一个评估工作负载的机制，通过 `evaluateTaskWorkload` 属性来表示：
+Each task has a mechanism to evaluate its workload, represented by the
+`evaluateTaskWorkload` property:
 
 ```typescript
 interface EvaluateTaskWorkload {
-  workload: number
+  workload: number;
 }
 ```
 
-不同类型的任务有不同的工作负载评估方式：
+Different types of tasks have different workload evaluation methods:
 
-- 文件任务：使用文件大小作为工作负载 `{ workload: file.size }`
-- URL任务：使用固定值 `{ workload: 1024 * 1024 * 2 }` (约2MB)
-- 网站地图任务：使用固定值 `{ workload: 1024 * 1024 * 20 }` (约20MB)
-- 笔记任务：使用文本内容的字节长度 `{ workload: contentBytes.length }`
+- File tasks: Use file size as workload `{ workload: file.size }`
+- URL tasks: Use a fixed value `{ workload: 1024 * 1024 * 2 }` (about 2MB)
+- Sitemap tasks: Use a fixed value `{ workload: 1024 * 1024 * 20 }` (about 20MB)
+- Note tasks: Use the byte length of the text content
+  `{ workload: contentBytes.length }`
 
-### 3. 任务状态管理
+### 3. Task State Management
 
-任务通过状态枚举来跟踪其生命周期：
+Tasks track their lifecycle through a status enum:
 
 ```typescript
 enum LoaderTaskItemState {
-  PENDING, // 等待处理
-  PROCESSING, // 正在处理
-  DONE // 已完成
+  PENDING, // Pending
+  PROCESSING, // Processing
+  DONE, // Done
 }
 ```
 
-### 4. 任务队列处理核心逻辑
+### 4. Core Logic of Task Queue Processing
 
-核心的队列处理逻辑在 `processingQueueHandle` 方法中：
+The core queue processing logic is in the `processingQueueHandle` method:
 
 ```typescript
 private processingQueueHandle() {
@@ -102,23 +108,23 @@ private processingQueueHandle() {
 }
 ```
 
-这个方法的工作流程是：
+The workflow of this method is:
 
-1. 遍历所有待处理的任务集合
-2. 对于每个任务集合中的每个子任务：
-   - 检查是否已达到最大负载（通过 `maximumLoad()` 方法）
-   - 如果任务状态为 PENDING，则：
-     - 增加当前工作负载和处理项目计数
-     - 将任务状态更新为 PROCESSING
-     - 将任务添加到待执行队列
-3. 执行所有收集到的子任务
-4. 当子任务完成时：
-   - 减少工作负载和处理项目计数
-   - 从任务集合中移除已完成的任务
-   - 如果任务集合为空，则解析相应的 Promise
-   - 递归调用 `processingQueueHandle()` 以处理更多任务
+1. Iterate over all pending task sets
+2. For each subtask in each task set:
+   - Check if the maximum load has been reached (via `maximumLoad()` method)
+   - If the task state is PENDING:
+     - Increase the current workload and processing item count
+     - Update the task state to PROCESSING
+     - Add the task to the execution queue
+3. Execute all collected subtasks
+4. When a subtask is completed:
+   - Decrease the workload and processing item count
+   - Remove the completed task from the task set
+   - If the task set is empty, resolve the corresponding Promise
+   - Recursively call `processingQueueHandle()` to process more tasks
 
-### 5. 负载检查
+### 5. Load Check
 
 ```typescript
 private maximumLoad() {
@@ -129,18 +135,19 @@ private maximumLoad() {
 }
 ```
 
-这个方法检查当前是否已达到最大负载，通过两个条件：
+This method checks whether the maximum load has been reached through two
+conditions:
 
-- 处理项目数量达到上限（30个）
-- 总工作负载达到上限（80MB）
+- The number of processing items reaches the upper limit (30)
+- The total workload reaches the upper limit (80MB)
 
-### 6. 任务添加与执行流程
+### 6. Task Addition and Execution Process
 
-当添加新任务时，流程如下：
+When adding a new task, the process is as follows:
 
-1. 创建任务（根据类型不同创建不同的任务）
-2. 通过 `appendProcessingQueue` 将任务添加到队列
-3. 调用 `processingQueueHandle` 开始处理队列中的任务
+1. Create a task (different types of tasks are created based on the type)
+2. Add the task to the queue via `appendProcessingQueue`
+3. Call `processingQueueHandle` to start processing tasks in the queue
 
 ```typescript
 private appendProcessingQueue(task: LoaderTask): Promise<LoaderReturn> {
@@ -152,23 +159,35 @@ private appendProcessingQueue(task: LoaderTask): Promise<LoaderReturn> {
 }
 ```
 
-## 并发控制的优势
+## Advantages of Concurrency Control
 
-这种并发控制机制有几个重要优势：
+This concurrency control mechanism has several important advantages:
 
-1. **资源使用优化**：通过限制同时处理的项目数量和总工作负载，避免系统资源过度使用
-2. **自动调节**：当任务完成时，会自动从队列中获取新任务，保持资源的高效利用
-3. **灵活性**：不同类型的任务有不同的工作负载评估，更准确地反映实际资源需求
-4. **可靠性**：通过状态管理和Promise解析机制，确保任务正确完成并通知调用者
+1. **Resource usage optimization**: By limiting the number of concurrently
+   processed items and total workload, it avoids excessive use of system
+   resources
+2. **Automatic adjustment**: When a task is completed, new tasks are
+   automatically fetched from the queue to maintain efficient resource
+   utilization
+3. **Flexibility**: Different types of tasks have different workload
+   evaluations, more accurately reflecting actual resource needs
+4. **Reliability**: Through state management and Promise resolution mechanisms,
+   it ensures tasks are completed correctly and notifies the caller
 
-## 实际应用场景
+## Practical Application Scenarios
 
-这种并发控制在处理大量数据时特别有用，例如：
+This concurrency control is especially useful when processing large amounts of
+data, for example:
 
-- 导入大型目录时，可能包含数百个文件
-- 处理大型网站地图，可能包含大量URL
-- 处理多个用户同时添加知识库项目的请求
+- Importing large directories, which may contain hundreds of files
+- Processing large sitemaps, which may contain a large number of URLs
+- Handling requests from multiple users adding knowledge base items
+  simultaneously
 
-通过这种机制，系统可以平滑地处理大量请求，避免资源耗尽，同时保持良好的响应性。
+Through this mechanism, the system can smoothly handle a large number of
+requests, avoid resource exhaustion, and maintain good responsiveness.
 
-总结来说，KnowledgeService 实现了一个复杂而高效的任务队列系统，通过精确控制并发处理的项目数量和工作负载，确保系统在处理大量数据时保持稳定和高效。
+In summary, KnowledgeService implements a complex and efficient task queue
+system that ensures the system remains stable and efficient when processing
+large amounts of data by precisely controlling the number of concurrently
+processed items and workload.

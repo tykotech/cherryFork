@@ -44,7 +44,7 @@ const handleChangeLoadingOfTopic = async (topicId: string) => {
   await waitForTopicQueue(topicId)
   store.dispatch(newMessagesActions.setTopicLoading({ topicId, loading: false }))
 }
-// TODO: 后续可以将db操作移到Listener Middleware中
+// TODO: Later, the db operation can be moved to Listener Middleware
 export const saveMessageAndBlocksToDB = async (message: Message, blocks: MessageBlock[]) => {
   try {
     if (blocks.length > 0) {
@@ -106,11 +106,11 @@ const updateExistingMessageAndBlocksInDB = async (
   }
 }
 
-// 更新单个块的逻辑，用于更新消息中的单个块
+// Update logic for a single block, used to update an individual block within a message
 const throttledBlockUpdate = throttle(async (id, blockUpdate) => {
   // const state = store.getState()
   // const block = state.messageBlocks.entities[id]
-  // throttle是异步函数,可能会在complete事件触发后才执行
+  // throttle is an asynchronous function and may execute after the complete event is triggered
   // if (
   //   blockUpdate.status === MessageBlockStatus.STREAMING &&
   //   (block?.status === MessageBlockStatus.SUCCESS || block?.status === MessageBlockStatus.ERROR)
@@ -123,7 +123,7 @@ const throttledBlockUpdate = throttle(async (id, blockUpdate) => {
 
 const cancelThrottledBlockUpdate = throttledBlockUpdate.cancel
 
-// // 修改: 节流更新单个块的内容/状态到数据库 (仅用于 Text/Thinking Chunks)
+// // Modified: Throttle updating the content/status of a single block to the database (for Text/Thinking Chunks only)
 // export const throttledBlockDbUpdate = throttle(
 //   async (blockId: string, blockChanges: Partial<MessageBlock>) => {
 //     // Check if blockId is valid before attempting update
@@ -133,7 +133,7 @@ const cancelThrottledBlockUpdate = throttledBlockUpdate.cancel
 //     }
 //     const state = store.getState()
 //     const block = state.messageBlocks.entities[blockId]
-//     // throttle是异步函数,可能会在complete事件触发后才执行
+//     // throttle is an asynchronous function and may execute after the complete event is triggered
 //     if (
 //       blockChanges.status === MessageBlockStatus.STREAMING &&
 //       (block?.status === MessageBlockStatus.SUCCESS || block?.status === MessageBlockStatus.ERROR)
@@ -144,16 +144,16 @@ const cancelThrottledBlockUpdate = throttledBlockUpdate.cancel
 //       console.error(`[DB Throttle Block Update] Failed for block ${blockId}:`, error)
 //     }
 //   },
-//   300, // 可以调整节流间隔
+//   300, // Throttle interval can be adjusted
 //   { leading: false, trailing: true }
 // )
 
-// 新增: 通用的、非节流的函数，用于保存消息和块的更新到数据库
+// New: General, non-throttled function to save message and block updates to the database
 const saveUpdatesToDB = async (
   messageId: string,
   topicId: string,
-  messageUpdates: Partial<Message>, // 需要更新的消息字段
-  blocksToUpdate: MessageBlock[] // 需要更新/创建的块
+  messageUpdates: Partial<Message>, // Fields of the message that need updating
+  blocksToUpdate: MessageBlock[] // Blocks that need updating/creating
 ) => {
   try {
     const messageDataToSave: Partial<Message> & Pick<Message, 'id' | 'topicId'> = {
@@ -167,7 +167,7 @@ const saveUpdatesToDB = async (
   }
 }
 
-// 新增: 辅助函数，用于获取并保存单个更新后的 Block 到数据库
+// New: Helper function to get and save a single updated Block to the database
 const saveUpdatedBlockToDB = async (
   blockId: string | null,
   messageId: string,
@@ -188,7 +188,7 @@ const saveUpdatedBlockToDB = async (
 }
 
 // --- Helper Function for Multi-Model Dispatch ---
-// 多模型创建和发送请求的逻辑，用于用户消息多模型发送和重发
+// Logic for creating and sending requests with multiple models, used for user message multi-model sending and resending
 const dispatchMultiModelResponses = async (
   dispatch: AppDispatch,
   getState: () => RootState,
@@ -573,7 +573,7 @@ const fetchAndProcessAssistantResponseImpl = async (
           requestId: error.request_id
         }
         if (lastBlockId) {
-          // 更改上一个block的状态为ERROR
+          // Change the status of the previous block to ERROR
           const changes: Partial<MessageBlock> = {
             status: isErrorTypeAbort ? MessageBlockStatus.PAUSED : MessageBlockStatus.ERROR
           }
@@ -610,7 +610,7 @@ const fetchAndProcessAssistantResponseImpl = async (
           const contextForUsage = userMsgIndex !== -1 ? orderedMsgs.slice(0, userMsgIndex + 1) : []
           const finalContextWithAssistant = [...contextForUsage, finalAssistantMsg]
 
-          // 更新topic的name
+          // Update the name of the topic
           autoRenameTopic(assistant, topicId)
 
           if (response && response.usage?.total_tokens === 0) {
@@ -661,11 +661,11 @@ const fetchAndProcessAssistantResponseImpl = async (
 }
 
 /**
- * 发送消息并处理助手回复
- * @param userMessage 已创建的用户消息
- * @param userMessageBlocks 用户消息关联的消息块
- * @param assistant 助手对象
- * @param topicId 主题ID
+ * Send a message and handle assistant reply
+ * @param userMessage The user message that has been created
+ * @param userMessageBlocks The message blocks associated with the user message
+ * @param assistant The assistant object
+ * @param topicId The topic ID
  */
 export const sendMessage =
   (userMessage: Message, userMessageBlocks: MessageBlock[], assistant: Assistant, topicId: Topic['id']) =>
@@ -869,7 +869,7 @@ export const resendMessageThunk =
       const resetDataList: Message[] = []
 
       if (assistantMessagesToReset.length === 0) {
-        // 没有用户消息,就创建一个
+        // No user message, create one
         const assistantMessage = createAssistantMessage(assistant.id, topicId, {
           askId: userMessageToResend.id,
           model: assistant.model
@@ -1117,7 +1117,7 @@ export const initiateTranslationThunk =
 export const updateTranslationBlockThunk =
   (blockId: string, accumulatedText: string, isComplete: boolean = false) =>
   async (dispatch: AppDispatch) => {
-    // Logger.log(`[updateTranslationBlockThunk] 更新翻译块 ${blockId}, isComplete: ${isComplete}`)
+    // Logger.log(`[updateTranslationBlockThunk] Updating translation block ${blockId}, isComplete: ${isComplete}`)
     try {
       const status = isComplete ? MessageBlockStatus.SUCCESS : MessageBlockStatus.STREAMING
       const changes: Partial<MessageBlock> = {
@@ -1125,10 +1125,10 @@ export const updateTranslationBlockThunk =
         status: status
       }
 
-      // 更新Redux状态
+      // Update Redux state
       dispatch(updateOneBlock({ id: blockId, changes }))
 
-      // 更新数据库
+      // Update database
       await db.message_blocks.update(blockId, changes)
       // Logger.log(`[updateTranslationBlockThunk] Successfully updated translation block ${blockId}.`)
     } catch (error) {
@@ -1383,7 +1383,7 @@ export const updateMessageAndBlocksThunk =
     }
 
     try {
-      // 1. 更新 Redux Store
+      // 1. Update Redux Store
       if (messageUpdates && messageId) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { id: msgId, ...actualMessageChanges } = messageUpdates // Separate ID from actual changes
@@ -1405,7 +1405,7 @@ export const updateMessageAndBlocksThunk =
         })
       }
 
-      // 2. 更新数据库 (在事务中)
+      // 2. Update database (within a transaction)
       await db.transaction('rw', db.topics, db.message_blocks, async () => {
         // Only update topic.messages if there were actual message changes
         if (messageUpdates && Object.keys(messageUpdates).length > 0) {

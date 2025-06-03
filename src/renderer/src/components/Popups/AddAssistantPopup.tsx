@@ -55,7 +55,7 @@ const PopupContainer: React.FC<Props> = ({ resolve }) => {
     return filtered
   }, [assistants, defaultAssistant, searchText, systemAgents, userAgents])
 
-  // 重置选中索引当搜索或列表内容变更时
+  // Reset selected index when search or list content changes
   useEffect(() => {
     setSelectedIndex(0)
   }, [agents.length, searchText])
@@ -81,8 +81,8 @@ const PopupContainer: React.FC<Props> = ({ resolve }) => {
       setOpen(false)
     },
     [resolve, addAssistant, setOpen]
-  ) // 添加函数内使用的依赖项
-  // 键盘导航处理
+  ) // Add dependencies used inside the function
+  // Keyboard navigation handling
   useEffect(() => {
     if (!open) return
 
@@ -100,12 +100,12 @@ const PopupContainer: React.FC<Props> = ({ resolve }) => {
           break
         case 'Enter':
         case 'NumpadEnter':
-          // 如果焦点在输入框且有搜索内容，则默认选择第一项
+          // If the focus is on the input box and there is search content, select the first item by default
           if (document.activeElement === inputRef.current?.input && searchText.trim()) {
             e.preventDefault()
             onCreateAssistant(displayedAgents[selectedIndex])
           }
-          // 否则选择当前选中项
+          // Otherwise select the currently selected item
           else if (selectedIndex >= 0 && selectedIndex < displayedAgents.length) {
             e.preventDefault()
             onCreateAssistant(displayedAgents[selectedIndex])
@@ -118,7 +118,7 @@ const PopupContainer: React.FC<Props> = ({ resolve }) => {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [open, selectedIndex, agents, searchText, onCreateAssistant])
 
-  // 确保选中项在可视区域
+  // Ensure the selected item is in the visible area
   useEffect(() => {
     if (containerRef.current) {
       const agentItems = containerRef.current.querySelectorAll('.agent-item')

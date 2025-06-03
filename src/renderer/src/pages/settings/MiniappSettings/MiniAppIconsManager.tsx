@@ -7,7 +7,6 @@ import {
   DroppableProvided,
   DropResult
 } from '@hello-pangea/dnd'
-import { DEFAULT_MIN_APPS } from '@renderer/config/minapps'
 import { useMinapps } from '@renderer/hooks/useMinapps'
 import { MinAppType } from '@renderer/types'
 import { FC, useCallback } from 'react'
@@ -95,7 +94,8 @@ const MiniAppIconsManager: FC<MiniAppManagerProps> = ({
   )
 
   const renderProgramItem = (program: MinAppType, provided: DraggableProvided, listType: ListType) => {
-    const { name, logo } = DEFAULT_MIN_APPS.find((app) => app.id === program.id) || { name: program.name, logo: '' }
+    // Use the program data directly since it should already be complete from the Redux store
+    const { name, logo } = program
 
     return (
       <ProgramItem ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>

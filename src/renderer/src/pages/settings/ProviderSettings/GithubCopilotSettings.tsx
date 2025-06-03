@@ -24,7 +24,7 @@ const GithubCopilotSettings: FC<GithubCopilotSettingsProps> = ({ provider: initi
   const { t } = useTranslation()
   const { provider, updateProvider } = useProvider(initialProvider.id)
   const { username, avatar, defaultHeaders, updateState, updateDefaultHeaders } = useCopilot()
-  // 状态管理
+  // State management
   const [authStatus, setAuthStatus] = useState<AuthStatus>(AuthStatus.NOT_STARTED)
   const [deviceCode, setDeviceCode] = useState<string>('')
   const [userCode, setUserCode] = useState<string>('')
@@ -34,20 +34,20 @@ const GithubCopilotSettings: FC<GithubCopilotSettingsProps> = ({ provider: initi
   const [headerText, setHeaderText] = useState<string>(JSON.stringify(defaultHeaders || {}, null, 2))
   const [verificationPageOpened, setVerificationPageOpened] = useState<boolean>(false)
 
-  // 初始化及同步状态
+  // Initialization and synchronization of state
   useEffect(() => {
     if (provider.isAuthed) {
       setAuthStatus(AuthStatus.AUTHENTICATED)
     } else {
       setAuthStatus(AuthStatus.NOT_STARTED)
-      // 重置其他状态
+      // Reset other states
       setDeviceCode('')
       setUserCode('')
       setVerificationUri('')
     }
   }, [provider])
 
-  // 获取设备代码
+  // Get device code
   const handleGetDeviceCode = useCallback(async () => {
     try {
       setLoading(true)
@@ -65,7 +65,7 @@ const GithubCopilotSettings: FC<GithubCopilotSettingsProps> = ({ provider: initi
     }
   }, [t, defaultHeaders])
 
-  // 使用设备代码获取访问令牌
+  // Use device code to get access token
   const handleGetToken = useCallback(async () => {
     try {
       setLoading(true)
@@ -90,19 +90,19 @@ const GithubCopilotSettings: FC<GithubCopilotSettingsProps> = ({ provider: initi
     }
   }, [deviceCode, t, updateProvider, provider, setApiKey, updateState, defaultHeaders])
 
-  // 登出
+  // Logout
   const handleLogout = useCallback(async () => {
     try {
       setLoading(true)
 
-      // 1. 保存登出状态到本地
+      // 1. Save logout status to local
       updateProvider({ ...provider, apiKey: '', isAuthed: false })
       setApiKey('')
 
-      // 3. 清除本地存储的token
+      // 3. Clear the locally stored token
       await window.api.copilot.logout()
 
-      // 4. 更新UI状态
+      // 4. Update UI state
       setAuthStatus(AuthStatus.NOT_STARTED)
       setDeviceCode('')
       setUserCode('')
@@ -112,7 +112,7 @@ const GithubCopilotSettings: FC<GithubCopilotSettingsProps> = ({ provider: initi
     } catch (error) {
       console.error('Failed to logout:', error)
       message.error(t('settings.provider.copilot.logout_failed'))
-      // 如果登出失败，重置登出状态
+      // If logout fails, reset logout status
       updateProvider({ ...provider, apiKey: '', isAuthed: false })
       setApiKey('')
     } finally {
@@ -120,13 +120,13 @@ const GithubCopilotSettings: FC<GithubCopilotSettingsProps> = ({ provider: initi
     }
   }, [t, updateProvider, provider, setApiKey])
 
-  // 复制用户代码
+  // Copy user code
   const handleCopyUserCode = useCallback(() => {
     navigator.clipboard.writeText(userCode)
     message.success(t('common.copied'))
   }, [userCode, t])
 
-  // 打开验证页面
+  // Open verification page
   const handleOpenVerificationPage = useCallback(() => {
     if (verificationUri) {
       window.open(verificationUri, '_blank')
@@ -134,10 +134,10 @@ const GithubCopilotSettings: FC<GithubCopilotSettingsProps> = ({ provider: initi
     }
   }, [verificationUri])
 
-  // 处理更新请求头
+  // Handle update request headers
   const handleUpdateHeaders = useCallback(() => {
     try {
-      // 处理headerText可能为空的情况
+      // Handle the case where headerText may be empty
       const headers = headerText.trim() ? JSON.parse(headerText) : {}
       updateDefaultHeaders(headers)
       message.success(t('message.save.success.title'))
@@ -146,7 +146,7 @@ const GithubCopilotSettings: FC<GithubCopilotSettingsProps> = ({ provider: initi
     }
   }, [headerText, updateDefaultHeaders, t])
 
-  // 根据认证状态渲染不同的UI
+  // Render different UI based on authentication status
   const renderAuthContent = () => {
     switch (authStatus) {
       case AuthStatus.AUTHENTICATED:

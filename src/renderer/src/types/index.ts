@@ -110,9 +110,9 @@ export type LegacyMessage = {
     // knowledge
     knowledge?: KnowledgeReference[]
   }
-  // 多模型消息样式
+  // Multi-model message style
   multiModelMessageStyle?: 'horizontal' | 'vertical' | 'fold' | 'grid'
-  // fold时是否选中
+  // Is selected when folded
   foldSelected?: boolean
 }
 

@@ -75,7 +75,7 @@ import {
 import { CompletionsParams } from '.'
 import { BaseOpenAiProvider } from './OpenAIResponseProvider'
 
-// 1. 定义联合类型
+// 1. Define union type
 export type OpenAIStreamChunk =
   | { type: 'reasoning' | 'text-delta'; textDelta: string }
   | { type: 'tool-calls'; delta: any }
@@ -404,9 +404,9 @@ export default class OpenAIProvider extends BaseOpenAiProvider {
     const lastUserMsg = userMessages.findLast((m) => m.role === 'user')
     if (lastUserMsg && isSupportedThinkingTokenQwenModel(model)) {
       const postsuffix = '/no_think'
-      // qwenThinkMode === true 表示思考模式啓用，此時不應添加 /no_think，如果存在則移除
+      // qwenThinkMode === true indicates thinking mode is enabled; do not add '/no_think' and remove if present
       const qwenThinkModeEnabled = assistant.settings?.qwenThinkMode === true
-      const currentContent = lastUserMsg.content // content 類型：string | ChatCompletionContentPart[] | null
+      const currentContent = lastUserMsg.content // content type: string | ChatCompletionContentPart[] | null
 
       lastUserMsg.content = processPostsuffixQwen3Model(
         currentContent,
@@ -415,7 +415,7 @@ export default class OpenAIProvider extends BaseOpenAiProvider {
       ) as ChatCompletionContentPart[]
     }
 
-    //当 systemMessage 内容为空时不发送 systemMessage
+    // Do not send systemMessage when its content is empty
     let reqMessages: ChatCompletionMessageParam[]
     if (!systemMessage.content) {
       reqMessages = [...userMessages]
@@ -590,7 +590,7 @@ export default class OpenAIProvider extends BaseOpenAiProvider {
       let thinkingContent = ''
       let isFirstChunk = true
 
-      // 1. 初始化中间件
+      // 1. Initialize middleware
       const reasoningTags = [
         { openingTag: '<think>', closingTag: '</think>', separator: '\n' },
         { openingTag: '###Thinking', closingTag: '###Response', separator: '\n' }
@@ -625,7 +625,7 @@ export default class OpenAIProvider extends BaseOpenAiProvider {
         }
       }
 
-      // 2. 使用中间件
+      // 2. Use middleware
       const { stream: processedStream } = await extractReasoningMiddleware<OpenAIStreamChunk>({
         openingTag: reasoningTag?.openingTag,
         closingTag: reasoningTag?.closingTag,
@@ -637,7 +637,7 @@ export default class OpenAIProvider extends BaseOpenAiProvider {
         })
       })
 
-      // 3. 消费 processedStream，分发 onChunk
+      // 3. Consume processedStream and dispatch onChunk
       for await (const chunk of readableStreamAsyncIterable(processedStream)) {
         const delta = chunk.type === 'finish' ? chunk.delta : chunk
         const rawChunk = chunk.type === 'finish' ? chunk.chunk : chunk
@@ -828,7 +828,7 @@ export default class OpenAIProvider extends BaseOpenAiProvider {
     }
 
     reqMessages = processReqMessages(model, reqMessages)
-    // 等待接口返回流
+    // Wait for response stream
     onChunk({ type: ChunkType.LLM_RESPONSE_CREATED })
     const start_time_millsec = new Date().getTime()
     const stream = await this.sdk.chat.completions
@@ -857,7 +857,7 @@ export default class OpenAIProvider extends BaseOpenAiProvider {
 
     await processStream(stream, 0).finally(cleanup)
 
-    // 捕获signal的错误
+    // Catch errors from signal
     await signalPromise?.promise?.catch((error) => {
       throw error
     })
@@ -981,7 +981,7 @@ export default class OpenAIProvider extends BaseOpenAiProvider {
       max_tokens: 1000
     })
 
-    // 针对思考类模型的返回，总结仅截取</think>之后的内容
+    // For reasoning models, only take the content after </think> for the summary
     let content = response.choices[0].message?.content || ''
     content = content.replace(/^<think>(.*?)<\/think>/s, '')
 
@@ -1032,7 +1032,7 @@ export default class OpenAIProvider extends BaseOpenAiProvider {
       )
       .finally(cleanup)
 
-    // 针对思考类模型的返回，总结仅截取</think>之后的内容
+    // For reasoning models, only take the content after </think> for the summary
     let content = response.choices[0].message?.content || ''
     content = content.replace(/^<think>(.*?)<\/think>/s, '')
 
@@ -1114,7 +1114,7 @@ export default class OpenAIProvider extends BaseOpenAiProvider {
       model: model.id,
       messages: [{ role: 'user', content: 'hi' }],
       max_completion_tokens: 1, // openAI
-      max_tokens: 1, // openAI deprecated 但大部分OpenAI兼容的提供商继续用这个头
+      max_tokens: 1, // openAI deprecated but most OpenAI-compatible providers still use this field
       enable_thinking: false, // qwen3
       stream
     }
@@ -1129,7 +1129,7 @@ export default class OpenAIProvider extends BaseOpenAiProvider {
         return { valid: true, error: null }
       } else {
         const response: any = await this.sdk.chat.completions.create(body as any)
-        // 等待整个流式响应结束
+        // Wait for the entire streaming response to finish
         let hasContent = false
         for await (const chunk of response) {
           if (chunk.choices?.[0]?.delta?.content) {
@@ -1214,7 +1214,7 @@ export default class OpenAIProvider extends BaseOpenAiProvider {
       return
     }
     const defaultHeaders = store.getState().copilot.defaultHeaders
-    // copilot每次请求前需要重新获取token，因为token中附带时间戳
+    // Copilot requires refreshing token before each request due to timestamp in token
     const { token } = await window.api.copilot.getToken(defaultHeaders)
     this.sdk.apiKey = token
   }

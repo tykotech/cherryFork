@@ -3,26 +3,26 @@ import store from '@renderer/store'
 import { LRUCache } from 'lru-cache'
 
 /**
- * FNV-1a哈希函数，用于计算字符串哈希值
- * @param input 输入字符串
- * @param maxInputLength 最大计算长度，默认50000字符
- * @returns 哈希值的36进制字符串表示
+ * FNV-1a hash function for computing string hash.
+ * @param input input string
+ * @param maxInputLength maximum number of chars to hash, default 50000
+ * @returns hash as base-36 string
  */
 const fastHash = (input: string, maxInputLength: number = 50000) => {
-  let hash = 2166136261 // FNV偏移基数
+  let hash = 2166136261 // FNV offset basis
   const count = Math.min(input.length, maxInputLength)
   for (let i = 0; i < count; i++) {
     hash ^= input.charCodeAt(i)
-    hash *= 16777619 // FNV素数
-    hash >>>= 0 // 保持为32位无符号整数
+    hash *= 16777619 // FNV prime
+    hash >>>= 0 // Ensure 32-bit unsigned integer
   }
   return hash.toString(36)
 }
 
 /**
- * 增强的哈希函数，对长内容使用三段采样计算哈希
- * @param input 输入字符串
- * @returns 哈希值或组合哈希值
+ * Enhanced hash: sample three sections of long input to compute hash.
+ * @param input input string
+ * @returns hash or combined hash
  */
 const enhancedHash = (input: string) => {
   const THRESHOLD = 50000
@@ -33,7 +33,7 @@ const enhancedHash = (input: string) => {
 
   const mid = Math.floor(input.length / 2)
 
-  // 三段hash保证唯一性
+  // Three-section hash for uniqueness
   const frontSection = input.slice(0, 10000)
   const midSection = input.slice(mid - 15000, mid + 15000)
   const endSection = input.slice(-10000)
@@ -41,11 +41,11 @@ const enhancedHash = (input: string) => {
   return `${fastHash(frontSection)}-${fastHash(midSection)}-${fastHash(endSection)}`
 }
 
-// 高亮结果缓存实例
+// Highlight result cache instance
 let highlightCache: LRUCache<string, string> | null = null
 
 /**
- * 检查缓存设置是否发生变化
+ * Check if cache settings have changed.
  */
 const haveSettingsChanged = (prev: any, current: any) => {
   if (!prev || !current) return true
@@ -59,12 +59,11 @@ const haveSettingsChanged = (prev: any, current: any) => {
 }
 
 /**
- * 代码缓存服务
- * 提供代码高亮结果的缓存管理和哈希计算功能
+ * Code cache service: manages syntax highlight caching and hash computing.
  */
 export const CodeCacheService = {
   /**
-   * 缓存上次使用的配置
+   * Cache of last used configuration
    */
   _lastConfig: {
     codeCacheable: false,
@@ -74,8 +73,8 @@ export const CodeCacheService = {
   },
 
   /**
-   * 获取当前缓存配置
-   * @returns 当前配置对象
+   * Get current cache configuration
+   * @returns current configuration object
    */
   getConfig() {
     try {
@@ -91,14 +90,14 @@ export const CodeCacheService = {
   },
 
   /**
-   * 检查并确保缓存配置是最新的
-   * 每次缓存操作前调用
-   * @returns 当前缓存实例或null
+   * Ensure cache configuration is up to date.
+   * Called before each cache operation.
+   * @returns current cache instance or null
    */
   ensureCache() {
     const currentConfig = this.getConfig()
 
-    // 检查配置是否变化
+    // Check if configuration has changed
     if (haveSettingsChanged(this._lastConfig, currentConfig)) {
       this._lastConfig = currentConfig
       this._updateCacheInstance(currentConfig)
@@ -108,8 +107,8 @@ export const CodeCacheService = {
   },
 
   /**
-   * 更新缓存实例
-   * @param config 缓存配置
+   * Update cache instance based on config.
+   * @param config cache configuration
    */
   _updateCacheInstance(config: any) {
     try {
@@ -117,24 +116,24 @@ export const CodeCacheService = {
       const newMaxSize = codeCacheMaxSize * 1000
       const newTTLMilliseconds = codeCacheTTL * 60 * 1000
 
-      // 根据配置决定是否创建或清除缓存
+      // Create or clear cache based on configuration
       if (codeCacheable) {
         if (!highlightCache) {
-          // 缓存不存在，创建新缓存
+          // Cache doesn't exist, create new cache
           highlightCache = new LRUCache<string, string>({
-            max: 200, // 最大缓存条目数
-            maxSize: newMaxSize, // 最大缓存大小
-            sizeCalculation: (value) => value.length, // 缓存大小计算
-            ttl: newTTLMilliseconds // 缓存过期时间（毫秒）
+            max: 200, // Maximum cache entries
+            maxSize: newMaxSize, // Maximum cache size
+            sizeCalculation: (value) => value.length, // Cache size calculation
+            ttl: newTTLMilliseconds // Cache expiration time (milliseconds)
           })
           return
         }
 
-        // 尝试从当前缓存获取配置信息
+        // Try to get configuration info from current cache
         const maxSize = highlightCache.max || 0
         const ttl = highlightCache.ttl || 0
 
-        // 检查实际配置是否变化
+        // Check if actual configuration has changed
         if (maxSize !== newMaxSize || ttl !== newTTLMilliseconds) {
           Logger.log('[CodeCacheService] Cache config changed, recreating cache')
           highlightCache.clear()
@@ -146,7 +145,7 @@ export const CodeCacheService = {
           })
         }
       } else if (highlightCache) {
-        // 缓存被禁用，清理资源
+        // Caching disabled, release resources
         highlightCache.clear()
         highlightCache = null
       }
@@ -156,24 +155,24 @@ export const CodeCacheService = {
   },
 
   /**
-   * 生成缓存键
-   * @param code 代码内容
-   * @param language 代码语言
-   * @param theme 高亮主题
-   * @returns 缓存键
+   * Generate cache key
+   * @param code code content
+   * @param language code language
+   * @param theme highlight theme
+   * @returns cache key
    */
   generateCacheKey: (code: string, language: string, theme: string) => {
     return `${language}|${theme}|${code.length}|${enhancedHash(code)}`
   },
 
   /**
-   * 获取缓存的高亮结果
-   * @param key 缓存键
-   * @returns 缓存的HTML或null
+   * Get cached highlight result
+   * @param key cache key
+   * @returns HTML string or null
    */
   getCachedResult: (key: string) => {
     try {
-      // 确保缓存配置是最新的
+      // Ensure cache configuration is up to date
       CodeCacheService.ensureCache()
 
       if (!store || !store.getState) return null
@@ -188,20 +187,20 @@ export const CodeCacheService = {
   },
 
   /**
-   * 设置缓存结果
-   * @param key 缓存键
-   * @param html 高亮HTML
-   * @param codeLength 代码长度
+   * Set cache result
+   * @param key cache key
+   * @param html highlight HTML
+   * @param codeLength length of code
    */
   setCachedResult: (key: string, html: string, codeLength: number) => {
     try {
-      // 确保缓存配置是最新的
+      // Ensure cache configuration is up to date
       CodeCacheService.ensureCache()
 
       if (!store || !store.getState) return
       const { codeCacheable, codeCacheThreshold } = store.getState().settings
 
-      // 判断是否可以缓存
+      // Check if caching is allowed
       if (!codeCacheable || codeLength < codeCacheThreshold * 1000) return
 
       highlightCache?.set(key, html)
@@ -211,7 +210,7 @@ export const CodeCacheService = {
   },
 
   /**
-   * 清空缓存
+   * Clear the cache
    */
   clear: () => {
     highlightCache?.clear()

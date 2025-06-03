@@ -37,14 +37,14 @@ import { processKnowledgeSearch } from './KnowledgeService'
 import { filterContextMessages, filterMessages, filterUsefulMessages } from './MessagesService'
 import WebSearchService from './WebSearchService'
 
-// TODO：考虑拆开
+// TODO: Consider splitting
 async function fetchExternalTool(
   lastUserMessage: Message,
   assistant: Assistant,
   onChunkReceived: (chunk: Chunk) => void,
   lastAnswer?: Message
 ): Promise<ExternalToolResult> {
-  // 可能会有重复？
+  // Might be duplicated?
   const knowledgeBaseIds = getKnowledgeBaseIds(lastUserMessage)
   const hasKnowledgeBase = !isEmpty(knowledgeBaseIds)
   const knowledgeRecognition = assistant.knowledgeRecognition || 'on'
@@ -53,7 +53,7 @@ async function fetchExternalTool(
   const shouldWebSearch = !!assistant.webSearchProviderId && webSearchProvider !== null
   const shouldKnowledgeSearch = hasKnowledgeBase
 
-  // 在工具链开始时发送进度通知
+  // Send progress notification at the start of the toolchain
   const willUseTools = shouldWebSearch || shouldKnowledgeSearch
   if (willUseTools) {
     onChunkReceived({ type: ChunkType.EXTERNEL_TOOL_IN_PROGRESS })
@@ -63,7 +63,7 @@ async function fetchExternalTool(
   const extract = async (): Promise<ExtractResults | undefined> => {
     if (!lastUserMessage) return undefined
 
-    // 根据配置决定是否需要提取
+    // Decide whether extraction is needed based on configuration
     const needWebExtract = shouldWebSearch
     const needKnowledgeExtract = hasKnowledgeBase && knowledgeRecognition === 'on'
 
@@ -91,7 +91,7 @@ async function fetchExternalTool(
       if (!keywords) return getFallbackResult()
 
       const extracted = extractInfoFromXML(keywords)
-      // 根据需求过滤结果
+      // Filter results as needed
       return {
         websearch: needWebExtract ? extracted?.websearch : undefined,
         knowledge: needKnowledgeExtract ? extracted?.knowledge : undefined
@@ -160,7 +160,7 @@ async function fetchExternalTool(
   ): Promise<KnowledgeReference[] | undefined> => {
     if (!hasKnowledgeBase) return
 
-    // 知识库搜索条件
+    // Knowledge base search criteria
     let searchCriteria: { question: string[]; rewrite: string }
     if (knowledgeRecognition === 'off') {
       const directContent = getMainTextContent(lastUserMessage)
@@ -198,7 +198,7 @@ async function fetchExternalTool(
   let extractResults: ExtractResults | undefined
 
   try {
-    // 根据配置决定是否需要提取
+    // Decide whether extraction is needed based on configuration
     if (shouldWebSearch || hasKnowledgeBase) {
       extractResults = await extract()
       Logger.log('[fetchExternalTool] Extraction results:', extractResults)
@@ -207,7 +207,7 @@ async function fetchExternalTool(
     let webSearchResponseFromSearch: WebSearchResponse | undefined
     let knowledgeReferencesFromSearch: KnowledgeReference[] | undefined
 
-    // 并行执行搜索
+    // Execute searches in parallel
     if (shouldWebSearch || shouldKnowledgeSearch) {
       ;[webSearchResponseFromSearch, knowledgeReferencesFromSearch] = await Promise.all([
         searchTheWeb(extractResults),
@@ -215,7 +215,7 @@ async function fetchExternalTool(
       ])
     }
 
-    // 存储搜索结果
+    // Store search results
     if (lastUserMessage) {
       if (webSearchResponseFromSearch) {
         window.keyv.set(`web-search-${lastUserMessage.id}`, webSearchResponseFromSearch)
@@ -225,7 +225,7 @@ async function fetchExternalTool(
       }
     }
 
-    // 发送工具执行完成通知
+    // Send tool execution complete notification
     if (willUseTools) {
       onChunkReceived({
         type: ChunkType.EXTERNEL_TOOL_COMPLETE,
@@ -257,7 +257,7 @@ async function fetchExternalTool(
     if (isAbortError(error)) throw error
     console.error('Tool execution failed:', error)
 
-    // 发送错误状态
+    // Send error status
     if (willUseTools) {
       onChunkReceived({
         type: ChunkType.EXTERNEL_TOOL_COMPLETE,

@@ -10,11 +10,11 @@ const StyleSheetManager = ({ children }: StyleSheetManagerProps): React.ReactEle
   return (
     <StyledComponentsStyleSheetManager
       shouldForwardProp={(prop, element) => {
-        // 对于 HTML 元素，使用 isPropValid 检查
+        // For HTML elements, use isPropValid to check
         if (typeof element === 'string') {
           return isPropValid(prop)
         }
-        // 对于自定义组件，允许所有非特殊属性通过
+        // For custom components, allow all non-special props
         return prop !== '$' && !prop.startsWith('$')
       }}>
       {children}

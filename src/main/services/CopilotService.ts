@@ -6,13 +6,13 @@ import path from 'path'
 
 import aoxisProxy from './AxiosProxy'
 
-// 配置常量，集中管理
+// Configuration constants, centralized management
 const CONFIG = {
   GITHUB_CLIENT_ID: 'Iv1.b507a08c87ecfe98',
   POLLING: {
     MAX_ATTEMPTS: 8,
     INITIAL_DELAY_MS: 1000,
-    MAX_DELAY_MS: 16000 // 最大延迟16秒
+    MAX_DELAY_MS: 16000 // Max delay 16 seconds
   },
   DEFAULT_HEADERS: {
     accept: 'application/json',
@@ -22,7 +22,7 @@ const CONFIG = {
     'user-agent': 'GithubCopilot/1.155.0',
     'accept-encoding': 'gzip,deflate,br'
   },
-  // API端点集中管理
+  // API endpoints centralized
   API_URLS: {
     GITHUB_USER: 'https://api.github.com/user',
     GITHUB_DEVICE_CODE: 'https://github.com/login/device/code',
@@ -31,7 +31,7 @@ const CONFIG = {
   }
 }
 
-// 接口定义移到顶部，便于查阅
+// Move interface definitions to the top for easy reference
 interface UserResponse {
   login: string
   avatar: string
@@ -51,7 +51,7 @@ interface CopilotTokenResponse {
   token: string
 }
 
-// 自定义错误类，统一错误处理
+// Custom error class for unified error handling
 class CopilotServiceError extends Error {
   constructor(
     message: string,
@@ -72,7 +72,7 @@ class CopilotService {
   }
 
   /**
-   * 设置自定义请求头
+   * Set custom request headers
    */
   private updateHeaders = (headers?: Record<string, string>): void => {
     if (headers && Object.keys(headers).length > 0) {
@@ -81,7 +81,7 @@ class CopilotService {
   }
 
   /**
-   * 获取GitHub登录信息
+   * Get GitHub login info
    */
   public getUser = async (_: Electron.IpcMainInvokeEvent, token: string): Promise<UserResponse> => {
     try {
@@ -103,12 +103,12 @@ class CopilotService {
       }
     } catch (error) {
       console.error('Failed to get user information:', error)
-      throw new CopilotServiceError('无法获取GitHub用户信息', error)
+      throw new CopilotServiceError('Failed to get GitHub user info', error)
     }
   }
 
   /**
-   * 获取GitHub设备授权信息
+   * Get GitHub device authorization info
    */
   public getAuthMessage = async (
     _: Electron.IpcMainInvokeEvent,
@@ -129,12 +129,12 @@ class CopilotService {
       return response.data
     } catch (error) {
       console.error('Failed to get auth message:', error)
-      throw new CopilotServiceError('无法获取GitHub授权信息', error)
+      throw new CopilotServiceError('Failed to get GitHub authorization info', error)
     }
   }
 
   /**
-   * 使用设备码获取访问令牌 - 优化轮询逻辑
+   * Use device code to get access token - improved polling logic
    */
   public getCopilotToken = async (
     _: Electron.IpcMainInvokeEvent,
@@ -164,10 +164,10 @@ class CopilotService {
           return { access_token }
         }
       } catch (error) {
-        // 指数退避策略
+        // Exponential backoff
         currentDelay = Math.min(currentDelay * 2, CONFIG.POLLING.MAX_DELAY_MS)
 
-        // 仅在最后一次尝试失败时记录详细错误
+        // Only log detailed error on last attempt
         const isLastAttempt = attempt === CONFIG.POLLING.MAX_ATTEMPTS - 1
         if (isLastAttempt) {
           console.error(`Token polling failed after ${CONFIG.POLLING.MAX_ATTEMPTS} attempts:`, error)
@@ -175,11 +175,11 @@ class CopilotService {
       }
     }
 
-    throw new CopilotServiceError('获取访问令牌超时，请重试')
+    throw new CopilotServiceError('Timeout getting access token, please try again')
   }
 
   /**
-   * 保存Copilot令牌到本地文件
+   * Save Copilot token to local file
    */
   public saveCopilotToken = async (_: Electron.IpcMainInvokeEvent, token: string): Promise<void> => {
     try {
@@ -187,12 +187,12 @@ class CopilotService {
       await fs.writeFile(this.tokenFilePath, encryptedToken)
     } catch (error) {
       console.error('Failed to save token:', error)
-      throw new CopilotServiceError('无法保存访问令牌', error)
+      throw new CopilotServiceError('Failed to save access token', error)
     }
   }
 
   /**
-   * 从本地文件读取令牌并获取Copilot令牌
+   * Read token from local file and get Copilot token
    */
   public getToken = async (
     _: Electron.IpcMainInvokeEvent,
@@ -216,12 +216,12 @@ class CopilotService {
       return response.data
     } catch (error) {
       console.error('Failed to get Copilot token:', error)
-      throw new CopilotServiceError('无法获取Copilot令牌，请重新授权', error)
+      throw new CopilotServiceError('Failed to get Copilot token, please re-authorize', error)
     }
   }
 
   /**
-   * 退出登录，删除本地token文件
+   * Logout, delete local token file
    */
   public logout = async (): Promise<void> => {
     try {
@@ -230,17 +230,17 @@ class CopilotService {
         await fs.unlink(this.tokenFilePath)
         Logger.log('Successfully logged out from Copilot')
       } catch (error) {
-        // 文件不存在不是错误，只是记录一下
+        // File not found is not an error, just log
         Logger.log('Token file not found, nothing to delete')
       }
     } catch (error) {
       console.error('Failed to logout:', error)
-      throw new CopilotServiceError('无法完成退出登录操作', error)
+      throw new CopilotServiceError('Failed to complete logout operation', error)
     }
   }
 
   /**
-   * 辅助方法：延迟执行
+   * Helper method: delay execution
    */
   private delay = (ms: number): Promise<void> => {
     return new Promise((resolve) => setTimeout(resolve, ms))

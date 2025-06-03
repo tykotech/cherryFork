@@ -50,10 +50,10 @@ const PopupContainer: React.FC<Props> = ({ model, resolve }) => {
   const [_searchText, setSearchText] = useState('')
   const searchText = useDeferredValue(_searchText)
 
-  // 当前选中的模型ID
+  // Current selected model ID
   const currentModelId = model ? getModelUniqId(model) : ''
 
-  // 管理滚动和焦点状态
+  // Manage scroll and focus state
   const {
     focusedItemKey,
     scrollTrigger,
@@ -94,7 +94,7 @@ const PopupContainer: React.FC<Props> = ({ model, resolve }) => {
     [_setStickyGroup]
   )
 
-  // 根据输入的文本筛选模型
+  // Filter models based on input text
   const getFilteredModels = useCallback(
     (provider) => {
       let models = provider.models.filter((m) => !isEmbeddingModel(m) && !isRerankModel(m))
@@ -116,7 +116,7 @@ const PopupContainer: React.FC<Props> = ({ model, resolve }) => {
     [searchText, t]
   )
 
-  // 创建模型列表项
+  // Create model list item
   const createModelItem = useCallback(
     (model: Model, provider: any, isPinned: boolean): FlatListItem => {
       const modelId = getModelUniqId(model)
@@ -149,18 +149,18 @@ const PopupContainer: React.FC<Props> = ({ model, resolve }) => {
     [t, currentModelId]
   )
 
-  // 构建扁平化列表数据
+  // Build flattened list data
   const listItems = useMemo(() => {
     const items: FlatListItem[] = []
 
-    // 添加置顶模型分组（仅在无搜索文本时）
+    // Add pinned models group (only when there is no search text)
     if (searchText.length === 0 && pinnedModels.length > 0) {
       const pinnedItems = providers.flatMap((p) =>
         p.models.filter((m) => pinnedModels.includes(getModelUniqId(m))).map((m) => createModelItem(m, p, true))
       )
 
       if (pinnedItems.length > 0) {
-        // 添加置顶分组标题
+        // Add pinned group title
         items.push({
           key: 'pinned-group',
           type: 'group',
@@ -172,7 +172,7 @@ const PopupContainer: React.FC<Props> = ({ model, resolve }) => {
       }
     }
 
-    // 添加常规模型分组
+    // Add regular models group
     providers.forEach((p) => {
       const filteredModels = getFilteredModels(p).filter(
         (m) => searchText.length > 0 || !pinnedModels.includes(getModelUniqId(m))
@@ -180,7 +180,7 @@ const PopupContainer: React.FC<Props> = ({ model, resolve }) => {
 
       if (filteredModels.length === 0) return
 
-      // 添加 provider 分组标题
+      // Add provider group title
       items.push({
         key: `provider-${p.id}`,
         type: 'group',
@@ -191,7 +191,7 @@ const PopupContainer: React.FC<Props> = ({ model, resolve }) => {
       items.push(...filteredModels.map((m) => createModelItem(m, p, pinnedModels.includes(getModelUniqId(m)))))
     })
 
-    // 移除第一个分组标题，使用 sticky group banner 替代，模拟 sticky 效果
+    // Remove the first group title, use sticky group banner instead, simulate sticky effect
     if (items.length > 0 && items[0].type === 'group') {
       firstGroupRef.current = items[0]
       items.shift()
@@ -201,17 +201,17 @@ const PopupContainer: React.FC<Props> = ({ model, resolve }) => {
     return items
   }, [providers, getFilteredModels, pinnedModels, searchText, t, createModelItem])
 
-  // 获取可选择的模型项（过滤掉分组标题）
+  // Get selectable model items (filter out group titles)
   const modelItems = useMemo(() => {
     return listItems.filter((item) => item.type === 'model')
   }, [listItems])
 
-  // 当搜索文本变化时更新滚动触发器
+  // Update scroll trigger when search text changes
   useEffect(() => {
     searchChanged(searchText)
   }, [searchText, searchChanged])
 
-  // 基于滚动位置更新sticky分组标题
+  // Update sticky group title based on scroll position
   const updateStickyGroup = useCallback(
     (scrollOffset?: number) => {
       if (listItems.length === 0) {
@@ -221,10 +221,10 @@ const PopupContainer: React.FC<Props> = ({ model, resolve }) => {
 
       let newStickyGroup: FlatListItem | null = null
 
-      // 基于滚动位置计算当前可见的第一个项的索引
+      // Calculate the index of the first visible item based on scroll position
       const estimatedIndex = Math.floor((scrollOffset ?? lastScrollOffset) / ITEM_HEIGHT)
 
-      // 从该索引向前查找最近的分组标题
+      // Find the nearest group title by looking up from this index
       for (let i = estimatedIndex - 1; i >= 0; i--) {
         if (i < listItems.length && listItems[i]?.type === 'group') {
           newStickyGroup = listItems[i]
@@ -232,7 +232,7 @@ const PopupContainer: React.FC<Props> = ({ model, resolve }) => {
         }
       }
 
-      // 找不到则使用第一个分组标题
+      // If not found, use the first group title
       if (!newStickyGroup) newStickyGroup = firstGroupRef.current
 
       if (stickyGroup?.key !== newStickyGroup?.key) {
@@ -242,7 +242,7 @@ const PopupContainer: React.FC<Props> = ({ model, resolve }) => {
     [listItems, lastScrollOffset, setStickyGroup, stickyGroup]
   )
 
-  // 处理列表滚动事件，更新lastScrollOffset并更新sticky分组
+  // Handle list scroll event, update lastScrollOffset and sticky group
   const handleScroll = useCallback(
     ({ scrollOffset }) => {
       setLastScrollOffset(scrollOffset)
@@ -250,28 +250,28 @@ const PopupContainer: React.FC<Props> = ({ model, resolve }) => {
     [setLastScrollOffset]
   )
 
-  // 列表项更新时，更新焦点
+  // Update focus when list item updates
   useEffect(() => {
     if (!loading) focusOnListChange(modelItems)
   }, [modelItems, focusOnListChange, loading])
 
-  // 列表项更新时，更新sticky分组
+  // Update sticky group when list item updates
   useEffect(() => {
     if (!loading) updateStickyGroup()
   }, [modelItems, updateStickyGroup, loading])
 
-  // 滚动到聚焦项
+  // Scroll to focused item
   useLayoutEffect(() => {
     if (scrollTrigger === 'none' || !focusedItemKey) return
 
     const index = listItems.findIndex((item) => item.key === focusedItemKey)
     if (index < 0) return
 
-    // 根据触发源决定滚动对齐方式
+    // Determine scroll alignment based on trigger source
     const alignment = scrollTrigger === 'keyboard' ? 'auto' : 'center'
     listRef.current?.scrollToItem(index, alignment)
 
-    // 滚动后重置触发器
+    // Reset trigger after scrolling
     setScrollTrigger('none')
   }, [focusedItemKey, scrollTrigger, listItems, setScrollTrigger])
 
@@ -285,12 +285,12 @@ const PopupContainer: React.FC<Props> = ({ model, resolve }) => {
     [resolve]
   )
 
-  // 处理键盘导航
+  // Handle keyboard navigation
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (!open || modelItems.length === 0 || e.isComposing) return
 
-      // 键盘操作时禁用鼠标 hover
+      // Disable mouse hover during keyboard operations
       if (['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Enter', 'Escape'].includes(e.key)) {
         e.preventDefault()
         e.stopPropagation()
@@ -346,7 +346,7 @@ const PopupContainer: React.FC<Props> = ({ model, resolve }) => {
     SelectModelPopup.hide()
   }, [resolve, setScrollTrigger])
 
-  // 初始化焦点和滚动位置
+  // Initialize focus and scroll position
   useEffect(() => {
     if (!open) return
     setTimeout(() => inputRef.current?.focus(), 0)
@@ -394,7 +394,7 @@ const PopupContainer: React.FC<Props> = ({ model, resolve }) => {
       }}
       closeIcon={null}
       footer={null}>
-      {/* 搜索框 */}
+      {/* Search box */}
       <HStack style={{ padding: '0 12px', marginTop: 5 }}>
         <Input
           prefix={
@@ -404,7 +404,7 @@ const PopupContainer: React.FC<Props> = ({ model, resolve }) => {
           }
           ref={inputRef}
           placeholder={t('models.search')}
-          value={_searchText} // 使用 _searchText，需要实时更新
+          value={_searchText} // Use _searchText, needs to be updated in real-time
           onChange={(e) => setSearchText(e.target.value)}
           allowClear
           autoFocus
@@ -413,7 +413,7 @@ const PopupContainer: React.FC<Props> = ({ model, resolve }) => {
           variant="borderless"
           size="middle"
           onKeyDown={(e) => {
-            // 防止上下键移动光标
+            // Prevent arrow keys from moving the cursor
             if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'Enter') {
               e.preventDefault()
             }
@@ -424,7 +424,7 @@ const PopupContainer: React.FC<Props> = ({ model, resolve }) => {
 
       {listItems.length > 0 ? (
         <ListContainer onMouseMove={() => !isMouseOver && startTransition(() => setIsMouseOver(true))}>
-          {/* Sticky Group Banner，它会替换第一个分组名称 */}
+          {/* Sticky Group Banner, it will replace the first group name */}
           <StickyGroupBanner>{stickyGroup?.name}</StickyGroupBanner>
           <FixedSizeList
             ref={listRef}
@@ -459,7 +459,7 @@ interface VirtualizedRowData {
 }
 
 /**
- * 虚拟化列表行组件，用于避免重新渲染
+ * Virtualized list row component, used to avoid re-rendering
  */
 const VirtualizedRow = React.memo(
   ({ data, index, style }: { data: VirtualizedRowData; index: number; style: React.CSSProperties }) => {

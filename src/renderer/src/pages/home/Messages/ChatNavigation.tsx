@@ -160,11 +160,11 @@ const ChatNavigation: FC<ChatNavigationProps> = ({ containerId }) => {
     return -1
   }
 
-  // 修改 handleCloseChatNavigation 函数
+  // Modify handleCloseChatNavigation function
   const handleCloseChatNavigation = () => {
     setIsVisible(false)
-    // 设置手动关闭状态，1分钟内不响应鼠标靠近事件
-    setManuallyClosedUntil(Date.now() + 60000) // 60000毫秒 = 1分钟
+    // Set manual close state, do not respond to mouse proximity events for 1 minute
+    setManuallyClosedUntil(Date.now() + 60000) // 60000 ms = 1 minute
   }
 
   const handleScrollToTop = () => {
@@ -245,7 +245,7 @@ const ChatNavigation: FC<ChatNavigationProps> = ({ containerId }) => {
 
     // Throttled mouse move handler to improve performance
     const handleMouseMove = (e: MouseEvent) => {
-      // 如果在手动关闭期间，不响应鼠标移动事件
+      // If during manual close period, do not respond to mouse move events
       if (manuallyClosedUntil && Date.now() < manuallyClosedUntil) {
         return
       }

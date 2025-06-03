@@ -135,7 +135,7 @@ const ImagePlaceholder = styled.div`
   display: flex;
   width: 70vh;
   height: 70vh;
-  background-color: var(--color-background-soft);
+  background-color: var(--color-background-soft, #f5f5f5);
   align-items: center;
   justify-content: center;
   padding: 24px;
@@ -151,7 +151,7 @@ const ImageList = styled.ul`
 `
 
 const ImageListItem = styled.li`
-  color: var(--color-text-secondary);
+  color: var(--color-text-secondary, #888888);
   margin-bottom: 10px;
 `
 

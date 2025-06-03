@@ -1,7 +1,7 @@
 import { ScrollAction, ScrollState } from './types'
 
 /**
- * 初始状态
+ * Initial state
  */
 export const initialScrollState: ScrollState = {
   focusedItemKey: '',
@@ -12,10 +12,10 @@ export const initialScrollState: ScrollState = {
 }
 
 /**
- * 滚动状态的 reducer，用于避免复杂依赖可能带来的状态更新问题
- * @param state 当前状态
- * @param action 动作
- * @returns 新的状态
+ * Reducer for scroll state, used to avoid state update issues caused by complex dependencies
+ * @param state Current state
+ * @param action Action
+ * @returns New state
  */
 export const scrollReducer = (state: ScrollState, action: ScrollAction): ScrollState => {
   switch (action.type) {
@@ -75,9 +75,9 @@ export const scrollReducer = (state: ScrollState, action: ScrollAction): ScrollS
     case 'FOCUS_ON_LIST_CHANGE': {
       const { modelItems } = action.payload
 
-      // 在列表变化时尝试聚焦一个模型：
-      // - 如果是 initial 状态，先尝试聚焦当前选中的模型
-      // - 如果是 search 状态，尝试聚焦第一个模型
+      // When the list changes, try to focus a model:
+      // - If it's the initial state, try to focus the currently selected model first
+      // - If it's the search state, try to focus the first model
       let newFocusedKey = ''
       if (state.scrollTrigger === 'initial' || state.scrollTrigger === 'search') {
         const selectedItem = modelItems.find((item) => item.isSelected)

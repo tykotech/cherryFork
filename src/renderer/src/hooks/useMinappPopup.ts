@@ -1,5 +1,6 @@
+import { useMinapps } from '@renderer/hooks/useMinapps'
 import { useRuntime } from '@renderer/hooks/useRuntime'
-import { useSettings } from '@renderer/hooks/useSettings' // 使用设置中的值
+import { useSettings } from '@renderer/hooks/useSettings' // Use values from settings
 import { useAppDispatch } from '@renderer/store'
 import {
   setCurrentMinappId,
@@ -25,24 +26,25 @@ import { MinAppType } from '@renderer/types'
  */
 export const useMinappPopup = () => {
   const dispatch = useAppDispatch()
+  const { minapps } = useMinapps()
   const { openedKeepAliveMinapps, openedOneOffMinapp, minappShow } = useRuntime()
-  const { maxKeepAliveMinapps } = useSettings() // 使用设置中的值
+  const { maxKeepAliveMinapps } = useSettings() // Use values from settings
 
   /** Open a minapp (popup shows and minapp loaded) */
   const openMinapp = (app: MinAppType, keepAlive: boolean = false) => {
     if (keepAlive) {
-      // 如果小程序已经打开，只切换显示
+      // If the minapp is already open, just switch to display it
       if (openedKeepAliveMinapps.some((item) => item.id === app.id)) {
         dispatch(setCurrentMinappId(app.id))
         dispatch(setMinappShow(true))
         return
       }
 
-      // 如果缓存数量未达上限，添加到缓存列表
+      // If the cache count is below the limit, add to the cache list
       if (openedKeepAliveMinapps.length < maxKeepAliveMinapps) {
         dispatch(setOpenedKeepAliveMinapps([app, ...openedKeepAliveMinapps]))
       } else {
-        // 缓存数量达到上限，移除最后一个，添加新的
+        // If the cache count reaches the limit, remove the last one and add the new one
         dispatch(setOpenedKeepAliveMinapps([app, ...openedKeepAliveMinapps.slice(0, maxKeepAliveMinapps - 1)]))
       }
 
@@ -52,7 +54,7 @@ export const useMinappPopup = () => {
       return
     }
 
-    //if the minapp is not keep alive, open it as one-off minapp
+    // If the minapp is not keep alive, open it as one-off minapp
     dispatch(setOpenedOneOffMinapp(app))
     dispatch(setCurrentMinappId(app.id))
     dispatch(setMinappShow(true))
@@ -64,14 +66,14 @@ export const useMinappPopup = () => {
     openMinapp(app, true)
   }
 
-  /** Open a minapp by id (look up the minapp in DEFAULT_MIN_APPS) */
+  /** Open a minapp by id (look up the minapp in the available apps) */
   const openMinappById = (id: string, keepAlive: boolean = false) => {
-    import('@renderer/config/minapps').then(({ DEFAULT_MIN_APPS }) => {
-      const app = DEFAULT_MIN_APPS.find((app) => app?.id === id)
-      if (app) {
-        openMinapp(app, keepAlive)
-      }
-    })
+    const app = minapps.find((app) => app?.id === id)
+    if (app) {
+      openMinapp(app, keepAlive)
+    } else {
+      console.warn(`Minapp with id '${id}' not found in available apps`)
+    }
   }
 
   /** Close a minapp immediately (popup hides and minapp unloaded) */

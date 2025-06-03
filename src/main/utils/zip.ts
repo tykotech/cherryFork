@@ -3,13 +3,13 @@ import zlib from 'node:zlib'
 
 import logger from 'electron-log'
 
-// 将 zlib 的 gzip 和 gunzip 方法转换为 Promise 版本
+// Convert zlib's gzip and gunzip methods to Promise versions
 const gzipPromise = util.promisify(zlib.gzip)
 const gunzipPromise = util.promisify(zlib.gunzip)
 
 /**
- * 压缩字符串
- * @returns {Promise<Buffer>} 压缩后的 Buffer
+ * Compress a string
+ * @returns {Promise<Buffer>} Compressed Buffer
  * @param str
  */
 export async function compress(str) {
@@ -23,9 +23,9 @@ export async function compress(str) {
 }
 
 /**
- * 解压缩 Buffer 到 JSON 字符串
- * @param {Buffer} compressedBuffer - 压缩的 Buffer
- * @returns {Promise<string>} 解压缩后的 JSON 字符串
+ * Decompress Buffer to JSON string
+ * @param {Buffer} compressedBuffer - Compressed Buffer
+ * @returns {Promise<string>} Decompressed JSON string
  */
 export async function decompress(compressedBuffer) {
   try {

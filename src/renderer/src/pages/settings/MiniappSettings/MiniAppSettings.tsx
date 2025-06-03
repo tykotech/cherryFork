@@ -1,5 +1,5 @@
-import { UndoOutlined } from '@ant-design/icons' // 导入重置图标
-import { DEFAULT_MIN_APPS } from '@renderer/config/minapps'
+import { UndoOutlined } from '@ant-design/icons' // Import reset icon
+import { getCurrentMinApps } from '@renderer/config/minapps'
 import { useTheme } from '@renderer/context/ThemeProvider'
 import { useMinapps } from '@renderer/hooks/useMinapps'
 import { useSettings } from '@renderer/hooks/useSettings'
@@ -17,7 +17,7 @@ import styled from 'styled-components'
 import { SettingContainer, SettingDescription, SettingDivider, SettingGroup, SettingRowTitle, SettingTitle } from '..'
 import MiniAppIconsManager from './MiniAppIconsManager'
 
-// 默认小程序缓存数量
+// Default mini app cache count
 const DEFAULT_MAX_KEEPALIVE = 3
 
 const MiniAppSettings: FC = () => {
@@ -32,20 +32,30 @@ const MiniAppSettings: FC = () => {
   const [messageApi, contextHolder] = message.useMessage()
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
 
-  const handleResetMinApps = useCallback(() => {
-    setVisibleMiniApps(DEFAULT_MIN_APPS)
-    setDisabledMiniApps([])
-    updateMinapps(DEFAULT_MIN_APPS)
-    updateDisabledMinapps([])
-  }, [updateDisabledMinapps, updateMinapps])
+  const handleResetMinApps = useCallback(async () => {
+    try {
+      const allApps = await getCurrentMinApps()
+      setVisibleMiniApps(allApps)
+      setDisabledMiniApps([])
+      updateMinapps(allApps)
+      updateDisabledMinapps([])
+    } catch (error) {
+      console.error('Failed to reset mini apps:', error)
+      // Fallback to current minapps if reset fails
+      setVisibleMiniApps(minapps)
+      setDisabledMiniApps([])
+      updateMinapps(minapps)
+      updateDisabledMinapps([])
+    }
+  }, [minapps, updateDisabledMinapps, updateMinapps])
 
-  // 恢复默认缓存数量
+  // Restore default cache count
   const handleResetCacheLimit = useCallback(() => {
     dispatch(setMaxKeepAliveMinapps(DEFAULT_MAX_KEEPALIVE))
     messageApi.info(t('settings.miniapps.cache_change_notice'))
   }, [dispatch, messageApi, t])
 
-  // 处理缓存数量变更
+  // Handle cache count change
   const handleCacheChange = useCallback(
     (value: number) => {
       dispatch(setMaxKeepAliveMinapps(value))
@@ -62,7 +72,7 @@ const MiniAppSettings: FC = () => {
     [dispatch, messageApi, t]
   )
 
-  // 组件卸载时清除定时器
+  // Clear timer on component unmount
   useEffect(() => {
     return () => {
       if (debounceTimerRef.current) {
@@ -73,7 +83,7 @@ const MiniAppSettings: FC = () => {
 
   return (
     <SettingContainer theme={theme}>
-      {contextHolder} {/* 添加消息上下文 */}
+      {contextHolder} {/* Add message context */}
       <SettingGroup theme={theme}>
         <SettingTitle>{t('settings.miniapps.title')}</SettingTitle>
         <SettingDivider />
@@ -105,7 +115,7 @@ const MiniAppSettings: FC = () => {
         </SettingRow>
         <SettingDivider />
 
-        {/* 缓存小程序数量设置 */}
+        {/* Cache mini app count setting */}
         <SettingRow>
           <SettingLabelGroup>
             <SettingRowTitle>{t('settings.miniapps.cache_title')}</SettingRowTitle>
@@ -149,7 +159,7 @@ const MiniAppSettings: FC = () => {
   )
 }
 
-// 修改和新增样式
+// Modified and new styles
 const SettingRow = styled.div`
   display: flex;
   align-items: flex-start;
@@ -162,7 +172,7 @@ const SettingLabelGroup = styled.div`
   flex: 1;
 `
 
-// 新增控件容器，包含滑块和恢复默认按钮
+// New control container, includes slider and reset button
 const CacheSettingControls = styled.div`
   display: flex;
   flex-direction: column;
@@ -189,14 +199,14 @@ const SliderWithResetContainer = styled.div`
   }
 `
 
-// 重置按钮样式
+// Reset button style
 const ResetButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
   width: 28px;
   height: 28px;
-  min-width: 28px; /* 确保不会被压缩 */
+  min-width: 28px; /* Ensure it won't be compressed */
   border-radius: 4px;
   border: 1px solid var(--color-border);
   background-color: var(--color-bg-1);
@@ -221,7 +231,7 @@ const ResetButtonWrapper = styled.div`
   justify-content: center;
 `
 
-// 新增: 带边框的容器组件
+// New: Bordered container component
 const BorderedContainer = styled.div`
   border: 1px solid var(--color-border);
   border-radius: 8px;

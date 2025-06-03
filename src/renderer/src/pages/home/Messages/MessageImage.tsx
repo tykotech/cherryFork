@@ -31,17 +31,17 @@ const MessageImage: FC<Props> = ({ block }) => {
       document.body.removeChild(link)
       window.message.success(t('message.download.success'))
     } catch (error) {
-      console.error('下载图片失败:', error)
+      console.error('Failed to download image:', error)
       window.message.error(t('message.download.failed'))
     }
   }
 
-  // 复制图片到剪贴板
+  // Copy image to clipboard
   const onCopy = async (type: string, image: string) => {
     try {
       switch (type) {
         case 'base64': {
-          // 处理 base64 格式的图片
+          // Handle base64 format image
           const parts = image.split(';base64,')
           if (parts.length === 2) {
             const mimeType = parts[0].replace('data:', '')
@@ -62,13 +62,13 @@ const MessageImage: FC<Props> = ({ block }) => {
             const blob = new Blob(byteArrays, { type: mimeType })
             await navigator.clipboard.write([new ClipboardItem({ [mimeType]: blob })])
           } else {
-            throw new Error('无效的 base64 图片格式')
+            throw new Error('Invalid base64 image format')
           }
           break
         }
         case 'url':
           {
-            // 处理 URL 格式的图片
+            // Handle URL format image
             const response = await fetch(image)
             const blob = await response.blob()
 
@@ -83,7 +83,7 @@ const MessageImage: FC<Props> = ({ block }) => {
 
       window.message.success(t('message.copy.success'))
     } catch (error) {
-      console.error('复制图片失败:', error)
+      console.error('Failed to copy image:', error)
       window.message.error(t('message.copy.failed'))
     }
   }

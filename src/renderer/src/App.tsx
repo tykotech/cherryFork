@@ -5,6 +5,7 @@ import { Provider } from 'react-redux'
 import { HashRouter, Route, Routes } from 'react-router-dom'
 import { PersistGate } from 'redux-persist/integration/react'
 
+import MinAppsInitializer from './components/app/MinAppsInitializer'
 import Sidebar from './components/app/Sidebar'
 import TopViewContainer from './components/TopView'
 import AntdProvider from './context/AntdProvider'
@@ -29,6 +30,7 @@ function App(): React.ReactElement {
           <AntdProvider>
             <SyntaxHighlighterProvider>
               <PersistGate loading={null} persistor={persistor}>
+                <MinAppsInitializer />
                 <TopViewContainer>
                   <HashRouter>
                     <NavigationHandler />

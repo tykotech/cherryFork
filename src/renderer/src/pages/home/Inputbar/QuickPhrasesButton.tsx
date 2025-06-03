@@ -90,10 +90,10 @@ const QuickPhrasesButton = ({ ref, setInputValue, resizeTextArea, ToolbarButton,
       }
     ]
     if (formData.location === 'assistant') {
-      // 添加到助手的 regularPhrases
+      // Add to assistant's regularPhrases
       await updateAssistant({ ...assistant, regularPhrases: updatedPrompts })
     } else {
-      // 添加到全局 Quick Phrases
+      // Add to global Quick Phrases
       await QuickPhraseService.add(formData)
     }
     setIsModalOpen(false)
@@ -167,17 +167,17 @@ const QuickPhrasesButton = ({ ref, setInputValue, resizeTextArea, ToolbarButton,
         centered>
         <Space direction="vertical" style={{ width: '100%' }} size="middle">
           <div>
-            <Label>{t('settings.quickPhrase.titleLabel')}</Label>
+            <Label>{t('settings.quickPhrase.titleLabel', 'Title')}</Label>
             <Input
-              placeholder={t('settings.quickPhrase.titlePlaceholder')}
+              placeholder={t('settings.quickPhrase.titlePlaceholder', 'Enter a title')}
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
             />
           </div>
           <div>
-            <Label>{t('settings.quickPhrase.contentLabel')}</Label>
+            <Label>{t('settings.quickPhrase.contentLabel', 'Content')}</Label>
             <Input.TextArea
-              placeholder={t('settings.quickPhrase.contentPlaceholder')}
+              placeholder={t('settings.quickPhrase.contentPlaceholder', 'Enter content')}
               value={formData.content}
               onChange={(e) => setFormData({ ...formData, content: e.target.value })}
               rows={6}
@@ -185,20 +185,20 @@ const QuickPhrasesButton = ({ ref, setInputValue, resizeTextArea, ToolbarButton,
             />
           </div>
           <div>
-            <Label>{t('settings.quickPhrase.locationLabel', '添加位置')}</Label>
+            <Label>{t('settings.quickPhrase.locationLabel', 'Add Location')}</Label>
             <Radio.Group
               value={formData.location}
               onChange={(e) => setFormData({ ...formData, location: e.target.value })}>
               <Radio value="global">
                 <Zap size={20} style={{ paddingRight: '4px', verticalAlign: 'middle', paddingBottom: '3px' }} />
-                {t('settings.quickPhrase.global', '全局快速短语')}
+                {t('settings.quickPhrase.global', 'Global Quick Phrase')}
               </Radio>
               <Radio value="assistant">
                 <BotMessageSquare
                   size={20}
                   style={{ paddingRight: '4px', verticalAlign: 'middle', paddingBottom: '3px' }}
                 />
-                {t('settings.quickPhrase.assistant', '助手提示词')}
+                {t('settings.quickPhrase.assistant', 'Assistant Prompt')}
               </Radio>
             </Radio.Group>
           </div>

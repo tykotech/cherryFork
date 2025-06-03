@@ -36,7 +36,8 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
+        os: [windows-latest, ubuntu-latest]
+        #os: [macos-latest, windows-latest, ubuntu-latest]#
       fail-fast: false
 
     steps:
@@ -180,7 +181,7 @@ jobs:
       - name: List files to be uploaded
         shell: bash
         run: |
-          echo "准备上传的文件:"
+          echo "Files to be uploaded:"
           if [ -x "$(command -v tree)" ]; then
             tree renamed-artifacts
           elif [ "$RUNNER_OS" == "Windows" ]; then
@@ -188,7 +189,7 @@ jobs:
           else
             ls -la renamed-artifacts
           fi
-          echo "总计: $(find renamed-artifacts -type f | wc -l) 个文件"
+          echo "Total: $(find renamed-artifacts -type f | wc -l) files"
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -225,14 +226,14 @@ jobs:
 
       - name: Create summary report
         run: |
-          echo "## ⚠️ 警告：这是每日构建版本" >> $GITHUB_STEP_SUMMARY
-          echo "此版本为自动构建的不稳定版本，仅供测试使用。不建议在生产环境中使用。" >> $GITHUB_STEP_SUMMARY
-          echo "安装此版本前请务必备份数据，并做好数据迁移准备。" >> $GITHUB_STEP_SUMMARY
-          echo "构建日期：$(date +'%Y-%m-%d')" >> $GITHUB_STEP_SUMMARY
+          echo "## ⚠️ Warning: This is a nightly build version" >> $GITHUB_STEP_SUMMARY
+          echo "This is an unstable automatically built version for testing purposes only. Not recommended for production use." >> $GITHUB_STEP_SUMMARY
+          echo "Please backup your data before installing this version and prepare for data migration." >> $GITHUB_STEP_SUMMARY
+          echo "Build date: $(date +'%Y-%m-%d')" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
-          echo "## 📦 安装包校验和" >> $GITHUB_STEP_SUMMARY
-          echo "请在下载后验证文件完整性。提供 SHA256 校验和。" >> $GITHUB_STEP_SUMMARY
+          echo "## 📦 Package Checksums" >> $GITHUB_STEP_SUMMARY
+          echo "Please verify file integrity after downloading. SHA256 checksums are provided." >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
           # Check each platform's artifacts and show checksums if available
@@ -240,42 +241,42 @@ jobs:
           # Windows
           WIN_ARTIFACT_DIR="all-artifacts/tykotechfork-nightly-${{ steps.date.outputs.date }}-windows-latest"
           if [ -d "$WIN_ARTIFACT_DIR" ] && [ -f "$WIN_ARTIFACT_DIR/SHA256SUMS.txt" ]; then
-            echo "### Windows 安装包" >> $GITHUB_STEP_SUMMARY
+            echo "### Windows Packages" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
             cat "$WIN_ARTIFACT_DIR/SHA256SUMS.txt" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
           else
-            echo "### Windows 安装包" >> $GITHUB_STEP_SUMMARY
-            echo "❌ Windows 构建未成功完成或未生成校验和。" >> $GITHUB_STEP_SUMMARY
+            echo "### Windows Packages" >> $GITHUB_STEP_SUMMARY
+            echo "❌ Windows build was not successfully completed or checksums were not generated." >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
           fi
 
           # macOS
           MAC_ARTIFACT_DIR="all-artifacts/tykotechfork-nightly-${{ steps.date.outputs.date }}-macos-latest"
           if [ -d "$MAC_ARTIFACT_DIR" ] && [ -f "$MAC_ARTIFACT_DIR/SHA256SUMS.txt" ]; then
-            echo "### macOS 安装包" >> $GITHUB_STEP_SUMMARY
+            echo "### macOS Packages" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
             cat "$MAC_ARTIFACT_DIR/SHA256SUMS.txt" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
           else
-            echo "### macOS 安装包" >> $GITHUB_STEP_SUMMARY
-            echo "❌ macOS 构建未成功完成或未生成校验和。" >> $GITHUB_STEP_SUMMARY
+            echo "### macOS Packages" >> $GITHUB_STEP_SUMMARY
+            echo "❌ macOS build was not successfully completed or checksums were not generated." >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
           fi
 
           # Linux
           LINUX_ARTIFACT_DIR="all-artifacts/tykotechfork-nightly-${{ steps.date.outputs.date }}-ubuntu-latest"
           if [ -d "$LINUX_ARTIFACT_DIR" ] && [ -f "$LINUX_ARTIFACT_DIR/SHA256SUMS.txt" ]; then
-            echo "### Linux 安装包" >> $GITHUB_STEP_SUMMARY
+            echo "### Linux Packages" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
             cat "$LINUX_ARTIFACT_DIR/SHA256SUMS.txt" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
           else
-            echo "### Linux 安装包" >> $GITHUB_STEP_SUMMARY
-            echo "❌ Linux 构建未成功完成或未生成校验和。" >> $GITHUB_STEP_SUMMARY
+            echo "### Linux Packages" >> $GITHUB_STEP_SUMMARY
+            echo "❌ Linux build was not successfully completed or checksums were not generated." >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
           fi
 

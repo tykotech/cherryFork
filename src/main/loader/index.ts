@@ -11,29 +11,29 @@ import { DraftsExportLoader } from './draftsExportLoader'
 import { EpubLoader } from './epubLoader'
 import { OdLoader, OdType } from './odLoader'
 
-// 文件扩展名到加载器类型的映射
+// Mapping from file extension to loader type
 const FILE_LOADER_MAP: Record<string, string> = {
-  // 内置类型
+  // Built-in types
   '.pdf': 'common',
   '.csv': 'common',
   '.docx': 'common',
   '.pptx': 'common',
   '.xlsx': 'common',
   '.md': 'common',
-  // OD类型
+  // OD types
   '.odt': 'od',
   '.ods': 'od',
   '.odp': 'od',
-  // epub类型
+  // epub type
   '.epub': 'epub',
-  // Drafts类型
+  // Drafts type
   '.draftsexport': 'drafts',
-  // HTML类型
+  // HTML type
   '.html': 'html',
   '.htm': 'html',
-  // JSON类型
+  // JSON type
   '.json': 'json'
-  // 其他类型默认为文本类型
+  // Other types default to text type
 }
 
 export async function addOdLoader(
@@ -68,17 +68,17 @@ export async function addFileLoader(
   base: KnowledgeBaseParams,
   forceReload: boolean
 ): Promise<LoaderReturn> {
-  // 获取文件类型，如果没有匹配则默认为文本类型
+  // Get file type, default to text type if not matched
   const loaderType = FILE_LOADER_MAP[file.ext.toLowerCase()] || 'text'
   let loaderReturn: AddLoaderReturn
 
-  // JSON类型处理
+  // JSON type handling
   let jsonObject = {}
   let jsonParsed = true
   Logger.info(`[KnowledgeBase] processing file ${file.path} as ${loaderType} type`)
   switch (loaderType) {
     case 'common':
-      // 内置类型处理
+      // Built-in type handling
       loaderReturn = await ragApplication.addLoader(
         new LocalPathLoader({
           path: file.path,
@@ -90,11 +90,11 @@ export async function addFileLoader(
       break
 
     case 'od':
-      // OD类型处理
+      // OD type handling
       loaderReturn = await addOdLoader(ragApplication, file, base, forceReload)
       break
     case 'epub':
-      // epub类型处理
+      // epub type handling
       loaderReturn = await ragApplication.addLoader(
         new EpubLoader({
           filePath: file.path,
@@ -106,12 +106,12 @@ export async function addFileLoader(
       break
 
     case 'drafts':
-      // Drafts类型处理
+      // Drafts type handling
       loaderReturn = await ragApplication.addLoader(new DraftsExportLoader(file.path) as any, forceReload)
       break
 
     case 'html':
-      // HTML类型处理
+      // HTML type handling
       loaderReturn = await ragApplication.addLoader(
         new WebLoader({
           urlOrContent: fs.readFileSync(file.path, 'utf-8'),
@@ -134,10 +134,10 @@ export async function addFileLoader(
         loaderReturn = await ragApplication.addLoader(new JsonLoader({ object: jsonObject }), forceReload)
         break
       }
-    // fallthrough - JSON 解析失败时作为文本处理
+    // fallthrough - If JSON parsing fails, process as text
     default:
-      // 文本类型处理（默认）
-      // 如果是其他文本类型且尚未读取文件，则读取文件
+      // Text type handling (default)
+      // If other text type and file not yet read, read file
       loaderReturn = await ragApplication.addLoader(
         new TextLoader({
           text: fs.readFileSync(file.path, 'utf-8'),

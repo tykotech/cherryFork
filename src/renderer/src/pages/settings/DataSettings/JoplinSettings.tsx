@@ -31,7 +31,7 @@ const JoplinSettings: FC = () => {
 
   const handleJoplinUrlBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     let url = e.target.value
-    // 确保URL以/结尾，但只在失去焦点时执行
+    // Ensure the URL ends with a slash, but only do this on blur
     if (url && !url.endsWith('/')) {
       url = `${url}/`
       dispatch(setJoplinUrl(url))
@@ -41,11 +41,15 @@ const JoplinSettings: FC = () => {
   const handleJoplinConnectionCheck = async () => {
     try {
       if (!joplinToken) {
-        window.message.error(t('settings.data.joplin.check.empty_token'))
+        window.message.error(
+          t('settings.data.joplin.check.empty_token', { defaultValue: 'Please enter the Joplin token.' })
+        )
         return
       }
       if (!joplinUrl) {
-        window.message.error(t('settings.data.joplin.check.empty_url'))
+        window.message.error(
+          t('settings.data.joplin.check.empty_url', { defaultValue: 'Please enter the Joplin URL.' })
+        )
         return
       }
 
@@ -54,13 +58,23 @@ const JoplinSettings: FC = () => {
       const data = await response.json()
 
       if (!response.ok || data?.error) {
-        window.message.error(t('settings.data.joplin.check.fail'))
+        window.message.error(
+          t('settings.data.joplin.check.fail', {
+            defaultValue: 'Failed to connect to Joplin. Please check your settings.'
+          })
+        )
         return
       }
 
-      window.message.success(t('settings.data.joplin.check.success'))
+      window.message.success(
+        t('settings.data.joplin.check.success', { defaultValue: 'Successfully connected to Joplin!' })
+      )
     } catch (e) {
-      window.message.error(t('settings.data.joplin.check.fail'))
+      window.message.error(
+        t('settings.data.joplin.check.fail', {
+          defaultValue: 'Failed to connect to Joplin. Please check your settings.'
+        })
+      )
     }
   }
 
@@ -74,10 +88,10 @@ const JoplinSettings: FC = () => {
 
   return (
     <SettingGroup theme={theme}>
-      <SettingTitle>{t('settings.data.joplin.title')}</SettingTitle>
+      <SettingTitle>{t('settings.data.joplin.title', { defaultValue: 'Joplin Integration' })}</SettingTitle>
       <SettingDivider />
       <SettingRow>
-        <SettingRowTitle>{t('settings.data.joplin.url')}</SettingRowTitle>
+        <SettingRowTitle>{t('settings.data.joplin.url', { defaultValue: 'Joplin URL' })}</SettingRowTitle>
         <HStack alignItems="center" gap="5px" style={{ width: 315 }}>
           <Input
             type="text"
@@ -85,15 +99,19 @@ const JoplinSettings: FC = () => {
             onChange={handleJoplinUrlChange}
             onBlur={handleJoplinUrlBlur}
             style={{ width: 315 }}
-            placeholder={t('settings.data.joplin.url_placeholder')}
+            placeholder={t('settings.data.joplin.url_placeholder', {
+              defaultValue: 'Enter the Joplin Web Clipper URL, e.g. http://127.0.0.1:41184/'
+            })}
           />
         </HStack>
       </SettingRow>
       <SettingDivider />
       <SettingRow>
         <SettingRowTitle style={{ display: 'flex', alignItems: 'center' }}>
-          <span>{t('settings.data.joplin.token')}</span>
-          <Tooltip title={t('settings.data.joplin.help')} placement="left">
+          <span>{t('settings.data.joplin.token', { defaultValue: 'Joplin Token' })}</span>
+          <Tooltip
+            title={t('settings.data.joplin.help', { defaultValue: 'How to get the Joplin token?' })}
+            placement="left">
             <InfoCircleOutlined
               style={{ color: 'var(--color-text-2)', cursor: 'pointer', marginLeft: 4 }}
               onClick={handleJoplinHelpClick}
@@ -106,9 +124,11 @@ const JoplinSettings: FC = () => {
             value={joplinToken || ''}
             onChange={handleJoplinTokenChange}
             style={{ width: 250 }}
-            placeholder={t('settings.data.joplin.token_placeholder')}
+            placeholder={t('settings.data.joplin.token_placeholder', { defaultValue: 'Enter your Joplin token' })}
           />
-          <Button onClick={handleJoplinConnectionCheck}>{t('settings.data.joplin.check.button')}</Button>
+          <Button onClick={handleJoplinConnectionCheck}>
+            {t('settings.data.joplin.check.button', { defaultValue: 'Check Connection' })}
+          </Button>
         </HStack>
       </SettingRow>
     </SettingGroup>

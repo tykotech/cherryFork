@@ -4,34 +4,34 @@ import { Response, ResponseError } from './newMessage'
 // Define Enum for Chunk Types
 // Currently used, does not list the complete lifecycle
 export enum ChunkType {
-  BLOCK_CREATED = 'block_created',
-  BLOCK_IN_PROGRESS = 'block_in_progress',
-  EXTERNEL_TOOL_IN_PROGRESS = 'externel_tool_in_progress',
-  WEB_SEARCH_IN_PROGRESS = 'web_search_in_progress',
-  WEB_SEARCH_COMPLETE = 'web_search_complete',
-  KNOWLEDGE_SEARCH_IN_PROGRESS = 'knowledge_search_in_progress',
-  KNOWLEDGE_SEARCH_COMPLETE = 'knowledge_search_complete',
-  MCP_TOOL_IN_PROGRESS = 'mcp_tool_in_progress',
-  MCP_TOOL_COMPLETE = 'mcp_tool_complete',
-  EXTERNEL_TOOL_COMPLETE = 'externel_tool_complete',
-  LLM_RESPONSE_CREATED = 'llm_response_created',
-  LLM_RESPONSE_IN_PROGRESS = 'llm_response_in_progress',
-  TEXT_DELTA = 'text.delta',
-  TEXT_COMPLETE = 'text.complete',
-  AUDIO_DELTA = 'audio.delta',
-  AUDIO_COMPLETE = 'audio.complete',
-  IMAGE_CREATED = 'image.created',
-  IMAGE_DELTA = 'image.delta',
-  IMAGE_COMPLETE = 'image.complete',
-  THINKING_DELTA = 'thinking.delta',
-  THINKING_COMPLETE = 'thinking.complete',
-  LLM_WEB_SEARCH_IN_PROGRESS = 'llm_websearch_in_progress',
-  LLM_WEB_SEARCH_COMPLETE = 'llm_websearch_complete',
-  LLM_RESPONSE_COMPLETE = 'llm_response_complete',
-  BLOCK_COMPLETE = 'block_complete',
-  ERROR = 'error',
-  SEARCH_IN_PROGRESS_UNION = 'search_in_progress_union',
-  SEARCH_COMPLETE_UNION = 'search_complete_union'
+  BLOCK_CREATED = 'block_created', // Message block created, meaningless
+  BLOCK_IN_PROGRESS = 'block_in_progress', // Message block in progress, meaningless
+  EXTERNEL_TOOL_IN_PROGRESS = 'externel_tool_in_progress', // External tool call in progress
+  WEB_SEARCH_IN_PROGRESS = 'web_search_in_progress', // Internet search in progress
+  WEB_SEARCH_COMPLETE = 'web_search_complete', // Internet search complete
+  KNOWLEDGE_SEARCH_IN_PROGRESS = 'knowledge_search_in_progress', // Knowledge base search in progress
+  KNOWLEDGE_SEARCH_COMPLETE = 'knowledge_search_complete', // Knowledge base search complete
+  MCP_TOOL_IN_PROGRESS = 'mcp_tool_in_progress', // MCP tool call in progress
+  MCP_TOOL_COMPLETE = 'mcp_tool_complete', // MCP tool call complete
+  EXTERNEL_TOOL_COMPLETE = 'externel_tool_complete', // External tool call complete, external tools include internet search, knowledge base, MCP server
+  LLM_RESPONSE_CREATED = 'llm_response_created', // Large model response created, returns the type of block to be created
+  LLM_RESPONSE_IN_PROGRESS = 'llm_response_in_progress', // Large model response in progress
+  TEXT_DELTA = 'text.delta', // Text content being generated
+  TEXT_COMPLETE = 'text.complete', // Text content generation complete
+  AUDIO_DELTA = 'audio.delta', // Audio content being generated
+  AUDIO_COMPLETE = 'audio.complete', // Audio content generation complete
+  IMAGE_CREATED = 'image.created', // Image content created
+  IMAGE_DELTA = 'image.delta', // Image content being generated
+  IMAGE_COMPLETE = 'image.complete', // Image content generation complete
+  THINKING_DELTA = 'thinking.delta', // Thinking content being generated
+  THINKING_COMPLETE = 'thinking.complete', // Thinking content generation complete
+  LLM_WEB_SEARCH_IN_PROGRESS = 'llm_websearch_in_progress', // Large model internal search in progress, no obvious features
+  LLM_WEB_SEARCH_COMPLETE = 'llm_websearch_complete', // Large model internal search complete
+  LLM_RESPONSE_COMPLETE = 'llm_response_complete', // Large model response complete, used as a completion marker for streaming processing in the future
+  BLOCK_COMPLETE = 'block_complete', // All blocks created complete, usually used for non-streaming processing; currently not distinguished
+  ERROR = 'error', // Error
+  SEARCH_IN_PROGRESS_UNION = 'search_in_progress_union', // Search (knowledge base/internet) in progress
+  SEARCH_COMPLETE_UNION = 'search_complete_union' // Search (knowledge base/internet) complete
 }
 
 export interface LLMResponseCreatedChunk {
@@ -338,31 +338,31 @@ export interface SearchCompleteUnionChunk {
 }
 
 export type Chunk =
-  | BlockCreatedChunk // 消息块创建，无意义
-  | BlockInProgressChunk // 消息块进行中，无意义
-  | ExternalToolInProgressChunk // 外部工具调用中
-  | WebSearchInProgressChunk // 互联网搜索进行中
-  | WebSearchCompleteChunk // 互联网搜索完成
-  | KnowledgeSearchInProgressChunk // 知识库搜索进行中
-  | KnowledgeSearchCompleteChunk // 知识库搜索完成
-  | MCPToolInProgressChunk // MCP工具调用中
-  | MCPToolCompleteChunk // MCP工具调用完成
-  | ExternalToolCompleteChunk // 外部工具调用完成，外部工具包含搜索互联网，知识库，MCP服务器
-  | LLMResponseCreatedChunk // 大模型响应创建，返回即将创建的块类型
-  | LLMResponseInProgressChunk // 大模型响应进行中
-  | TextDeltaChunk // 文本内容生成中
-  | TextCompleteChunk // 文本内容生成完成
-  | AudioDeltaChunk // 音频内容生成中
-  | AudioCompleteChunk // 音频内容生成完成
-  | ImageCreatedChunk // 图片内容创建
-  | ImageDeltaChunk // 图片内容生成中
-  | ImageCompleteChunk // 图片内容生成完成
-  | ThinkingDeltaChunk // 思考内容生成中
-  | ThinkingCompleteChunk // 思考内容生成完成
-  | LLMWebSearchInProgressChunk // 大模型内部搜索进行中，无明显特征
-  | LLMWebSearchCompleteChunk // 大模型内部搜索完成
-  | LLMResponseCompleteChunk // 大模型响应完成，未来用于作为流式处理的完成标记
-  | BlockCompleteChunk // 所有块创建完成，通常用于非流式处理；目前没有做区分
-  | ErrorChunk // 错误
-  | SearchInProgressUnionChunk // 搜索(知识库/互联网)进行中
-  | SearchCompleteUnionChunk // 搜索(知识库/互联网)完成
+  | BlockCreatedChunk // Message block created, meaningless
+  | BlockInProgressChunk // Message block in progress, meaningless
+  | ExternalToolInProgressChunk // External tool call in progress
+  | WebSearchInProgressChunk // Internet search in progress
+  | WebSearchCompleteChunk // Internet search complete
+  | KnowledgeSearchInProgressChunk // Knowledge base search in progress
+  | KnowledgeSearchCompleteChunk // Knowledge base search complete
+  | MCPToolInProgressChunk // MCP tool call in progress
+  | MCPToolCompleteChunk // MCP tool call complete
+  | ExternalToolCompleteChunk // External tool call complete, external tools include internet search, knowledge base, MCP server
+  | LLMResponseCreatedChunk // Large model response created, returns the type of block to be created
+  | LLMResponseInProgressChunk // Large model response in progress
+  | TextDeltaChunk // Text content being generated
+  | TextCompleteChunk // Text content generation complete
+  | AudioDeltaChunk // Audio content being generated
+  | AudioCompleteChunk // Audio content generation complete
+  | ImageCreatedChunk // Image content created
+  | ImageDeltaChunk // Image content being generated
+  | ImageCompleteChunk // Image content generation complete
+  | ThinkingDeltaChunk // Thinking content being generated
+  | ThinkingCompleteChunk // Thinking content generation complete
+  | LLMWebSearchInProgressChunk // Large model internal search in progress, no obvious features
+  | LLMWebSearchCompleteChunk // Large model internal search complete
+  | LLMResponseCompleteChunk // Large model response complete, used as a completion marker for streaming processing in the future
+  | BlockCompleteChunk // All blocks created complete, usually used for non-streaming processing; currently not distinguished
+  | ErrorChunk // Error
+  | SearchInProgressUnionChunk // Search (knowledge base/internet) in progress
+  | SearchCompleteUnionChunk // Search (knowledge base/internet) complete

@@ -53,7 +53,7 @@ const AboutSettings: FC = () => {
         <SettingTitle>
           {t('settings.about.title')}
           <HStack alignItems="center">
-            <Link to="https://github.com/CherryHQ/cherry-studio">
+            <Link to="https://github.com/TykoDev/cherry-studio-TykoFork">
               <GithubOutlined style={{ marginRight: 4, color: 'var(--color-text)', fontSize: 20 }} />
             </Link>
           </HStack>
@@ -61,7 +61,7 @@ const AboutSettings: FC = () => {
         <SettingDivider />
         <AboutHeader>
           <Row align="middle">
-            <AvatarWrapper onClick={() => onOpenWebsite('https://github.com/CherryHQ/cherry-studio')}>
+            <AvatarWrapper onClick={() => onOpenWebsite('https://github.com/TykoDev/cherry-studio-TykoFork')}>
               {update.downloadProgress > 0 && (
                 <ProgressCircle
                   type="circle"
@@ -78,22 +78,14 @@ const AboutSettings: FC = () => {
               <Title>{APP_NAME}</Title>
               <Description>{t('settings.about.description')}</Description>
               <Tag
-                onClick={() => onOpenWebsite('https://github.com/CherryHQ/cherry-studio/releases')}
+                onClick={() => onOpenWebsite('https://github.com/TykoDev/cherry-studio-TykoFork/releases')}
                 color="cyan"
                 style={{ marginTop: 8, cursor: 'pointer' }}>
                 v{version}
               </Tag>
             </VersionWrapper>
           </Row>
-          {!isPortable && (
-            <Tooltip title="This feature is disabled. See ENABLE_UPDATE_BRAND.md for more information.">
-              <div>
-                <CheckUpdateButton onClick={() => {}} loading={false} disabled={true}>
-                  {t('settings.about.checkUpdate')} (Disabled)
-                </CheckUpdateButton>
-              </div>
-            </Tooltip>
-          )}
+          {/* Check update button removed */}
         </AboutHeader>
         {!isPortable && (
           <>
@@ -227,8 +219,6 @@ const Description = styled.div`
   color: var(--color-text-2);
   text-align: center;
 `
-
-const CheckUpdateButton = styled(Button)``
 
 const AvatarWrapper = styled.div`
   position: relative;

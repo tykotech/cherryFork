@@ -57,15 +57,15 @@ export function estimateImageTokens(file: FileType) {
 }
 
 /**
- * 估算用户输入内容（文本和文件）的 token 用量。
+ * Estimate the token usage for user input (text and files).
  *
- * 该函数只根据传入的 content（文本内容）和 files（文件列表）估算，
- * 不依赖完整的 Message 结构，也不会处理消息块、上下文等信息。
+ * This function only estimates based on the provided content (text) and files (file list),
+ * does not depend on the complete Message structure, and does not process message blocks, context, etc.
  *
- * @param {Object} params - 输入参数对象
- * @param {string} [params.content] - 用户输入的文本内容
- * @param {FileType[]} [params.files] - 用户上传的文件列表（支持图片和文本）
- * @returns {Promise<Usage>} 返回一个 Usage 对象，包含 prompt_tokens、completion_tokens、total_tokens
+ * @param {Object} params - Input parameter object
+ * @param {string} [params.content] - User input text content
+ * @param {FileType[]} [params.files] - List of files uploaded by the user (supports images and text)
+ * @returns {Promise<Usage>} Returns a Usage object containing prompt_tokens, completion_tokens, total_tokens
  */
 export async function estimateUserPromptUsage({
   content,
@@ -95,13 +95,13 @@ export async function estimateUserPromptUsage({
 }
 
 /**
- * 估算完整消息（Message）的 token 用量。
+ * Estimate the token usage for a complete message (Message).
  *
- * 该函数会自动从 message 中提取主文本内容、推理内容（reasoningContent）和所有文件块，
- * 统计文本和图片的 token 数量，适用于对完整消息对象进行 usage 估算。
+ * This function automatically extracts the main text content, reasoning content, and all file blocks from the message,
+ * counts the number of tokens for text and images, suitable for usage estimation of a complete message object.
  *
- * @param {Partial<Message>} message - 消息对象，可以是完整或部分 Message
- * @returns {Promise<Usage>} 返回一个 Usage 对象，包含 prompt_tokens、completion_tokens、total_tokens
+ * @param {Partial<Message>} message - Message object, can be a complete or partial Message
+ * @returns {Promise<Usage>} Returns a Usage object containing prompt_tokens, completion_tokens, total_tokens
  */
 export async function estimateMessageUsage(message: Partial<Message>): Promise<Usage> {
   const fileBlocks = findFileBlocks(message as Message)
@@ -154,7 +154,7 @@ export async function estimateHistoryTokens(assistant: Assistant, msgs: Message[
   const maxContextCount = contextCount
   const messages = filterMessages(filterContextMessages(takeRight(msgs, maxContextCount)))
 
-  // 有 usage 数据的消息，快速计算总数
+  // Messages with usage data, quickly calculate the total
   const uasageTokens = messages
     .filter((m) => m.usage)
     .reduce((acc, message) => {
@@ -163,7 +163,7 @@ export async function estimateHistoryTokens(assistant: Assistant, msgs: Message[
       return acc + (message.role === 'user' ? inputTokens : outputTokens)
     }, 0)
 
-  // 没有 usage 数据的消息，需要计算每条消息的 token
+  // Messages without usage data, need to calculate the token for each message
   let allMessages: MessageItem[][] = []
 
   for (const message of messages.filter((m) => !m.usage)) {

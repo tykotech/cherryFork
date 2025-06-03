@@ -30,7 +30,7 @@ const AssistantMessagesSettings: FC<Props> = ({ assistant, updateAssistant, upda
   }, [messages, assistant?.messages])
 
   const onSave = () => {
-    // 检查是否有空对话组
+    // Check if there are any empty conversation groups
     for (let i = 0; i < messages.length; i += 2) {
       const userContent = messages[i].content.trim()
       const assistantContent = messages[i + 1]?.content.trim()
@@ -43,7 +43,7 @@ const AssistantMessagesSettings: FC<Props> = ({ assistant, updateAssistant, upda
       }
     }
 
-    // 过滤掉空消息并将消息分组
+    // Filter out empty messages and group messages
     const filteredMessagess = messages.reduce((acc, conv, index) => {
       if (index % 2 === 0) {
         const userContent = conv.content.trim()
@@ -75,7 +75,7 @@ const AssistantMessagesSettings: FC<Props> = ({ assistant, updateAssistant, upda
 
   const deleteMessages = (index: number) => {
     const newMessagess = [...messages]
-    newMessagess.splice(index, 2) // 删除用户和助手的对话
+    newMessagess.splice(index, 2) // Delete user and assistant conversation
     setMessagess(newMessagess)
   }
 

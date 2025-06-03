@@ -19,13 +19,13 @@ export class ReduxService extends EventEmitter {
   }
 
   private setupIpcHandlers() {
-    // 监听 store 就绪事件
+    // Listen for store ready event
     ipcMain.handle(IpcChannel.ReduxStoreReady, () => {
       this.isReady = true
       this.emit('ready')
     })
 
-    // 监听 store 状态变化
+    // Listen for store state changes
     ipcMain.on(IpcChannel.ReduxStateChange, (_, newState) => {
       this.stateCache = newState
       this.emit(this.STATUS_CHANGE_EVENT, newState)
@@ -46,22 +46,22 @@ export class ReduxService extends EventEmitter {
           return
         }
       } catch (error) {
-        // 忽略错误，继续等待
+        // Ignore error, keep waiting
       }
       await new Promise((resolve) => setTimeout(resolve, 100))
     }
     throw new Error('Timeout waiting for Redux store to be ready')
   }
 
-  // 添加同步获取状态的方法
+  // Add method to get state synchronously
   getStateSync() {
     return this.stateCache
   }
 
-  // 添加同步选择器方法
+  // Add synchronous selector method
   selectSync<T = StoreValue>(selector: string): T | undefined {
     try {
-      // 使用 Function 构造器来安全地执行选择器
+      // Use Function constructor to safely execute selector
       const selectorFn = new Function('state', `return ${selector}`)
       return selectorFn(this.stateCache)
     } catch (error) {
@@ -70,10 +70,10 @@ export class ReduxService extends EventEmitter {
     }
   }
 
-  // 修改 select 方法，优先使用缓存
+  // Modify select method to prefer cache
   async select<T = StoreValue>(selector: string): Promise<T> {
     try {
-      // 如果已经准备就绪，先尝试从缓存中获取
+      // If ready, try to get from cache first
       if (this.isReady) {
         const cachedValue = this.selectSync<T>(selector)
         if (cachedValue !== undefined) {
@@ -81,7 +81,7 @@ export class ReduxService extends EventEmitter {
         }
       }
 
-      // 如果缓存中没有，再从渲染进程获取
+      // If not in cache, get from renderer process
       const mainWindow = windowService.getMainWindow()
       if (!mainWindow) {
         throw new Error('Main window is not available')
@@ -99,7 +99,7 @@ export class ReduxService extends EventEmitter {
     }
   }
 
-  // 派发 action
+  // Dispatch action
   async dispatch(action: any): Promise<void> {
     const mainWindow = windowService.getMainWindow()
     if (!mainWindow) {
@@ -116,7 +116,7 @@ export class ReduxService extends EventEmitter {
     }
   }
 
-  // 订阅状态变化
+  // Subscribe to state changes
   async subscribe(selector: string, callback: (newValue: any) => void): Promise<Unsubscribe> {
     const mainWindow = windowService.getMainWindow()
     if (!mainWindow) {
@@ -124,13 +124,13 @@ export class ReduxService extends EventEmitter {
     }
     await this.waitForStoreReady(mainWindow.webContents)
 
-    // 在渲染进程中设置监听
+    // Set up listener in renderer process
     await mainWindow.webContents.executeJavaScript(
       `
       if (!window._storeSubscriptions) {
         window._storeSubscriptions = new Set();
 
-        // 设置全局状态变化监听
+        // Set up global state change listener
         const unsubscribe = window.store.subscribe(() => {
           const state = window.store.getState();
           window.electron.ipcRenderer.send('` +
@@ -143,7 +143,7 @@ export class ReduxService extends EventEmitter {
     `
     )
 
-    // 在主进程中处理回调
+    // Handle callback in main process
     const handler = async () => {
       try {
         const newValue = await this.select(selector)
@@ -159,7 +159,7 @@ export class ReduxService extends EventEmitter {
     }
   }
 
-  // 获取整个状态树
+  // Get entire state tree
   async getState(): Promise<any> {
     const mainWindow = windowService.getMainWindow()
     if (!mainWindow) {
@@ -176,7 +176,7 @@ export class ReduxService extends EventEmitter {
     }
   }
 
-  // 批量执行 actions
+  // Batch execute actions
   async batch(actions: any[]): Promise<void> {
     for (const action of actions) {
       await this.dispatch(action)
@@ -189,36 +189,36 @@ export const reduxService = new ReduxService()
 /** example
  async function example() {
  try {
- // 读取状态
+ // Read state
  const settings = await reduxService.select('state.settings')
  Logger.log('settings', settings)
 
- // 派发 action
+ // Dispatch action
  await reduxService.dispatch({
  type: 'settings/updateApiKey',
  payload: 'new-api-key'
  })
 
- // 订阅状态变化
+ // Subscribe to state changes
  const unsubscribe = await reduxService.subscribe('state.settings.apiKey', (newValue) => {
  Logger.log('API key changed:', newValue)
  })
 
- // 批量执行 actions
+ // Batch execute actions
  await reduxService.batch([
  { type: 'action1', payload: 'data1' },
  { type: 'action2', payload: 'data2' }
  ])
 
- // 同步方法虽然可能不是最新的数据，但响应更快
+ // Synchronous method may not have the latest data, but is faster
  const apiKey = reduxService.selectSync('state.settings.apiKey')
  Logger.log('apiKey', apiKey)
 
- // 处理保证是最新的数据
+ // Asynchronous method ensures the latest data
  const apiKey1 = await reduxService.select('state.settings.apiKey')
  Logger.log('apiKey1', apiKey1)
 
- // 取消订阅
+ // Unsubscribe
  unsubscribe()
  } catch (error) {
  Logger.error('Error:', error)

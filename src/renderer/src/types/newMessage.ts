@@ -166,24 +166,24 @@ export type Message = {
   updatedAt?: string
   status: UserMessageStatus | AssistantMessageStatus
 
-  // 消息元数据
+  // Message metadata
   modelId?: string
   model?: Model
   type?: 'clear'
   isPreset?: boolean
   useful?: boolean
-  askId?: string // 关联的问题消息ID
+  askId?: string // Associated question message ID
   mentions?: Model[]
   enabledMCPs?: MCPServer[]
 
   usage?: Usage
   metrics?: Metrics
 
-  // UI相关
+  // UI related
   multiModelMessageStyle?: 'horizontal' | 'vertical' | 'fold' | 'grid'
   foldSelected?: boolean
 
-  // 块集合
+  // Block collection
   blocks: MessageBlock['id'][]
 }
 

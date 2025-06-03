@@ -167,7 +167,7 @@ const Inputbar: FC<Props> = ({ assistant: _assistant, setActiveTopic, topic }) =
   const resizeTextArea = useCallback(() => {
     const textArea = textareaRef.current?.resizableTextArea?.textArea
     if (textArea) {
-      // 如果已经手动设置了高度,则不自动调整
+      // If the height has been manually set, do not auto-adjust
       if (textareaHeight) {
         return
       }
@@ -419,7 +419,7 @@ const Inputbar: FC<Props> = ({ assistant: _assistant, setActiveTopic, topic }) =
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     const isEnterPressed = event.keyCode == 13
 
-    // 按下Tab键，自动选中${xxx}
+    // Pressing the Tab key automatically selects ${xxx}
     if (event.key === 'Tab' && inputFocus) {
       event.preventDefault()
       const textArea = textareaRef.current?.resizableTextArea?.textArea
@@ -576,12 +576,12 @@ const Inputbar: FC<Props> = ({ assistant: _assistant, setActiveTopic, topic }) =
 
   const onPaste = useCallback(
     async (event: ClipboardEvent) => {
-      // 1. 文件/图片粘贴
+      // 1. File/Image paste
       if (event.clipboardData?.files && event.clipboardData.files.length > 0) {
         event.preventDefault()
         for (const file of event.clipboardData.files) {
           if (file.path === '') {
-            // 图像生成也支持图像编辑
+            // Image generation also supports image editing
             if (file.type.startsWith('image/') && (isVisionModel(model) || isGenerateImageModel(model))) {
               const tempFilePath = await window.api.file.create(file.name)
               const arrayBuffer = await file.arrayBuffer()
@@ -613,22 +613,22 @@ const Inputbar: FC<Props> = ({ assistant: _assistant, setActiveTopic, topic }) =
         return
       }
 
-      // 2. 文本粘贴
+      // 2. Text paste
       const clipboardText = event.clipboardData?.getData('text')
       if (pasteLongTextAsFile && clipboardText && clipboardText.length > pasteLongTextThreshold) {
-        // 长文本直接转文件，阻止默认粘贴
+        // Long text directly converted to file, prevent default paste
         event.preventDefault()
 
         const tempFilePath = await window.api.file.create('pasted_text.txt')
         await window.api.file.write(tempFilePath, clipboardText)
         const selectedFile = await window.api.file.get(tempFilePath)
         selectedFile && setFiles((prevFiles) => [...prevFiles, selectedFile])
-        setText(text) // 保持输入框内容不变
+        setText(text) // Keep the input box content unchanged
         setTimeout(() => resizeTextArea(), 50)
         return
       }
 
-      // 短文本走默认粘贴行为
+      // Short text follows the default paste behavior
     },
     [model, pasteLongTextAsFile, pasteLongTextThreshold, resizeTextArea, supportExts, t, text]
   )
@@ -675,7 +675,7 @@ const Inputbar: FC<Props> = ({ assistant: _assistant, setActiveTopic, topic }) =
     (e: MouseEvent) => {
       if (!isDragging) return
 
-      const delta = startDragY.current - e.clientY // 改变计算方向
+      const delta = startDragY.current - e.clientY // Change calculation direction
       const viewportHeight = window.innerHeight
       const maxHeightInPixels = viewportHeight * 0.7
 
@@ -724,7 +724,7 @@ const Inputbar: FC<Props> = ({ assistant: _assistant, setActiveTopic, topic }) =
       // }),
       EventEmitter.on(EVENT_NAMES.ESTIMATED_TOKEN_COUNT, ({ tokensCount, contextCount }) => {
         _setEstimateTokenCount(tokensCount)
-        setContextCount({ current: contextCount.current, max: contextCount.max }) // 现在contextCount是一个对象而不是单个数值
+        setContextCount({ current: contextCount.current, max: contextCount.max }) // Now contextCount is an object rather than a single value
       }),
       EventEmitter.on(EVENT_NAMES.ADD_NEW_TOPIC, addNewTopic),
       EventEmitter.on(EVENT_NAMES.QUOTE_TEXT, (quotedText: string) => {
@@ -1052,13 +1052,13 @@ const InputBarContainer = styled.div`
   margin: 14px 20px;
   margin-top: 0;
   border-radius: 15px;
-  padding-top: 6px; // 为拖动手柄留出空间
+  padding-top: 6px; // leave space for drag handle
   background-color: var(--color-background-opacity);
 `
 
 const TextareaStyle: CSSProperties = {
   paddingLeft: 0,
-  padding: '6px 15px 8px' // 减小顶部padding
+  padding: '6px 15px 8px' // reduce top padding
 }
 
 const Textarea = styled(TextArea)`

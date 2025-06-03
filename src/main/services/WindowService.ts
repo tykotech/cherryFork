@@ -75,7 +75,10 @@ export class WindowService {
         sandbox: false,
         webSecurity: false,
         webviewTag: true,
-        allowRunningInsecureContent: true
+        allowRunningInsecureContent: true,
+        experimentalFeatures: false,
+        contextIsolation: true,
+        nodeIntegration: false
       }
     })
 
@@ -100,9 +103,48 @@ export class WindowService {
     this.setupContextMenu(mainWindow)
     this.setupWindowEvents(mainWindow)
     this.setupWebContentsHandlers(mainWindow)
+    this.setupDevToolsErrorSuppression(mainWindow)
     this.setupWindowLifecycleEvents(mainWindow)
     this.setupMainWindowMonitor(mainWindow)
     this.loadMainWindowContent(mainWindow)
+  }
+
+  private setupDevToolsErrorSuppression(mainWindow: BrowserWindow) {
+    // Suppress DevTools autofill errors
+    mainWindow.webContents.on('console-message', (_event, _level, message) => {
+      // Suppress specific autofill-related DevTools errors
+      if (
+        message.includes('Autofill.enable') ||
+        message.includes('Autofill.setAddresses') ||
+        message.includes('devtools://devtools/bundled/core/protocol_client') ||
+        message.includes('devtools://devtools/bundled/panels/elements')
+      ) {
+        return // Don't log these specific errors
+      }
+    })
+
+    // Handle DevTools opened event to suppress autofill
+    mainWindow.webContents.on('devtools-opened', () => {
+      mainWindow.webContents.devToolsWebContents
+        ?.executeJavaScript(
+          `
+        // Disable autofill in DevTools
+        try {
+          chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+            if (request.method === 'Autofill.enable' || request.method === 'Autofill.setAddresses') {
+              sendResponse({error: {code: -32601, message: 'Method not supported in Electron'}});
+              return true;
+            }
+          });
+        } catch (e) {
+          // Ignore errors from this DevTools patch
+        }
+      `
+        )
+        .catch(() => {
+          // Ignore errors from DevTools JavaScript execution
+        })
+    })
   }
 
   private setupMainWindowMonitor(mainWindow: BrowserWindow) {
@@ -112,16 +154,16 @@ export class WindowService {
       const lastCrashTime = this.lastRendererProcessCrashTime
       this.lastRendererProcessCrashTime = currentTime
       if (currentTime - lastCrashTime > 60 * 1000) {
-        // 如果大于1分钟，则重启渲染进程
+        // If more than 1 minute, reload the renderer process
         mainWindow.webContents.reload()
       } else {
-        // 如果小于1分钟，则退出应用, 可能是连续crash，需要退出应用
+        // If less than 1 minute, quit the app, likely due to consecutive crashes
         app.exit(1)
       }
     })
 
     mainWindow.webContents.on('unresponsive', () => {
-      // 在升级到electron 34后，可以获取具体js stack trace,目前只打个日志监控下
+      // After upgrading to electron 34, we can get specific js stack traces, currently just logging for monitoring
       // https://www.electronjs.org/blog/electron-34-0#unresponsive-renderer-javascript-call-stacks
       Logger.error('Renderer process unresponsive')
     })
@@ -129,7 +171,7 @@ export class WindowService {
 
   private setupMaximize(mainWindow: BrowserWindow, isMaximized: boolean) {
     if (isMaximized) {
-      // 如果是从托盘启动，则需要延迟最大化，否则显示的就不是重启前的最大化窗口了
+      // If launched from tray, delay maximize to restore previous maximized state
       configManager.getLaunchToTray()
         ? mainWindow.once('show', () => {
             mainWindow.maximize()
@@ -165,7 +207,7 @@ export class WindowService {
       }
     })
 
-    // 处理全屏相关事件
+    // Handle fullscreen related events
     mainWindow.on('enter-full-screen', () => {
       mainWindow.webContents.send(IpcChannel.FullscreenStatusChanged, true)
     })
@@ -193,9 +235,9 @@ export class WindowService {
       })
     }
 
-    // 添加Escape键退出全屏的支持
+    // Add support for exiting full screen with the Escape key
     mainWindow.webContents.on('before-input-event', (event, input) => {
-      // 当按下Escape键且窗口处于全屏状态时退出全屏
+      // Exit full screen when Escape key is pressed and the window is in full screen
       if (input.key === 'Escape' && !input.alt && !input.control && !input.meta && !input.shift) {
         if (mainWindow.isFullScreen()) {
           event.preventDefault()
@@ -286,28 +328,27 @@ export class WindowService {
 
   private setupWindowLifecycleEvents(mainWindow: BrowserWindow) {
     mainWindow.on('close', (event) => {
-      // 如果已经触发退出，直接退出
+      // If app quitting is already triggered, quit immediately
       if (app.isQuitting) {
         return app.quit()
       }
 
-      // 托盘及关闭行为设置
+      // Tray and close behavior settings
       const isShowTray = configManager.getTray()
       const isTrayOnClose = configManager.getTrayOnClose()
 
-      // 没有开启托盘，或者开启了托盘，但设置了直接关闭，应执行直接退出
+      // If tray disabled, or tray enabled but close-to-tray disabled, quit directly
       if (!isShowTray || (isShowTray && !isTrayOnClose)) {
-        // 如果是Windows或Linux，直接退出
-        // mac按照系统默认行为，不退出
+        // For Windows or Linux, quit the application
         if (isWin || isLinux) {
           return app.quit()
         }
       }
 
       /**
-       * 上述逻辑以下:
-       * win/linux: 是“开启托盘+设置关闭时最小化到托盘”的情况
-       * mac: 任何情况都会到这里，因此需要单独处理mac
+       * Following logic applies when tray is enabled and close-to-tray is set:
+       * win/linux: minimize to tray on close
+       * mac: always reach here, handle mac-specific behavior
        */
 
       event.preventDefault()
@@ -350,8 +391,8 @@ export class WindowService {
        *  AppleScript may be a solution, but it's not worth
        *
        * [Linux] Known Issue
-       *  setVisibleOnAllWorkspaces 在 Linux 环境下（特别是 KDE Wayland）会导致窗口进入"假弹出"状态
-       *  因此在 Linux 环境下不执行这两行代码
+       *  setVisibleOnAllWorkspaces in Linux environment (especially KDE Wayland) will cause the window to enter a 'fake popup' state
+       *  Therefore, these two lines of code are not executed in the Linux environment
        */
       if (!isLinux) {
         this.mainWindow.setVisibleOnAllWorkspaces(true)
@@ -429,7 +470,10 @@ export class WindowService {
         preload: join(__dirname, '../preload/index.js'),
         sandbox: false,
         webSecurity: false,
-        webviewTag: true
+        webviewTag: true,
+        experimentalFeatures: false,
+        contextIsolation: true,
+        nodeIntegration: false
       }
     })
 

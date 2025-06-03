@@ -426,4 +426,4 @@ export const resetAssistantMessage = (
   }
 }
 
-// 需要一个重置助手消息
+// NOTE: Need a function to reset assistant message

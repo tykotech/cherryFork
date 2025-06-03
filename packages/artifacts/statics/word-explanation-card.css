@@ -1,12 +1,12 @@
 :root {
-  /* 莫兰迪色系：使用柔和、低饱和度的颜色 */
-  --primary-color: #b6b5a7; /* 莫兰迪灰褐色，用于背景文字 */
-  --secondary-color: #9a8f8f; /* 莫兰迪灰棕色，用于标题背景 */
-  --accent-color: #c5b4a0; /* 莫兰迪淡棕色，用于强调元素 */
-  --background-color: #e8e3de; /* 莫兰迪米色，用于页面背景 */
-  --text-color: #5b5b5b; /* 莫兰迪深灰色，用于主要文字 */
-  --light-text-color: #8c8c8c; /* 莫兰迪中灰色，用于次要文字 */
-  --divider-color: #d1cbc3; /* 莫兰迪浅灰色，用于分隔线 */
+  /* Morandi color palette: use soft, low-saturation colors */
+  --primary-color: #b6b5a7; /* Morandi gray-brown, for background text */
+  --secondary-color: #9a8f8f; /* Morandi taupe, for header background */
+  --accent-color: #c5b4a0; /* Morandi light brown, for accent elements */
+  --background-color: #e8e3de; /* Morandi beige, for page background */
+  --text-color: #5b5b5b; /* Morandi dark gray, for main text */
+  --light-text-color: #8c8c8c; /* Morandi medium gray, for secondary text */
+  --divider-color: #d1cbc3; /* Morandi light gray, for dividers */
 }
 body,
 html {
@@ -16,14 +16,14 @@ html {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: var(--background-color); /* 使用莫兰迪米色作为页面背景 */
+  background-color: var(--background-color); /* Use Morandi beige as page background */
   font-family: 'Noto Sans SC', sans-serif;
-  color: var(--text-color); /* 使用莫兰迪深灰色作为主要文字颜色 */
+  color: var(--text-color); /* Use Morandi dark gray as main text color */
 }
 .card {
   width: 300px;
   height: 500px;
-  background-color: #f2ede9; /* 莫兰迪浅米色，用于卡片背景 */
+  background-color: #f2ede9; /* Morandi light beige, for card background */
   border-radius: 20px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   overflow: hidden;
@@ -32,8 +32,8 @@ html {
   flex-direction: column;
 }
 .header {
-  background-color: var(--secondary-color); /* 使用莫兰迪灰棕色作为标题背景 */
-  color: #f2ede9; /* 浅色文字与深色背景形成对比 */
+  background-color: var(--secondary-color); /* Use Morandi taupe as header background */
+  color: #f2ede9; /* Light text for contrast with dark background */
   padding: 20px;
   text-align: left;
   position: relative;
@@ -58,7 +58,7 @@ h1 {
 .word-main {
   font-family: 'Noto Serif SC', serif;
   font-size: 36px;
-  color: var(--text-color); /* 使用莫兰迪深灰色作为主要词汇颜色 */
+  color: var(--text-color); /* Use Morandi dark gray for main word color */
   margin-bottom: 10px;
   position: relative;
 }
@@ -69,17 +69,17 @@ h1 {
   bottom: -5px;
   width: 50px;
   height: 3px;
-  background-color: var(--accent-color); /* 使用莫兰迪淡棕色作为下划线 */
+  background-color: var(--accent-color); /* Use Morandi light brown for underline */
 }
 .word-sub {
   font-size: 14px;
-  color: var(--light-text-color); /* 使用莫兰迪中灰色作为次要文字颜色 */
+  color: var(--light-text-color); /* Use Morandi medium gray for secondary text */
   margin: 5px 0;
 }
 .divider {
   width: 100%;
   height: 1px;
-  background-color: var(--divider-color); /* 使用莫兰迪浅灰色作为分隔线 */
+  background-color: var(--divider-color); /* Use Morandi light gray for divider */
   margin: 20px 0;
 }
 .explanation {
@@ -94,12 +94,12 @@ h1 {
 .quote {
   position: relative;
   padding-left: 20px;
-  border-left: 3px solid var(--accent-color); /* 使用莫兰迪淡棕色作为引用边框 */
+  border-left: 3px solid var(--accent-color); /* Use Morandi light brown for quote border */
 }
 .background-text {
   position: absolute;
   font-size: 150px;
-  color: rgba(182, 181, 167, 0.15); /* 使用莫兰迪灰褐色的透明版本作为背景文字 */
+  color: rgba(182, 181, 167, 0.15); /* Transparent Morandi gray-brown for background text */
   z-index: 0;
   top: 50%;
   left: 50%;

@@ -122,10 +122,10 @@ export default abstract class BaseProvider {
     const webSearchReferences = await this.getWebSearchReferencesFromCache(message)
     const knowledgeReferences = await this.getKnowledgeBaseReferencesFromCache(message)
 
-    // 添加偏移量以避免ID冲突
+    // Add offset to avoid ID conflicts
     const reindexedKnowledgeReferences = knowledgeReferences.map((ref) => ({
       ...ref,
-      id: ref.id + webSearchReferences.length // 为知识库引用的ID添加网络搜索引用的数量作为偏移量
+      id: ref.id + webSearchReferences.length // Add the number of web search references as an offset to the knowledge base reference ID
     }))
 
     const allReferences = [...webSearchReferences, ...reindexedKnowledgeReferences]
@@ -163,7 +163,7 @@ export default abstract class BaseProvider {
   }
 
   /**
-   * 从缓存中获取知识库引用
+   * Get knowledge base references from cache
    */
   private async getKnowledgeBaseReferencesFromCache(message: Message): Promise<KnowledgeReference[]> {
     const content = getMainTextContent(message)
@@ -229,7 +229,7 @@ export default abstract class BaseProvider {
         if (abortController.signal.aborted) {
           reject(new Error('Request was aborted.'))
         }
-        // 捕获abort事件,有些abort事件必须
+        // Capture abort event, some abort events are necessary
         abortController.signal.addEventListener('abort', () => {
           reject(new Error('Request was aborted.'))
         })

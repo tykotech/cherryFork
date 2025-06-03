@@ -181,7 +181,7 @@ const MainMenus: FC = () => {
 const SidebarOpenedMinappTabs: FC = () => {
   const { minappShow, openedKeepAliveMinapps, currentMinappId } = useRuntime()
   const { openMinappKeepAlive, hideMinappPopup, closeMinapp, closeAllMinapps } = useMinappPopup()
-  const { showOpenedMinappsInSidebar } = useSettings() // 获取控制显示的设置
+  const { showOpenedMinappsInSidebar } = useSettings() // Get the setting that controls the display
   const { theme } = useTheme()
   const { t } = useTranslation()
 
@@ -195,7 +195,7 @@ const SidebarOpenedMinappTabs: FC = () => {
 
   // animation for minapp switch indicator
   useEffect(() => {
-    //hacky way to get the height of the icon
+    // hacky way to get the height of the icon
     const iconDefaultHeight = 40
     const iconDefaultOffset = 17
     const container = document.querySelector('.TabsContainer') as HTMLElement
@@ -217,10 +217,10 @@ const SidebarOpenedMinappTabs: FC = () => {
     container.style.setProperty('--indicator-right', `${indicatorRight}px`)
   }, [currentMinappId, openedKeepAliveMinapps, minappShow])
 
-  // 检查是否需要显示已打开小程序组件
+  // Check if the opened mini program component needs to be displayed
   const isShowOpened = showOpenedMinappsInSidebar && openedKeepAliveMinapps.length > 0
 
-  // 如果不需要显示，返回空容器保持动画效果但不显示内容
+  // If not showing, return empty container to preserve animation without content
   if (!isShowOpened) return <TabsContainer className="TabsContainer" />
 
   return (

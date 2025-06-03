@@ -3,8 +3,8 @@ default-mode:
   remove: [pull_request_target, issues]
 
 labels:
-  # <!-- [Ss]kip `LABEL` --> 跳过一个 label
-  # <!-- [Rr]emove `LABEL` --> 去掉一个 label
+  # <!-- [Ss]kip `LABEL` --> Skip a label
+  # <!-- [Rr]emove `LABEL` --> Remove a label
 
   # skips and removes
   - name: skip all
@@ -76,7 +76,7 @@ labels:
   - name: remove client:win
     content:
     regexes: "[Rr]emove (?:[Ll]abels? |)(?:`|)client:win(?:`|)"
-  
+
   - name: skip sig/Assistant
     content:
     regexes: "[Ss]kip (?:[Ll]abels? |)(?:`|)sig/Assistant(?:`|)"
@@ -129,7 +129,7 @@ labels:
   # Area labels
   - name: area/Connectivity
     content: area/Connectivity
-    regexes: "代理|[Pp]roxy"
+    regexes: "proxy|[Pp]roxy"
     skip-if:
       - skip all
       - skip area/Connectivity
@@ -139,7 +139,7 @@ labels:
 
   - name: area/UI/UX
     content: area/UI/UX
-    regexes: "界面|[Uu][Ii]|重叠|按钮|图标|组件|渲染|菜单|栏目|头像|主题|样式|[Cc][Ss][Ss]"
+    regexes: "interface|[Uu][Ii]|overlap|button|icon|component|render|menu|section|avatar|theme|style|[Cc][Ss][Ss]"
     skip-if:
       - skip all
       - skip area/UI/UX
@@ -150,7 +150,7 @@ labels:
   # Kind labels
   - name: kind/documentation
     content: kind/documentation
-    regexes: "文档|教程|[Dd]oc(s|umentation)|[Rr]eadme"
+    regexes: "documentation|tutorial|[Dd]oc(s|umentation)|[Rr]eadme"
     skip-if:
       - skip all
       - skip kind/documentation
@@ -192,7 +192,7 @@ labels:
   # SIG labels
   - name: sig/Assistant
     content: sig/Assistant
-    regexes: "快捷助手|[Aa]ssistant"
+    regexes: "Quick Assistant|[Aa]ssistant"
     skip-if:
       - skip all
       - skip sig/Assistant
@@ -202,7 +202,7 @@ labels:
 
   - name: sig/Data
     content: sig/Data
-    regexes: "[Ww]ebdav|坚果云|备份|同步|数据|Obsidian|Notion|Joplin|思源"
+    regexes: "[Ww]ebdav|Nutstore|backup|sync|data|Obsidian|Notion|Joplin|SiYuan"
     skip-if:
       - skip all
       - skip sig/Data
@@ -222,7 +222,7 @@ labels:
 
   - name: sig/RAG
     content: sig/RAG
-    regexes: "知识库|[Rr][Aa][Gg]"
+    regexes: "knowledge base|[Rr][Aa][Gg]"
     skip-if:
       - skip all
       - skip sig/RAG

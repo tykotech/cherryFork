@@ -21,6 +21,28 @@ import { setUserDataDir } from './utils/file'
 
 Logger.initialize()
 
+// Fix DevTools autofill errors by disabling problematic features
+app.commandLine.appendSwitch('--disable-features', 'VizDisplayCompositor,Autofill')
+app.commandLine.appendSwitch('--disable-dev-shm-usage')
+app.commandLine.appendSwitch('--disable-background-timer-throttling')
+app.commandLine.appendSwitch('--disable-renderer-backgrounding')
+app.commandLine.appendSwitch('--disable-backgrounding-occluded-windows')
+
+// Suppress DevTools protocol error logging
+const originalConsoleError = console.error
+console.error = (...args) => {
+  const message = args.join(' ')
+  if (
+    message.includes('Autofill.enable') ||
+    message.includes('Autofill.setAddresses') ||
+    message.includes('Protocol error') ||
+    (message.includes('DevTools') && message.includes('not supported'))
+  ) {
+    return // Suppress these specific errors
+  }
+  originalConsoleError.apply(console, args)
+}
+
 // Check for single instance lock
 if (!app.requestSingleInstanceLock()) {
   app.quit()
@@ -41,6 +63,71 @@ if (!app.requestSingleInstanceLock()) {
     }
 
     const mainWindow = windowService.createMainWindow()
+
+    // Suppress DevTools autofill and protocol errors
+    if (mainWindow) {
+      mainWindow.webContents.on('did-finish-load', () => {
+        // Inject error suppression script
+        mainWindow.webContents
+          .executeJavaScript(
+            `
+            // Suppress DevTools console errors for autofill and other unsupported features
+            const originalConsoleError = console.error;
+            const originalConsoleWarn = console.warn;
+            
+            console.error = function(...args) {
+              const message = args.join(' ');
+              // Skip autofill related errors
+              if (message.includes('Autofill.enable') || 
+                  message.includes('Autofill.setAddresses') ||
+                  message.includes('Protocol error') ||
+                  message.includes('DevTools') && message.includes('not supported')) {
+                return;
+              }
+              originalConsoleError.apply(console, args);
+            };
+            
+            console.warn = function(...args) {
+              const message = args.join(' ');
+              // Skip autofill related warnings
+              if (message.includes('Autofill') || 
+                  message.includes('DevTools protocol')) {
+                return;
+              }
+              originalConsoleWarn.apply(console, args);
+            };
+          `
+          )
+          .catch(() => {
+            // Silently ignore injection errors
+          })
+      })
+
+      // Handle DevTools opened event
+      mainWindow.webContents.on('devtools-opened', () => {
+        // Additional error suppression when DevTools is opened
+        mainWindow.webContents.devToolsWebContents
+          ?.executeJavaScript(
+            `
+            // Suppress DevTools-specific errors
+            const originalError = console.error;
+            console.error = function(...args) {
+              const message = args.join(' ');
+              if (message.includes('Autofill') || 
+                  message.includes('Protocol error') ||
+                  message.includes('not supported in Electron')) {
+                return;
+              }
+              originalError.apply(console, args);
+            };
+          `
+          )
+          .catch(() => {
+            // Silently ignore DevTools injection errors
+          })
+      })
+    }
+
     new TrayService()
 
     app.on('activate', function () {
@@ -112,8 +199,10 @@ if (!app.requestSingleInstanceLock()) {
     // event.preventDefault()
     try {
       await mcpService.cleanup()
+      app.exit(0)
     } catch (error) {
       Logger.error('Error cleaning up MCP service:', error)
+      app.exit(1)
     }
   })
 

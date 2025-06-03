@@ -60,7 +60,7 @@ export async function reset() {
   })
 }
 
-// 备份到 webdav
+// Backup to WebDAV
 /**
  * @param autoBackupProcess
  * if call in auto backup process, not show any message, any error will be thrown
@@ -97,7 +97,7 @@ export async function backupToWebdav({
   const finalFileName = backupFileName.endsWith('.zip') ? backupFileName : `${backupFileName}.zip`
   const backupData = await getBackupData()
 
-  // 上传文件
+  // Upload file
   try {
     const success = await window.api.backup.backupToWebdav(backupData, {
       webdavHost,
@@ -116,10 +116,10 @@ export async function backupToWebdav({
         window.message.success({ content: i18n.t('message.backup.success'), key: 'backup' })
       }
 
-      // 清理旧备份文件
+      // Clean up old backup files
       if (webdavMaxBackups > 0) {
         try {
-          // 获取所有备份文件
+          // Get all backup files
           const files = await window.api.backup.listWebdavFiles({
             webdavHost,
             webdavUser,
@@ -127,15 +127,15 @@ export async function backupToWebdav({
             webdavPath
           })
 
-          // 筛选当前设备的备份文件
+          // Filter backup files for current device
           const currentDeviceFiles = files.filter((file) => {
-            // 检查文件名是否包含当前设备的标识信息
+            // Check if filename contains current device identifiers
             return file.fileName.includes(deviceType) && file.fileName.includes(hostname)
           })
 
-          // 如果当前设备的备份文件数量超过最大保留数量，删除最旧的文件
+          // If backups exceed max retention, delete oldest files
           if (currentDeviceFiles.length > webdavMaxBackups) {
-            // 文件已按修改时间降序排序，所以最旧的文件在末尾
+            // Files are sorted by modification time descending, so oldest are at the end
             const filesToDelete = currentDeviceFiles.slice(webdavMaxBackups)
 
             for (const file of filesToDelete) {
@@ -192,7 +192,7 @@ export async function backupToWebdav({
   }
 }
 
-// 从 webdav 恢复
+// Restore from WebDAV
 export async function restoreFromWebdav(fileName?: string) {
   const { webdavHost, webdavUser, webdavPass, webdavPath } = store.getState().settings
   let data = ''
@@ -259,12 +259,12 @@ export function startAutoSync(immediate = false) {
       return
     }
 
-    // 用户指定的自动备份时间间隔（毫秒）
+    // User-specified auto backup interval (milliseconds)
     const requiredInterval = webdavSyncInterval * 60 * 1000
 
     let timeUntilNextSync = 1000 //also immediate
     switch (type) {
-      case 'fromLastSyncTime': // 如果存在最后一次同步WebDAV的时间，以它为参考计算下一次同步的时间
+      case 'fromLastSyncTime': // If last WebDAV sync time exists, use it to calculate next sync time
         timeUntilNextSync = Math.max(1000, (webdavSync?.lastSyncTime || 0) + requiredInterval - Date.now())
         break
       case 'fromNow':
@@ -332,7 +332,7 @@ export function startAutoSync(immediate = false) {
           scheduleNextBackup('fromNow')
           isAutoBackupRunning = false
         } else {
-          //Exponential Backoff with Base 2： 7s、17s、37s
+          //Exponential Backoff with Base 2: 7s, 17s, 37s
           const backoffDelay = Math.pow(2, retryCount - 1) * 10000 - 3000
           Logger.log(`[AutoSync] Failed, retry ${retryCount}/${maxRetries} after ${backoffDelay / 1000}s`)
 

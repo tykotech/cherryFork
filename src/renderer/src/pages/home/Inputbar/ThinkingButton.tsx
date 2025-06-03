@@ -30,7 +30,7 @@ interface Props {
   ToolbarButton: any
 }
 
-// 模型类型到支持选项的映射表
+// Model type to supported options mapping
 const MODEL_SUPPORTED_OPTIONS: Record<string, ThinkingOption[]> = {
   default: ['off', 'low', 'medium', 'high'],
   grok: ['off', 'low', 'high'],
@@ -38,7 +38,7 @@ const MODEL_SUPPORTED_OPTIONS: Record<string, ThinkingOption[]> = {
   qwen: ['off', 'low', 'medium', 'high']
 }
 
-// 选项转换映射表：当选项不支持时使用的替代选项
+// Fallback mapping: alternative options when not supported
 const OPTION_FALLBACK: Record<ThinkingOption, ThinkingOption> = {
   off: 'off',
   low: 'low',
@@ -60,7 +60,7 @@ const ThinkingButton: FC<Props> = ({ ref, model, assistant, ToolbarButton }): Re
     return assistant.settings?.reasoning_effort || 'off'
   }, [assistant.settings?.reasoning_effort])
 
-  // 确定当前模型支持的选项类型
+  // Determine the current model type
   const modelType = useMemo(() => {
     if (isGeminiModel) return 'gemini'
     if (isGrokModel) return 'grok'
@@ -68,15 +68,15 @@ const ThinkingButton: FC<Props> = ({ ref, model, assistant, ToolbarButton }): Re
     return 'default'
   }, [isGeminiModel, isGrokModel, isQwenModel])
 
-  // 获取当前模型支持的选项
+  // Get the current supported options for the model
   const supportedOptions = useMemo(() => {
     return MODEL_SUPPORTED_OPTIONS[modelType]
   }, [modelType])
 
-  // 检查当前设置是否与当前模型兼容
+  // Check if current setting is compatible with the model
   useEffect(() => {
     if (currentReasoningEffort && !supportedOptions.includes(currentReasoningEffort)) {
-      // 使用表中定义的替代选项
+      // Use the fallback option defined in the mapping
       const fallbackOption = OPTION_FALLBACK[currentReasoningEffort as ThinkingOption]
 
       updateAssistantSettings({
@@ -108,7 +108,7 @@ const ThinkingButton: FC<Props> = ({ ref, model, assistant, ToolbarButton }): Re
   const onThinkingChange = useCallback(
     (option?: ThinkingOption) => {
       const isEnabled = option !== undefined && option !== 'off'
-      // 然后更新设置
+      // Then update the settings
       if (!isEnabled) {
         updateAssistantSettings({
           reasoning_effort: undefined,
@@ -126,7 +126,7 @@ const ThinkingButton: FC<Props> = ({ ref, model, assistant, ToolbarButton }): Re
   )
 
   const baseOptions = useMemo(() => {
-    // 使用表中定义的选项创建UI选项
+    // Create UI options based on supported options
     return supportedOptions.map((option) => ({
       level: option,
       label: t(`assistants.settings.reasoning_effort.${option === 'auto' ? 'default' : option}`),
@@ -155,9 +155,9 @@ const ThinkingButton: FC<Props> = ({ ref, model, assistant, ToolbarButton }): Re
     }
   }, [openQuickPanel, quickPanel])
 
-  // 获取当前应显示的图标
+  // Get the current icon to display
   const getThinkingIcon = useCallback(() => {
-    // 如果当前选项不支持，显示回退选项的图标
+    // If the current option is not supported, show the fallback option's icon
     if (currentReasoningEffort && !supportedOptions.includes(currentReasoningEffort)) {
       const fallbackOption = OPTION_FALLBACK[currentReasoningEffort as ThinkingOption]
       return createThinkingIcon(fallbackOption, true)

@@ -51,7 +51,7 @@ const AnimatedBlockWrapper: React.FC<AnimatedBlockWrapperProps> = ({ children, e
 }
 
 interface Props {
-  blocks: string[] // 可以接收块ID数组或MessageBlock数组
+  blocks: string[] // Accepts an array of block IDs or MessageBlock arrays
   messageStatus?: Message['status']
   message: Message
 }
@@ -73,9 +73,9 @@ const filterImageBlockGroups = (blocks: MessageBlock[]): (MessageBlock[] | Messa
 }
 
 const MessageBlockRenderer: React.FC<Props> = ({ blocks, message }) => {
-  // 始终调用useSelector，避免条件调用Hook
+  // Always call useSelector to avoid conditional Hook calls
   const blockEntities = useSelector((state: RootState) => messageBlocksSelectors.selectEntities(state))
-  // 根据blocks类型处理渲染数据
+  // Process rendering data based on block types
   const renderedBlocks = blocks.map((blockId) => blockEntities[blockId]).filter(Boolean)
   const groupedBlocks = useMemo(() => filterImageBlockGroups(renderedBlocks), [renderedBlocks])
   return (

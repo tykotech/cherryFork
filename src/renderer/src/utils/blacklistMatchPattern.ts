@@ -206,7 +206,7 @@ export async function filterResultWithBlacklist(
 ): Promise<WebSearchProviderResponse> {
   Logger.log('[filterResultWithBlacklist]', response)
 
-  // 没有结果或者没有黑名单规则时，直接返回原始结果
+  // If there are no results or no blacklist rules, return the original results directly
   if (
     !(response.results as any[])?.length ||
     (!websearch?.excludeDomains?.length && !websearch?.subscribeSources?.length)
@@ -214,10 +214,10 @@ export async function filterResultWithBlacklist(
     return response
   }
 
-  // 创建匹配模式映射实例
+  // Create a match pattern map instance
   const patternMap = new MatchPatternMap<string>()
 
-  // 合并所有黑名单规则
+  // Merge all blacklist rules
   const blacklistPatterns: string[] = [
     ...websearch.excludeDomains,
     ...(websearch.subscribeSources?.length
@@ -227,13 +227,13 @@ export async function filterResultWithBlacklist(
       : [])
   ]
 
-  // 正则表达式规则集合
+  // Regular expression rule set
   const regexPatterns: RegExp[] = []
 
-  // 分类处理黑名单规则
+  // Categorize blacklist rules
   blacklistPatterns.forEach((pattern) => {
     if (pattern.startsWith('/') && pattern.endsWith('/')) {
-      // 处理正则表达式格式
+      // Handle regular expression format
       try {
         const regexPattern = pattern.slice(1, -1)
         regexPatterns.push(new RegExp(regexPattern, 'i'))
@@ -241,7 +241,7 @@ export async function filterResultWithBlacklist(
         console.error('Invalid regex pattern:', pattern, error)
       }
     } else {
-      // 处理匹配模式格式
+      // Handle match pattern format
       try {
         patternMap.set(pattern, pattern)
       } catch (error) {
@@ -250,23 +250,23 @@ export async function filterResultWithBlacklist(
     }
   })
 
-  // 过滤搜索结果
+  // Filter search results
   const filteredResults = (response.results as any[]).filter((result) => {
     try {
       const url = new URL(result.url)
 
-      // 检查URL是否匹配任何正则表达式规则
+      // Check if the URL matches any regular expression rule
       const matchesRegex = regexPatterns.some((regex) => regex.test(url.hostname))
       if (matchesRegex) {
         return false
       }
 
-      // 检查URL是否匹配任何匹配模式规则
+      // Check if the URL matches any match pattern rule
       const matchesPattern = patternMap.get(result.url).length > 0
       return !matchesPattern
     } catch (error) {
       console.error('Error processing URL:', result.url, error)
-      return true // 如果URL解析失败，保留该结果
+      return true // If URL parsing fails, keep the result
     }
   })
 

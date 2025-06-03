@@ -44,7 +44,10 @@ const NpxSearch: FC = () => {
     const searchScope = scopeOverride || npmScope
 
     if (!searchScope.trim()) {
-      window.message.warning({ content: t('settings.mcp.npx_list.scope_required'), key: 'mcp-npx-scope-required' })
+      window.message.warning({
+        content: t('settings.mcp.npx_list.scope_required', 'Scope is required'),
+        key: 'mcp-npx-scope-required'
+      })
       return
     }
 
@@ -59,7 +62,7 @@ const NpxSearch: FC = () => {
           name: server.name,
           description: server.description || '',
           version: '1.0.0',
-          usage: '参考下方链接中的使用说明',
+          usage: 'See usage instructions in the link below',
           npmLink: 'https://docs.cherry-ai.com/advanced-basic/mcp/in-memory',
           fullName: server.name,
           type: server.type || 'inMemory'
@@ -96,18 +99,24 @@ const NpxSearch: FC = () => {
       setSearchResults(formattedResults)
 
       if (formattedResults.length === 0) {
-        window.message.info({ content: t('settings.mcp.npx_list.no_packages'), key: 'mcp-npx-no-packages' })
+        window.message.info({
+          content: t('settings.mcp.npx_list.no_packages', 'No packages found'),
+          key: 'mcp-npx-no-packages'
+        })
       }
     } catch (error: unknown) {
       setSearchResults([])
       _searchResults = []
       if (error instanceof Error) {
         window.message.error({
-          content: `${t('settings.mcp.npx_list.search_error')}: ${error.message}`,
+          content: `${t('settings.mcp.npx_list.search_error', 'Search error')}: ${error.message}`,
           key: 'mcp-npx-search-error'
         })
       } else {
-        window.message.error({ content: t('settings.mcp.npx_list.search_error'), key: 'mcp-npx-search-error' })
+        window.message.error({
+          content: t('settings.mcp.npx_list.search_error', 'Search error'),
+          key: 'mcp-npx-search-error'
+        })
       }
     } finally {
       setSearchLoading(false)
@@ -128,7 +137,7 @@ const NpxSearch: FC = () => {
           </Center>
           <Space.Compact style={{ width: '100%' }}>
             <Input
-              placeholder={t('settings.mcp.npx_list.scope_placeholder')}
+              placeholder={t('settings.mcp.npx_list.scope_placeholder', 'Enter npm scope')}
               value={npmScope}
               onChange={(e) => setNpmScope(e.target.value)}
               onPressEnter={() => handleNpmSearch(npmScope)}
@@ -194,14 +203,17 @@ const NpxSearch: FC = () => {
 
                         if (buildInServer) {
                           addMCPServer(buildInServer)
-                          window.message.success({ content: t('settings.mcp.addSuccess'), key: 'mcp-add-server' })
+                          window.message.success({
+                            content: t('settings.mcp.addSuccess', 'Added successfully'),
+                            key: 'mcp-add-server'
+                          })
                           return
                         }
 
                         const newServer = {
                           id: nanoid(),
                           name: record.name,
-                          description: `${record.description}\n\n${t('settings.mcp.npx_list.usage')}: ${record.usage}\n${t('settings.mcp.npx_list.npm')}: ${record.npmLink}`,
+                          description: `${record.description}\n\n${t('settings.mcp.npx_list.usage', 'Usage')}: ${record.usage}\n${t('settings.mcp.npx_list.npm', 'NPM')}: ${record.npmLink}`,
                           command: 'npx',
                           args: record.configSample?.args ?? ['-y', record.fullName],
                           env: record.configSample?.env,
@@ -211,7 +223,10 @@ const NpxSearch: FC = () => {
                         }
 
                         addMCPServer(newServer)
-                        window.message.success({ content: t('settings.mcp.addSuccess'), key: 'mcp-add-server' })
+                        window.message.success({
+                          content: t('settings.mcp.addSuccess', 'Added successfully'),
+                          key: 'mcp-add-server'
+                        })
                       }}
                     />
                   </Flex>
@@ -219,7 +234,7 @@ const NpxSearch: FC = () => {
                 <Space direction="vertical" size="small">
                   <Text className="selectable">{record.description}</Text>
                   <Text type="secondary" className="selectable">
-                    {t('settings.mcp.npx_list.usage')}: {record.usage}
+                    {t('settings.mcp.npx_list.usage', 'Usage')}: {record.usage}
                   </Text>
                   <Link href={record.npmLink} target="_blank" rel="noopener noreferrer">
                     {record.npmLink}

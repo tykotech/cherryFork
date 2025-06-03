@@ -4,8 +4,8 @@ import archiver from 'archiver'
 import { exec } from 'child_process'
 import { app } from 'electron'
 import Logger from 'electron-log'
-import StreamZip from 'node-stream-zip'
 import * as fs from 'fs-extra'
+import StreamZip from 'node-stream-zip'
 import * as path from 'path'
 import { createClient, CreateDirectoryOptions, FileStat } from 'webdav'
 
@@ -33,42 +33,42 @@ class BackupManager {
       for (const item of items) {
         const fullPath = path.join(dirPath, item.name)
 
-        // 先处理子目录
+        // First process subdirectories
         if (item.isDirectory()) {
           await this.setWritableRecursive(fullPath)
         }
 
-        // 统一设置权限（Windows需要特殊处理）
+        // Set permissions (Windows needs special handling)
         await this.forceSetWritable(fullPath)
       }
 
-      // 确保根目录权限
+      // Ensure root directory permissions
       await this.forceSetWritable(dirPath)
     } catch (error) {
-      Logger.error(`权限设置失败：${dirPath}`, error)
+      Logger.error(`Permission setting failed: ${dirPath}`, error)
       throw error
     }
   }
 
-  // 新增跨平台权限设置方法
+  // New cross-platform permission setting method
   private async forceSetWritable(targetPath: string): Promise<void> {
     try {
-      // Windows系统需要先取消只读属性
+      // Windows needs to remove read-only attribute first
       if (process.platform === 'win32') {
-        await fs.chmod(targetPath, 0o666) // Windows会忽略权限位但能移除只读
+        await fs.chmod(targetPath, 0o666) // Windows ignores permission bits but can remove read-only
       } else {
         const stats = await fs.stat(targetPath)
         const mode = stats.isDirectory() ? 0o777 : 0o666
         await fs.chmod(targetPath, mode)
       }
 
-      // 双重保险：使用文件属性命令（Windows专用）
+      // Double insurance: use file attribute command (Windows only)
       if (process.platform === 'win32') {
         await exec(`attrib -R "${targetPath}" /L /D`)
       }
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
-        Logger.warn(`权限设置警告：${targetPath}`, error)
+        Logger.warn(`Permission setting warning: ${targetPath}`, error)
       }
     }
   }
@@ -90,7 +90,7 @@ class BackupManager {
       await fs.ensureDir(this.tempDir)
       onProgress({ stage: 'preparing', progress: 0, total: 100 })
 
-      // 使用流的方式写入 data.json
+      // Write data.json using stream
       const tempDataPath = path.join(this.tempDir, 'data.json')
 
       await new Promise<void>((resolve, reject) => {
@@ -104,15 +104,15 @@ class BackupManager {
 
       onProgress({ stage: 'writing_data', progress: 20, total: 100 })
 
-      // 复制 Data 目录到临时目录
+      // Copy Data directory to temp directory
       const sourcePath = path.join(app.getPath('userData'), 'Data')
       const tempDataDir = path.join(this.tempDir, 'Data')
 
-      // 获取源目录总大小
+      // Get total size of source directory
       const totalSize = await this.getDirSize(sourcePath)
       let copiedSize = 0
 
-      // 使用流式复制
+      // Stream copy
       await this.copyDirWithProgress(sourcePath, tempDataDir, (size) => {
         copiedSize += size
         const progress = Math.min(50, Math.floor((copiedSize / totalSize) * 50))
@@ -122,14 +122,14 @@ class BackupManager {
       await this.setWritableRecursive(tempDataDir)
       onProgress({ stage: 'preparing_compression', progress: 50, total: 100 })
 
-      // 创建输出文件流
+      // Create output file stream
       const backupedFilePath = path.join(destinationPath, fileName)
       const output = fs.createWriteStream(backupedFilePath)
 
-      // 创建 archiver 实例，启用 ZIP64 支持
+      // Create archiver instance, enable ZIP64 support
       const archive = archiver('zip', {
-        zlib: { level: 1 }, // 使用最低压缩级别以提高速度
-        zip64: true // 启用 ZIP64 支持以处理大文件
+        zlib: { level: 1 }, // Use lowest compression level for speed
+        zip64: true // Enable ZIP64 support for large files
       })
 
       let lastProgress = 50
@@ -138,7 +138,7 @@ class BackupManager {
       let totalBytes = 0
       let processedBytes = 0
 
-      // 首先计算总文件数和总大小
+      // First calculate total file count and size
       const calculateTotals = async (dirPath: string) => {
         const items = await fs.readdir(dirPath, { withFileTypes: true })
         for (const item of items) {
@@ -155,7 +155,7 @@ class BackupManager {
 
       await calculateTotals(this.tempDir)
 
-      // 监听文件添加事件
+      // Listen for file add events
       archive.on('entry', () => {
         processedEntries++
         if (totalEntries > 0) {
@@ -167,7 +167,7 @@ class BackupManager {
         }
       })
 
-      // 监听数据写入事件
+      // Listen for data write events
       archive.on('data', (chunk) => {
         processedBytes += chunk.length
         if (totalBytes > 0) {
@@ -179,7 +179,7 @@ class BackupManager {
         }
       })
 
-      // 使用 Promise 等待压缩完成
+      // Use Promise to wait for compression to finish
       await new Promise<void>((resolve, reject) => {
         output.on('close', () => {
           onProgress({ stage: 'compressing', progress: 100, total: 100 })
@@ -192,17 +192,17 @@ class BackupManager {
           }
         })
 
-        // 将输出流连接到压缩器
+        // Pipe output stream to archiver
         archive.pipe(output)
 
-        // 添加整个临时目录到压缩文件
+        // Add entire temp directory to archive
         archive.directory(this.tempDir, false)
 
-        // 完成压缩
+        // Finalize compression
         archive.finalize()
       })
 
-      // 清理临时目录
+      // Clean up temp directory
       await fs.remove(this.tempDir)
       onProgress({ stage: 'completed', progress: 100, total: 100 })
 
@@ -210,7 +210,7 @@ class BackupManager {
       return backupedFilePath
     } catch (error) {
       Logger.error('[BackupManager] Backup failed:', error)
-      // 确保清理临时目录
+      // Ensure temp directory is cleaned up
       await fs.remove(this.tempDir).catch(() => {})
       throw error
     }
@@ -225,7 +225,7 @@ class BackupManager {
     }
 
     try {
-      // 创建临时目录
+      // Create temp directory
       await fs.ensureDir(this.tempDir)
       onProgress({ stage: 'preparing', progress: 0, total: 100 })
 
@@ -237,24 +237,24 @@ class BackupManager {
       onProgress({ stage: 'extracted', progress: 25, total: 100 })
 
       Logger.log('[backup] step 2: read data.json')
-      // 读取 data.json
+      // Read data.json
       const dataPath = path.join(this.tempDir, 'data.json')
       const data = await fs.readFile(dataPath, 'utf-8')
       onProgress({ stage: 'reading_data', progress: 35, total: 100 })
 
       Logger.log('[backup] step 3: restore Data directory')
-      // 恢复 Data 目录
+      // Restore Data directory
       const sourcePath = path.join(this.tempDir, 'Data')
       const destPath = path.join(app.getPath('userData'), 'Data')
 
-      // 获取源目录总大小
+      // Get total size of source directory
       const totalSize = await this.getDirSize(sourcePath)
       let copiedSize = 0
 
       await this.setWritableRecursive(destPath)
       await fs.remove(destPath)
 
-      // 使用流式复制
+      // Stream copy
       await this.copyDirWithProgress(sourcePath, destPath, (size) => {
         copiedSize += size
         const progress = Math.min(85, 35 + Math.floor((copiedSize / totalSize) * 50))
@@ -262,7 +262,7 @@ class BackupManager {
       })
 
       Logger.log('[backup] step 4: clean up temp directory')
-      // 清理临时目录
+      // Clean up temp directory
       await this.setWritableRecursive(this.tempDir)
       await fs.remove(this.tempDir)
       onProgress({ stage: 'completed', progress: 100, total: 100 })
@@ -285,11 +285,11 @@ class BackupManager {
       const result = await webdavClient.putFileContents(filename, fs.createReadStream(backupedFilePath), {
         overwrite: true
       })
-      // 上传成功后删除本地备份文件
+      // Delete local backup file after successful upload
       await fs.remove(backupedFilePath)
       return result
     } catch (error) {
-      // 上传失败时也删除本地临时文件
+      // Delete local temp file on upload failure
       await fs.remove(backupedFilePath).catch(() => {})
       throw error
     }
@@ -306,7 +306,7 @@ class BackupManager {
         fs.mkdirSync(this.backupDir, { recursive: true })
       }
 
-      // 使用流的方式写入文件
+      // Write file using stream
       await new Promise<void>((resolve, reject) => {
         const writeStream = fs.createWriteStream(backupedFilePath)
         writeStream.write(retrievedFile as Buffer)

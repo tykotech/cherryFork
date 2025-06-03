@@ -40,7 +40,7 @@ export function useWebdavBackupModal({ backupMethod }: { backupMethod?: typeof b
   }
 
   const showBackupModal = useCallback(async () => {
-    // 获取默认文件名
+    // Generate default file name
     const deviceType = await window.api.system.getDeviceType()
     const hostname = await window.api.system.getHostname()
     const timestamp = dayjs().format('YYYYMMDDHHmmss')

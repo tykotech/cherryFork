@@ -265,16 +265,16 @@ const Messages: React.FC<MessagesProps> = ({ assistant, topic, setActiveTopic })
 const computeDisplayMessages = (messages: Message[], startIndex: number, displayCount: number) => {
   const reversedMessages = [...messages].reverse()
 
-  // 如果剩余消息数量小于 displayCount，直接返回所有剩余消息
+  // If the number of remaining messages is less than displayCount, return all remaining messages directly
   if (reversedMessages.length - startIndex <= displayCount) {
     return reversedMessages.slice(startIndex)
   }
 
-  const userIdSet = new Set() // 用户消息 id 集合
-  const assistantIdSet = new Set() // 助手消息 askId 集合
+  const userIdSet = new Set() // User message id set
+  const assistantIdSet = new Set() // Assistant message askId set
   const displayMessages: Message[] = []
 
-  // 处理单条消息的函数
+  // Process a single message function
   const processMessage = (message: Message) => {
     if (!message) return
 
@@ -286,11 +286,11 @@ const computeDisplayMessages = (messages: Message[], startIndex: number, display
       displayMessages.push(message)
       return
     }
-    // 如果是相同 askId 的助手消息，也要显示
+    // If it is the same askId of the assistant message, it should also be displayed
     displayMessages.push(message)
   }
 
-  // 遍历消息直到满足显示数量要求
+  // Traverse messages until the display count requirement is met
   for (let i = startIndex; i < reversedMessages.length && userIdSet.size + assistantIdSet.size < displayCount; i++) {
     processMessage(reversedMessages[i])
   }

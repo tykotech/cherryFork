@@ -19,7 +19,7 @@ import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import styled from 'styled-components'
 
-// 定义Tooltip相关样式组件
+// Define Tooltip related styled components
 const TooltipContent = styled.div`
   max-width: 300px;
 `
@@ -44,7 +44,7 @@ const TooltipFooter = styled.div`
   font-style: italic;
 `
 
-// 自定义节点组件
+// Custom node component
 const CustomNode: FC<{ data: any }> = ({ data }) => {
   const { t } = useTranslation()
   const nodeType = data.type
@@ -54,14 +54,14 @@ const CustomNode: FC<{ data: any }> = ({ data }) => {
   let gradientColor = 'rgba(0, 0, 0, 0.03)'
   let avatar: React.ReactNode | null = null
 
-  // 根据消息类型设置不同的样式和图标
+  // Set different styles and icons based on message type
   if (nodeType === 'user') {
     borderColor = 'var(--color-icon)'
     backgroundColor = 'rgba(var(--color-info-rgb), 0.03)'
     gradientColor = 'rgba(var(--color-info-rgb), 0.08)'
     title = data.userName || t('chat.history.user_node')
 
-    // 用户头像
+    // User avatar
     if (data.userAvatar) {
       avatar = <Avatar src={data.userAvatar} alt={title} />
     } else {
@@ -73,7 +73,7 @@ const CustomNode: FC<{ data: any }> = ({ data }) => {
     gradientColor = 'rgba(var(--color-primary-rgb), 0.08)'
     title = `${data.model || t('chat.history.assistant_node')}`
 
-    // 模型头像
+    // Model avatar
     if (data.modelInfo) {
       avatar = <ModelAvatar model={data.modelInfo} size={32} />
     } else if (data.modelId) {
@@ -90,10 +90,10 @@ const CustomNode: FC<{ data: any }> = ({ data }) => {
     }
   }
 
-  // 处理节点点击事件，滚动到对应消息
+  // Handle node click event, scroll to corresponding message
   const handleNodeClick = () => {
     if (data.messageId) {
-      // 创建一个自定义事件来定位消息并切换标签
+      // Create a custom event to locate the message and switch the tab
       const customEvent = new CustomEvent('flow-navigate-to-message', {
         detail: {
           messageId: data.messageId,
@@ -104,7 +104,7 @@ const CustomNode: FC<{ data: any }> = ({ data }) => {
         bubbles: true
       })
 
-      // 让监听器处理标签切换
+      // Let the listener handle the tab switch
       document.dispatchEvent(customEvent)
 
       setTimeout(() => {
@@ -113,7 +113,7 @@ const CustomNode: FC<{ data: any }> = ({ data }) => {
     }
   }
 
-  // 隐藏连接点的通用样式
+  // General style for hiding connection points
   const handleStyle = {
     opacity: 0,
     width: '12px',
@@ -159,25 +159,25 @@ const CustomNode: FC<{ data: any }> = ({ data }) => {
   )
 }
 
-// 创建自定义节点类型
+// Create custom node types
 const nodeTypes: NodeTypes = { custom: CustomNode }
 
 interface ChatFlowHistoryProps {
   conversationId?: string
 }
 
-// 定义节点和边的类型
+// Define node and edge types
 type FlowNode = Node<any>
 type FlowEdge = Edge<any>
 
-// 统一的边样式
+// Unified edge style
 const commonEdgeStyle = {
   stroke: 'var(--color-border)',
   strokeDasharray: '4,4',
   strokeWidth: 2
 }
 
-// 统一的边配置
+// Unified edge configuration
 const defaultEdgeOptions = {
   animated: true,
   style: commonEdgeStyle,
@@ -196,14 +196,14 @@ const ChatFlowHistory: FC<ChatFlowHistoryProps> = ({ conversationId }) => {
 
   const topicId = conversationId
 
-  // 只在消息实际内容变化时更新，而不是属性变化（如foldSelected）
+  // Only update when actual message content changes, not property changes (such as foldSelected)
   const messages = useSelector(
     (state: RootState) => selectMessagesForTopic(state, topicId || ''),
     (prev, next) => {
-      // 只比较消息的关键属性，忽略展示相关的属性（如foldSelected）
+      // Only compare key properties of messages, ignore display-related properties (such as foldSelected)
       if (prev.length !== next.length) return false
 
-      // 比较每条消息的内容和关键属性，忽略UI状态相关属性
+      // Compare the content and key properties of each message, ignoring UI state-related properties
       return prev.every((prevMsg, index) => {
         const nextMsg = next[index]
         const prevMsgContent = getMainTextContent(prevMsg)
@@ -220,10 +220,10 @@ const ChatFlowHistory: FC<ChatFlowHistoryProps> = ({ conversationId }) => {
     }
   )
 
-  // 获取用户头像
+  // Get user avatar
   const userAvatar = useSelector((state: RootState) => state.runtime.avatar)
 
-  // 消息过滤
+  // Message filtering
   const { userMessages, assistantMessages } = useMemo(() => {
     const userMsgs = messages.filter((msg) => msg.role === 'user')
     const assistantMsgs = messages.filter((msg) => msg.role === 'assistant')
@@ -233,29 +233,29 @@ const ChatFlowHistory: FC<ChatFlowHistoryProps> = ({ conversationId }) => {
   const buildConversationFlowData = useCallback(() => {
     if (!topicId || !messages.length) return { nodes: [], edges: [] }
 
-    // 创建节点和边
+    // Create nodes and edges
     const flowNodes: FlowNode[] = []
     const flowEdges: FlowEdge[] = []
 
-    // 布局参数
+    // Layout parameters
     const verticalGap = 200
     const horizontalGap = 350
     const baseX = 150
 
-    // 如果没有任何消息可以显示，返回空结果
+    // If there are no messages to display, return empty result
     if (userMessages.length === 0 && assistantMessages.length === 0) {
       return { nodes: [], edges: [] }
     }
 
-    // 为所有用户消息创建节点
+    // Create nodes for all user messages
     userMessages.forEach((message, index) => {
       const nodeId = `user-${message.id}`
       const yPosition = index * verticalGap * 2
 
-      // 获取用户名
+      // Get user name
       const userNameValue = userName || t('chat.history.user_node')
 
-      // 获取用户头像
+      // Get user avatar
       const msgUserAvatar = userAvatar || null
 
       flowNodes.push({
@@ -273,7 +273,7 @@ const ChatFlowHistory: FC<ChatFlowHistoryProps> = ({ conversationId }) => {
         targetPosition: Position.Top
       })
 
-      // 找到用户消息之后的助手回复
+      // Find assistant replies after user message
       const userMsgTime = new Date(message.createdAt).getTime()
       const relatedAssistantMsgs = assistantMessages.filter((aMsg) => {
         const aMsgTime = new Date(aMsg.createdAt).getTime()
@@ -283,36 +283,36 @@ const ChatFlowHistory: FC<ChatFlowHistoryProps> = ({ conversationId }) => {
         )
       })
 
-      // 为相关的助手消息创建节点
+      // Create nodes for related assistant messages
       relatedAssistantMsgs.forEach((aMsg, aIndex) => {
         const assistantNodeId = `assistant-${aMsg.id}`
         const isMultipleResponses = relatedAssistantMsgs.length > 1
         const assistantX = baseX + (isMultipleResponses ? horizontalGap * aIndex : 0)
         const assistantY = yPosition + verticalGap
 
-        // 根据位置确定连接点位置
-        let sourcePos = Position.Bottom // 默认向下输出
-        let targetPos = Position.Top // 默认从上方输入
+        // Determine connection point positions based on layout
+        let sourcePos = Position.Bottom // Default output downwards
+        let targetPos = Position.Top // Default input from above
 
-        // 横向排列多个助手消息时调整连接点
-        // 注意：现在所有助手节点都直接连接到用户节点，而不是相互连接
+        // When arranging multiple assistant messages horizontally, adjust connection points
+        // Note: Now all assistant nodes are directly connected to user node, not to each other
         if (isMultipleResponses) {
-          // 所有助手节点都使用顶部作为输入点(从用户节点)
+          // All assistant nodes use top as input (from user node)
           targetPos = Position.Top
 
-          // 所有助手节点都使用底部作为输出点(到下一个用户节点)
+          // All assistant nodes use bottom as output (to next user node)
           sourcePos = Position.Bottom
         }
 
         const aMsgAny = aMsg as any
 
-        // 获取模型名称
+        // Get model name
         const modelName = (aMsgAny.model && aMsgAny.model.name) || t('chat.history.assistant_node')
 
-        // 获取模型ID
+        // Get model ID
         const modelId = (aMsgAny.model && aMsgAny.model.id) || ''
 
-        // 完整的模型信息
+        // Complete model info
         const modelInfo = aMsgAny.model as Model | undefined
 
         flowNodes.push({
@@ -331,16 +331,16 @@ const ChatFlowHistory: FC<ChatFlowHistoryProps> = ({ conversationId }) => {
           targetPosition: targetPos
         })
 
-        // 连接消息 - 将每个助手节点直接连接到用户节点
+        // Connect messages - connect each assistant node directly to user node
         if (aIndex === 0) {
-          // 连接用户消息到第一个助手回复
+          // Connect user message to first assistant reply
           flowEdges.push({
             id: `edge-${nodeId}-to-${assistantNodeId}`,
             source: nodeId,
             target: assistantNodeId
           })
         } else {
-          // 直接连接用户消息到所有其他助手回复
+          // Directly connect user message to all other assistant replies
           flowEdges.push({
             id: `edge-${nodeId}-to-${assistantNodeId}`,
             source: nodeId,
@@ -349,19 +349,19 @@ const ChatFlowHistory: FC<ChatFlowHistoryProps> = ({ conversationId }) => {
         }
       })
 
-      // 连接相邻的用户消息
+      // Connect adjacent user messages
       if (index > 0) {
         const prevUserNodeId = `user-${userMessages[index - 1].id}`
         const prevUserTime = new Date(userMessages[index - 1].createdAt).getTime()
 
-        // 查找前一个用户消息的所有助手回复
+        // Find all assistant replies for previous user message
         const prevAssistantMsgs = assistantMessages.filter((aMsg) => {
           const aMsgTime = new Date(aMsg.createdAt).getTime()
           return aMsgTime > prevUserTime && aMsgTime < userMsgTime
         })
 
         if (prevAssistantMsgs.length > 0) {
-          // 所有前一个用户的助手消息都连接到当前用户消息
+          // All previous user's assistant messages connect to current user message
           prevAssistantMsgs.forEach((aMsg) => {
             const assistantId = `assistant-${aMsg.id}`
             flowEdges.push({
@@ -371,7 +371,7 @@ const ChatFlowHistory: FC<ChatFlowHistoryProps> = ({ conversationId }) => {
             })
           })
         } else {
-          // 如果没有助手消息，直接连接两个用户消息
+          // If no assistant messages, connect two user messages directly
           flowEdges.push({
             id: `edge-${prevUserNodeId}-to-${nodeId}`,
             source: prevUserNodeId,
@@ -381,28 +381,28 @@ const ChatFlowHistory: FC<ChatFlowHistoryProps> = ({ conversationId }) => {
       }
     })
 
-    // 处理孤立的助手消息（没有对应的用户消息）
+    // Handle orphan assistant messages (no corresponding user message)
     const orphanAssistantMsgs = assistantMessages.filter(
       (aMsg) => !flowNodes.some((node) => node.id === `assistant-${aMsg.id}`)
     )
 
     if (orphanAssistantMsgs.length > 0) {
-      // 在图表顶部添加这些孤立消息
+      // Add these orphan messages at the top of the chart
       const startY = flowNodes.length > 0 ? Math.min(...flowNodes.map((node) => node.position.y)) - verticalGap * 2 : 0
 
       orphanAssistantMsgs.forEach((aMsg, index) => {
         const assistantNodeId = `orphan-assistant-${aMsg.id}`
 
-        // 获取模型数据
+        // Get model data
         const aMsgAny = aMsg as any
 
-        // 获取模型名称
+        // Get model name
         const modelName = (aMsgAny.model && aMsgAny.model.name) || t('chat.history.assistant_node')
 
-        // 获取模型ID
+        // Get model ID
         const modelId = (aMsgAny.model && aMsgAny.model.id) || ''
 
-        // 完整的模型信息
+        // Complete model info
         const modelInfo = aMsgAny.model as Model | undefined
 
         flowNodes.push({
@@ -421,7 +421,7 @@ const ChatFlowHistory: FC<ChatFlowHistoryProps> = ({ conversationId }) => {
           targetPosition: Position.Top
         })
 
-        // 连接相邻的孤立消息
+        // Connect adjacent orphan messages
         if (index > 0) {
           const prevNodeId = `orphan-assistant-${orphanAssistantMsgs[index - 1].id}`
           flowEdges.push({
@@ -504,7 +504,7 @@ const ChatFlowHistory: FC<ChatFlowHistoryProps> = ({ conversationId }) => {
   )
 }
 
-// 样式组件定义
+// Style component definitions
 const FlowContainer = styled.div`
   width: 100%;
   height: 100%;
@@ -558,7 +558,7 @@ const CustomNodeContainer = styled.div`
     filter: brightness(1.02);
   }
 
-  /* 添加点击动画效果 */
+  /* Add click animation effect */
   &:active {
     transform: scale(0.98);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -615,5 +615,5 @@ const NodeContent = styled.div`
   padding: 3px;
 `
 
-// 确保组件使用React.memo包装以减少不必要的重渲染
+// Ensure the component is wrapped with React.memo to reduce unnecessary re-renders
 export default memo(ChatFlowHistory)

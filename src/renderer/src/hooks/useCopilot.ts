@@ -11,8 +11,8 @@ import {
 } from '../store/copilot'
 
 /**
- * 用于访问和操作Copilot相关状态的钩子函数
- * @returns Copilot状态和操作方法
+ * Hook function for accessing and manipulating Copilot-related state
+ * @returns Copilot state and operation methods
  */
 export function useCopilot() {
   const dispatch = useDispatch()
@@ -39,10 +39,10 @@ export function useCopilot() {
   }
 
   return {
-    // 当前状态
+    // Current state
     ...copilotState,
 
-    // 状态更新方法
+    // State update methods
     updateUsername,
     updateAvatar,
     updateDefaultHeaders,

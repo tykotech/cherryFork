@@ -91,7 +91,7 @@ const DisplaySettings: FC = () => {
   )
 
   useEffect(() => {
-    // 初始化获取当前缩放值
+    // Initialize and get current zoom factor
     window.api.handleZoomFactor(0).then((factor) => {
       setCurrentZoom(factor)
     })
@@ -101,10 +101,10 @@ const DisplaySettings: FC = () => {
         setCurrentZoom(factor)
       })
     }
-    // 添加resize事件监听
+    // Add resize event listener
     window.addEventListener('resize', handleResize)
 
-    // 清理事件监听，防止内存泄漏
+    // Clean up event listener to prevent memory leaks
     return () => {
       window.removeEventListener('resize', handleResize)
     }

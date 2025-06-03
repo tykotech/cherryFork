@@ -291,38 +291,38 @@ export function convertLinksToOpenRouter(text: string, resetCounter = false): st
 }
 
 /**
- * 根据webSearch结果补全链接，将[<sup>num</sup>]()转换为[<sup>num</sup>](webSearch[num-1].url)
- * @param text 原始文本
- * @param webSearch webSearch结果
- * @returns 补全后的文本
+ * Completes links based on webSearch results, converting [<sup>num</sup>]() to [<sup>num</sup>](webSearch[num-1].url)
+ * @param text The original text
+ * @param webSearch The webSearch results
+ * @returns The text with completed links
  */
 export function completeLinks(text: string, webSearch: any[]): string {
-  // 使用正则表达式匹配形如 [<sup>num</sup>]() 的链接
+  // Uses regex to match links in the form [<sup>num</sup>]()
   return text.replace(/\[<sup>(\d+)<\/sup>\]\(\)/g, (match, num) => {
     const index = parseInt(num) - 1
-    // 检查 webSearch 数组中是否存在对应的 URL
+    // Check if the corresponding URL exists in the webSearch array
     if (index >= 0 && index < webSearch.length && webSearch[index]?.link) {
       return `[<sup>${num}</sup>](${webSearch[index].link})`
     }
-    // 如果没有找到对应的 URL，保持原样
+    // If no corresponding URL is found, return the match as is
     return match
   })
 }
 
 /**
- * 从Markdown文本中提取所有URL
- * 支持以下格式：
+ * Extracts all URLs from Markdown text
+ * Supports the following formats:
  * 1. [text](url)
  * 2. [<sup>num</sup>](url)
  * 3. ([text](url))
  *
- * @param text Markdown格式的文本
- * @returns 提取到的URL数组，去重后的结果
+ * @param text Markdown formatted text
+ * @returns Extracted URLs array, deduped
  */
 export function extractUrlsFromMarkdown(text: string): string[] {
   const urlSet = new Set<string>()
 
-  // 匹配所有Markdown链接格式
+  // Matches all Markdown link formats
   const linkPattern = /\[(?:[^[\]]*)\]\(([^()]+)\)/g
   let match: RegExpExecArray | null
 
@@ -337,9 +337,9 @@ export function extractUrlsFromMarkdown(text: string): string[] {
 }
 
 /**
- * 验证字符串是否是有效的URL
- * @param url 要验证的URL字符串
- * @returns 是否是有效的URL
+ * Validates if a string is a well-formed URL
+ * @param url The URL string to validate
+ * @returns Whether the URL is valid
  */
 function isValidUrl(url: string): boolean {
   try {
@@ -351,12 +351,12 @@ function isValidUrl(url: string): boolean {
 }
 
 /**
- * 清理 Markdown 链接之间的逗号
- * 例如: [text](url),[text](url) -> [text](url) [text](url)
- * @param text 包含 Markdown 链接的文本
- * @returns 清理后的文本
+ * Cleans up commas between Markdown links
+ * For example: [text](url),[text](url) -> [text](url) [text](url)
+ * @param text Text containing Markdown links
+ * @returns The cleaned text
  */
 export function cleanLinkCommas(text: string): string {
-  // 匹配两个 Markdown 链接之间的英文逗号（可能包含空格）
+  // Matches English commas between two Markdown links (possibly with spaces)
   return text.replace(/\]\(([^)]+)\)\s*,\s*\[/g, ']($1)[')
 }

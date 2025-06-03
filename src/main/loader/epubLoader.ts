@@ -8,52 +8,52 @@ import * as fs from 'fs'
 import path from 'path'
 
 /**
- * epub 加载器的配置选项
+ * epub loader configuration options
  */
 interface EpubLoaderOptions {
-  /** epub 文件路径 */
+  /** epub file path */
   filePath: string
-  /** 文本分块大小 */
+  /** text chunk size */
   chunkSize: number
-  /** 分块重叠大小 */
+  /** chunk overlap size */
   chunkOverlap: number
 }
 
 /**
- * epub 文件的元数据信息
+ * epub file metadata information
  */
 interface EpubMetadata {
-  /** 作者显示名称（例如："Lewis Carroll"） */
+  /** Author display name (e.g., "Lewis Carroll") */
   creator?: string
-  /** 作者规范化名称，用于排序和索引（例如："Carroll, Lewis"） */
+  /** Author normalized name for sorting and indexing (e.g., "Carroll, Lewis") */
   creatorFileAs?: string
-  /** 书籍标题（例如："Alice's Adventures in Wonderland"） */
+  /** Book title (e.g., "Alice's Adventures in Wonderland") */
   title?: string
-  /** 语言代码（例如："en" 或 "zh-CN"） */
+  /** Language code (e.g., "en" or "zh-CN") */
   language?: string
-  /** 主题或分类（例如："Fantasy"、"Fiction"） */
+  /** Subject or category (e.g., "Fantasy", "Fiction") */
   subject?: string
-  /** 创建日期（例如："2024-02-14"） */
+  /** Creation date (e.g., "2024-02-14") */
   date?: string
-  /** 书籍描述或简介 */
+  /** Book description or summary */
   description?: string
 }
 
 /**
- * epub 章节信息
+ * epub chapter information
  */
 interface EpubChapter {
-  /** 章节 ID */
+  /** Chapter ID */
   id: string
-  /** 章节标题 */
+  /** Chapter title */
   title?: string
-  /** 章节顺序 */
+  /** Chapter order */
   order?: number
 }
 
 /**
- * epub 文件加载器
- * 用于解析 epub 电子书文件，提取文本内容和元数据
+ * epub file loader
+ * Used to parse epub ebook files, extract text content and metadata
  */
 export class EpubLoader extends BaseLoader<Record<string, string | number | boolean>, Record<string, unknown>> {
   protected filePath: string
@@ -63,8 +63,8 @@ export class EpubLoader extends BaseLoader<Record<string, string | number | bool
   private metadata: EpubMetadata | null
 
   /**
-   * 创建 epub 加载器实例
-   * @param options 加载器配置选项
+   * Create epub loader instance
+   * @param options Loader configuration options
    */
   constructor(options: EpubLoaderOptions) {
     super(options.filePath, {
@@ -79,15 +79,15 @@ export class EpubLoader extends BaseLoader<Record<string, string | number | bool
   }
 
   /**
-   * 等待 epub 文件初始化完成
-   * epub 库使用事件机制，需要等待 'end' 事件触发后才能访问文件内容
-   * @param epub epub 实例
-   * @returns 元数据和章节信息
+   * Wait for epub file initialization to complete
+   * The epub library uses an event mechanism, need to wait for the 'end' event before accessing file content
+   * @param epub epub instance
+   * @returns metadata and chapter information
    */
   private waitForEpubInit(epub: any): Promise<{ metadata: EpubMetadata; chapters: EpubChapter[] }> {
     return new Promise((resolve, reject) => {
       epub.on('end', () => {
-        // 提取元数据
+        // Extract metadata
         const metadata: EpubMetadata = {
           creator: epub.metadata.creator,
           creatorFileAs: epub.metadata.creatorFileAs,
@@ -98,7 +98,7 @@ export class EpubLoader extends BaseLoader<Record<string, string | number | bool
           description: epub.metadata.description
         }
 
-        // 提取章节信息
+        // Extract chapter information
         const chapters: EpubChapter[] = epub.flow.map((chapter: any, index: number) => ({
           id: chapter.id,
           title: chapter.title || `Chapter ${index + 1}`,
@@ -117,10 +117,10 @@ export class EpubLoader extends BaseLoader<Record<string, string | number | bool
   }
 
   /**
-   * 获取章节内容
-   * @param epub epub 实例
-   * @param chapterId 章节 ID
-   * @returns 章节文本内容
+   * Get chapter content
+   * @param epub epub instance
+   * @param chapterId chapter ID
+   * @returns chapter text content
    */
   private getChapter(epub: any, chapterId: string): Promise<string> {
     return new Promise((resolve, reject) => {
@@ -135,23 +135,23 @@ export class EpubLoader extends BaseLoader<Record<string, string | number | bool
   }
 
   /**
-   * 从 epub 文件中提取文本内容
-   * 1. 检查文件是否存在
-   * 2. 初始化 epub 并获取元数据
-   * 3. 遍历所有章节并提取文本
-   * 4. 清理 HTML 标签
-   * 5. 合并所有章节文本
+   * Extract text content from epub file
+   * 1. Check if file exists
+   * 2. Initialize epub and get metadata
+   * 3. Traverse all chapters and extract text
+   * 4. Clean HTML tags
+   * 5. Merge all chapter text
    */
   private async extractTextFromEpub() {
     try {
-      // 检查文件是否存在
+      // Check if file exists
       if (!fs.existsSync(this.filePath)) {
         throw new Error(`File not found: ${this.filePath}`)
       }
 
       const epub = new EPub(this.filePath)
 
-      // 等待 epub 初始化完成并获取元数据
+      // Wait for epub initialization and get metadata
       const { metadata, chapters } = await this.waitForEpubInit(epub)
       this.metadata = metadata
 
@@ -159,11 +159,11 @@ export class EpubLoader extends BaseLoader<Record<string, string | number | bool
         throw new Error('No content found in epub file')
       }
 
-      // 使用临时文件而不是内存数组
+      // Use temporary file instead of memory array
       const tempFilePath = path.join(getTempDir(), `epub-${Date.now()}.txt`)
       const writeStream = fs.createWriteStream(tempFilePath)
 
-      // 遍历所有章节
+      // Traverse all chapters
       for (const chapter of chapters) {
         try {
           const content = await this.getChapter(epub, chapter.id)
@@ -172,14 +172,14 @@ export class EpubLoader extends BaseLoader<Record<string, string | number | bool
             continue
           }
 
-          // 移除 HTML 标签并清理文本
+          // Remove HTML tags and clean text
           const text = content
-            .replace(/<[^>]*>/g, ' ') // 移除所有 HTML 标签
-            .replace(/\s+/g, ' ') // 将多个空白字符替换为单个空格
-            .trim() // 移除首尾空白
+            .replace(/<[^>]*>/g, ' ') // Remove all HTML tags
+            .replace(/\s+/g, ' ') // Replace multiple whitespace with a single space
+            .trim() // Remove leading and trailing whitespace
 
           if (text) {
-            // 直接写入文件
+            // Write directly to file
             writeStream.write(text + '\n\n')
           }
         } catch (error) {
@@ -187,23 +187,23 @@ export class EpubLoader extends BaseLoader<Record<string, string | number | bool
         }
       }
 
-      // 关闭写入流
+      // Close write stream
       writeStream.end()
 
-      // 等待写入完成
+      // Wait for write to finish
       await new Promise<void>((resolve, reject) => {
         writeStream.on('finish', resolve)
         writeStream.on('error', reject)
       })
 
-      // 从临时文件读取内容
+      // Read content from temporary file
       this.extractedText = fs.readFileSync(tempFilePath, 'utf-8')
 
-      // 删除临时文件
+      // Delete temporary file
       fs.unlinkSync(tempFilePath)
 
-      // 只添加一条完成日志
-      Logger.info(`[EpubLoader] 电子书 ${this.metadata?.title || path.basename(this.filePath)} 处理完成`)
+      // Only add one completion log
+      Logger.info(`[EpubLoader] Ebook ${this.metadata?.title || path.basename(this.filePath)} processed successfully`)
     } catch (error) {
       Logger.error('[EpubLoader] Error in extractTextFromEpub:', error)
       throw error
@@ -211,28 +211,33 @@ export class EpubLoader extends BaseLoader<Record<string, string | number | bool
   }
 
   /**
-   * 生成文本块
-   * 重写 BaseLoader 的方法，将提取的文本分割成适当大小的块
-   * 每个块都包含源文件和元数据信息
+   * Generate text chunks
+   * Override BaseLoader's method, split the extracted text into appropriate size chunks
+   * Each chunk contains source file and metadata information
    */
   override async *getUnfilteredChunks() {
-    // 如果还没有提取文本，先提取
+    // If text has not been extracted, extract first
     if (!this.extractedText) {
       await this.extractTextFromEpub()
     }
 
-    Logger.info('[EpubLoader] 书名：', this.metadata?.title || '未知书名', ' 文本大小：', this.extractedText.length)
+    Logger.info(
+      '[EpubLoader] Book title:',
+      this.metadata?.title || 'Unknown Title',
+      ' Text size:',
+      this.extractedText.length
+    )
 
-    // 创建文本分块器
+    // Create text splitter
     const chunker = new RecursiveCharacterTextSplitter({
       chunkSize: this.chunkSize,
       chunkOverlap: this.chunkOverlap
     })
 
-    // 清理并分割文本
+    // Clean and split text
     const chunks = await chunker.splitText(cleanString(this.extractedText))
 
-    // 为每个文本块添加元数据
+    // Add metadata to each text chunk
     for (const chunk of chunks) {
       yield {
         pageContent: chunk,

@@ -1,6 +1,6 @@
 /**
- * 判断字符串是否是 json 字符串
- * @param str 字符串
+ * Determine if a string is a JSON string
+ * @param str The string
  */
 export function isJSON(str: any): boolean {
   if (typeof str !== 'string') {
@@ -15,9 +15,9 @@ export function isJSON(str: any): boolean {
 }
 
 /**
- * 尝试解析 JSON 字符串，如果解析失败则返回 null。
- * @param str 要解析的字符串
- * @returns 解析后的对象，如果解析失败则返回 null
+ * Try to parse a JSON string, return null if parsing fails.
+ * @param str The string to parse
+ * @returns The parsed object, or null if parsing fails
  */
 export function parseJSON(str: string) {
   try {

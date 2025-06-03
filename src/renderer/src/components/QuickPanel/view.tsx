@@ -27,11 +27,11 @@ interface Props {
 }
 
 /**
- * @description 快捷面板内容视图;
- * 请不要往这里添加入参，避免耦合;
- * 这里只读取来自上下文QuickPanelContext的数据
+ * @description Quick panel content view;
+ * Please do not add parameters here to avoid coupling;
+ * This only reads data from the context QuickPanelContext
  *
- * 无奈之举，为了清除输入框搜索文本，所以传了个setInputText进来
+ * Unfortunately, in order to clear the input box search text, the setInputText is passed in
  */
 export const QuickPanelView: React.FC<Props> = ({ setInputText }) => {
   const ctx = use(QuickPanelContext)
@@ -48,7 +48,7 @@ export const QuickPanelView: React.FC<Props> = ({ setInputText }) => {
   const ASSISTIVE_KEY = isMac ? '⌘' : 'Ctrl'
   const [isAssistiveKeyPressed, setIsAssistiveKeyPressed] = useState(false)
 
-  // 避免上下翻页时，鼠标干扰
+  // Avoid interference from the mouse when scrolling up and down
   const [isMouseOver, setIsMouseOver] = useState(false)
 
   const scrollTriggerRef = useRef<QuickPanelScrollTrigger>('initial')
@@ -64,7 +64,7 @@ export const QuickPanelView: React.FC<Props> = ({ setInputText }) => {
   const searchText = useDeferredValue(_searchText)
   const searchTextRef = useRef('')
 
-  // 处理搜索，过滤列表
+  // Handle search and filter the list
   const list = useMemo(() => {
     if (!ctx.isVisible && !ctx.symbol) return []
     const newList = ctx.list?.filter((item) => {
@@ -178,7 +178,7 @@ export const QuickPanelView: React.FC<Props> = ({ setInputText }) => {
       ctx.afterAction?.(quickPanelCallBackOptions)
 
       if (item.isMenu) {
-        // 保存上一个打开的选项，用于回退
+        // Save the last opened option for fallback
         setHistoryPanel((prev) => [
           ...(prev || []),
           {
@@ -208,7 +208,7 @@ export const QuickPanelView: React.FC<Props> = ({ setInputText }) => {
     searchTextRef.current = searchText
   }, [searchText])
 
-  // 获取当前输入的搜索词
+  // Get the current input search term
   const isComposing = useRef(false)
   useEffect(() => {
     if (!ctx.isVisible) return
@@ -252,7 +252,7 @@ export const QuickPanelView: React.FC<Props> = ({ setInputText }) => {
       textArea.removeEventListener('compositionend', handleCompositionEnd)
       setTimeout(() => {
         setSearchText('')
-      }, 200) // 等待面板关闭动画结束后，再清空搜索词
+      }, 200) // Wait for the panel close animation to finish, then clear the search term
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ctx.isVisible])
@@ -266,7 +266,7 @@ export const QuickPanelView: React.FC<Props> = ({ setInputText }) => {
     scrollTriggerRef.current = 'none'
   }, [index])
 
-  // 处理键盘事件
+  // Handle keyboard events
   useEffect(() => {
     if (!ctx.isVisible) return
 
@@ -507,7 +507,7 @@ interface VirtualizedRowData {
 }
 
 /**
- * 虚拟化列表行组件，用于避免重新渲染
+ * Virtualized list row component to avoid re-rendering
  */
 const VirtualizedRow = React.memo(
   ({ data, index, style }: { data: VirtualizedRowData; index: number; style: React.CSSProperties }) => {

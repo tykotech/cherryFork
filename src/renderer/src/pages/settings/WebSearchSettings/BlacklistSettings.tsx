@@ -116,7 +116,7 @@ const BlacklistSettings: FC = () => {
       // Fetch and parse content for each selected subscription source
       for (const source of selectedSources) {
         try {
-          // Fetch and parse subscription content
+          // Fetch and parse subscription source content
           const blacklist = await parseSubscribeContent(source.url)
 
           if (blacklist.length > 0) {
@@ -141,7 +141,7 @@ const BlacklistSettings: FC = () => {
         // Update Redux store
         setSubscribeSources(updatedSources)
         setSubscribeValid(true)
-        // 显示成功消息
+        // Display success message
         window.message.success({
           content: t('settings.websearch.subscribe_update_success'),
           duration: 2
@@ -170,7 +170,7 @@ const BlacklistSettings: FC = () => {
 
     if (result && result.url) {
       try {
-        // 获取并解析订阅源内容
+        // Fetch and parse subscription source content
         const blacklist = await parseSubscribeContent(result.url)
 
         if (blacklist.length === 0) {
@@ -183,7 +183,7 @@ const BlacklistSettings: FC = () => {
           blacklist
         })
         setSubscribeValid(true)
-        // 显示成功消息
+        // Display success message
         window.message.success({
           content: t('settings.websearch.subscribe_add_success'),
           duration: 2
@@ -205,7 +205,7 @@ const BlacklistSettings: FC = () => {
       const remainingSources =
         websearch.subscribeSources?.filter((source) => !selectedRowKeys.includes(source.key)) || []
 
-      // 更新 Redux store
+      // Update Redux store
       setSubscribeSources(remainingSources)
 
       // Clear selection state

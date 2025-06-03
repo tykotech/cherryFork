@@ -66,16 +66,16 @@ async function downloadUvBinary(platform, arch, version = DEFAULT_UV_VERSION, is
 
     console.log(`Extracting ${packageName} to ${binDir}...`)
 
-    // 根据文件扩展名选择解压方法
+    // Choose extraction method based on file extension
     if (packageName.endsWith('.zip')) {
-      // 使用 adm-zip 处理 zip 文件
+      // Use adm-zip to handle zip files
       const zip = new AdmZip(tempFilename)
       zip.extractAllTo(binDir, true)
       fs.unlinkSync(tempFilename)
       console.log(`Successfully installed uv ${version} for ${platform}-${arch}`)
       return true
     } else {
-      // tar.gz 文件的处理保持不变
+      // tar.gz file handling remains unchanged
       await tar.x({
         file: tempFilename,
         cwd: tempdir,

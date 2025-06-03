@@ -11,7 +11,7 @@ env:
 
 jobs:
   stale:
-    if: github.repository_owner == 'CherryHQ'
+    if: github.repository_owner == 'TykoDev' && github.repository == 'cherry-studio-TykoFork'
     runs-on: ubuntu-latest
     permissions:
       actions: write # Workaround for https://github.com/actions/stale/issues/1090
@@ -32,8 +32,6 @@ jobs:
           stale-issue-message: |
             This issue has been labeled as needing more information and has been inactive for ${{ env.daysBeforeStale }} days. 
             It will be closed now due to lack of additional information.
-            
-            该问题被标记为"需要更多信息"且已经 ${{ env.daysBeforeStale }} 天没有任何活动，将立即关闭。
           operations-per-run: 50
           exempt-issue-labels: "pending, Dev Team"
           days-before-pr-stale: -1
@@ -48,7 +46,6 @@ jobs:
           stale-issue-label: "inactive"
           stale-issue-message: |
             This issue has been inactive for a prolonged period and will be closed automatically in ${{ env.daysBeforeClose }} days.
-            该问题已长时间处于闲置状态，${{ env.daysBeforeClose }} 天后将自动关闭。
           exempt-issue-labels: "pending, Dev Team, kind/enhancement"
           days-before-pr-stale: -1 # Completely disable stalling for PRs
           days-before-pr-close: -1 # Completely disable closing for PRs
@@ -56,3 +53,4 @@ jobs:
           # Temporary to reduce the huge issues number
           operations-per-run: 100
           debug-only: false
+

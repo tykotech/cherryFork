@@ -40,13 +40,13 @@ interface Registry {
   url: string
 }
 
-const NpmRegistry: Registry[] = [{ name: '淘宝 NPM Mirror', url: 'https://registry.npmmirror.com' }]
+const NpmRegistry: Registry[] = [{ name: 'Taobao NPM Mirror', url: 'https://registry.npmmirror.com' }]
 const PipRegistry: Registry[] = [
-  { name: '清华大学', url: 'https://pypi.tuna.tsinghua.edu.cn/simple' },
-  { name: '阿里云', url: 'http://mirrors.aliyun.com/pypi/simple/' },
-  { name: '中国科学技术大学', url: 'https://mirrors.ustc.edu.cn/pypi/simple/' },
-  { name: '华为云', url: 'https://repo.huaweicloud.com/repository/pypi/simple/' },
-  { name: '腾讯云', url: 'https://mirrors.cloud.tencent.com/pypi/simple/' }
+  { name: 'Tsinghua University', url: 'https://pypi.tuna.tsinghua.edu.cn/simple' },
+  { name: 'Alibaba Cloud', url: 'http://mirrors.aliyun.com/pypi/simple/' },
+  { name: 'University of Science and Technology of China', url: 'https://mirrors.ustc.edu.cn/pypi/simple/' },
+  { name: 'Huawei Cloud', url: 'https://repo.huaweicloud.com/repository/pypi/simple/' },
+  { name: 'Tencent Cloud', url: 'https://mirrors.cloud.tencent.com/pypi/simple/' }
 ]
 
 type TabKey = 'settings' | 'description' | 'tools' | 'prompts' | 'resources'

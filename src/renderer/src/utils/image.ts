@@ -3,9 +3,9 @@ import imageCompression from 'browser-image-compression'
 import * as htmlToImage from 'html-to-image'
 
 /**
- * 将文件转换为 Base64 编码的字符串或 ArrayBuffer。
- * @param file 要转换的文件
- * @returns Promise<string | ArrayBuffer | null> 转换后的 Base64 编码数据，如果出错则返回 null
+ * Convert a file to a Base64-encoded string or ArrayBuffer.
+ * @param file The file to convert
+ * @returns Promise<string | ArrayBuffer | null> The converted Base64-encoded data, or null if an error occurs
  */
 export const convertToBase64 = (file: File): Promise<string | ArrayBuffer | null> => {
   return new Promise((resolve, reject) => {
@@ -17,9 +17,9 @@ export const convertToBase64 = (file: File): Promise<string | ArrayBuffer | null
 }
 
 /**
- * 压缩图像文件，限制最大大小和尺寸。
- * @param file 要压缩的图像文件
- * @returns Promise<File> 压缩后的图像文件
+ * Compress an image file, limiting the maximum size and dimensions.
+ * @param file The image file to compress
+ * @returns Promise<File> The compressed image file
  */
 export const compressImage = async (file: File) => {
   return await imageCompression(file, {
@@ -30,9 +30,9 @@ export const compressImage = async (file: File) => {
 }
 
 /**
- * 捕获指定 div 元素的图像数据。
- * @param divRef div 元素的引用
- * @returns Promise<string | undefined> 图像数据 URL，如果失败则返回 undefined
+ * Capture the image data of the specified div element.
+ * @param divRef The reference to the div element
+ * @returns Promise<string | undefined> The image data URL, or undefined if it fails
  */
 export async function captureDiv(divRef: React.RefObject<HTMLDivElement>) {
   if (divRef.current) {
@@ -49,9 +49,9 @@ export async function captureDiv(divRef: React.RefObject<HTMLDivElement>) {
 }
 
 /**
- * 捕获可滚动 div 元素的完整内容图像。
- * @param divRef 可滚动 div 元素的引用
- * @returns Promise<HTMLCanvasElement | undefined> 捕获的画布对象，如果失败则返回 undefined
+ * Capture the full content image of a scrollable div element.
+ * @param divRef The reference to the scrollable div element
+ * @returns Promise<HTMLCanvasElement | undefined> The captured canvas object, or undefined if it fails
  */
 export const captureScrollableDiv = async (divRef: React.RefObject<HTMLDivElement | null>) => {
   if (divRef.current) {
@@ -141,9 +141,9 @@ export const captureScrollableDiv = async (divRef: React.RefObject<HTMLDivElemen
 }
 
 /**
- * 将可滚动 div 元素的图像数据转换为 Data URL 格式。
- * @param divRef 可滚动 div 元素的引用
- * @returns Promise<string | undefined> 图像数据 URL，如果失败则返回 undefined
+ * Convert the image data of a scrollable div element to Data URL format.
+ * @param divRef The reference to the scrollable div element
+ * @returns Promise<string | undefined> The image data URL, or undefined if it fails
  */
 export const captureScrollableDivAsDataURL = async (divRef: React.RefObject<HTMLDivElement | null>) => {
   return captureScrollableDiv(divRef).then((canvas) => {
@@ -155,10 +155,10 @@ export const captureScrollableDivAsDataURL = async (divRef: React.RefObject<HTML
 }
 
 /**
- * 将可滚动 div 元素的图像数据转换为 Blob 格式。
- * @param divRef 可滚动 div 元素的引用
- * @param func Blob 回调函数
- * @returns Promise<void> 处理结果
+ * Convert the image data of a scrollable div element to Blob format.
+ * @param divRef The reference to the scrollable div element
+ * @param func The Blob callback function
+ * @returns Promise<void> The result of the processing
  */
 export const captureScrollableDivAsBlob = async (
   divRef: React.RefObject<HTMLDivElement | null>,

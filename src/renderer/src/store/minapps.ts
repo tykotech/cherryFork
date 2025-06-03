@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { DEFAULT_MIN_APPS } from '@renderer/config/minapps'
+import { ORIGIN_DEFAULT_MIN_APPS } from '@renderer/config/minapps'
 import { MinAppType, SidebarIcon } from '@renderer/types'
 
 export const DEFAULT_SIDEBAR_ICONS: SidebarIcon[] = [
@@ -19,7 +19,7 @@ export interface MinAppsState {
 }
 
 const initialState: MinAppsState = {
-  enabled: DEFAULT_MIN_APPS,
+  enabled: ORIGIN_DEFAULT_MIN_APPS,
   disabled: [],
   pinned: []
 }
@@ -28,6 +28,12 @@ const minAppsSlice = createSlice({
   name: 'minApps',
   initialState,
   reducers: {
+    initializeMinApps: (state, action: PayloadAction<MinAppType[]>) => {
+      // Initialize with all apps (default + custom) if not already initialized
+      if (state.enabled.length === ORIGIN_DEFAULT_MIN_APPS.length) {
+        state.enabled = action.payload.map((app) => ({ ...app, logo: undefined }))
+      }
+    },
     setMinApps: (state, action: PayloadAction<MinAppType[]>) => {
       state.enabled = action.payload.map((app) => ({ ...app, logo: undefined }))
     },
@@ -43,6 +49,6 @@ const minAppsSlice = createSlice({
   }
 })
 
-export const { setMinApps, addMinApp, setDisabledMinApps, setPinnedMinApps } = minAppsSlice.actions
+export const { initializeMinApps, setMinApps, addMinApp, setDisabledMinApps, setPinnedMinApps } = minAppsSlice.actions
 
 export default minAppsSlice.reducer

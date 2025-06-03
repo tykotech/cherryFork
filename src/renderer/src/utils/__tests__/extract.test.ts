@@ -59,7 +59,7 @@ describe('extract', () => {
 
       const result = extractInfoFromXML(xml)
 
-      // 注意：当使用 root 标签包裹时，结果包含 root 属性
+      // Note: When wrapped with root tag, the result contains the root property
       expect(result).toEqual({
         root: {
           websearch: {
@@ -116,13 +116,13 @@ describe('extract', () => {
         </websearch>
       `
 
-      // 注意：XMLParser 能够处理一些无效的 XML
+      // Note: XMLParser can handle some invalid XML
       const result = extractInfoFromXML(invalidXml)
       expect(result).toBeDefined()
     })
 
     it('should handle empty XML input', () => {
-      // 注意：XMLParser 会尝试解析空字符串
+      // Note: XMLParser will try to parse an empty string
       const result = extractInfoFromXML('')
       expect(result).toEqual({})
     })

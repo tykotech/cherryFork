@@ -16,22 +16,26 @@ exports.default = async function (context) {
       'node_modules'
     )
 
+    // Use node_modules files for the specified architecture
     keepPackageNodeFiles(node_modules_path, '@libsql', arch === Arch.arm64 ? ['darwin-arm64'] : ['darwin-x64'])
   }
 
   if (platform === 'linux') {
     const node_modules_path = path.join(context.appOutDir, 'resources', 'app.asar.unpacked', 'node_modules')
     const _arch = arch === Arch.arm64 ? ['linux-arm64-gnu', 'linux-arm64-musl'] : ['linux-x64-gnu', 'linux-x64-musl']
+    // Use node_modules files for the specified architecture
     keepPackageNodeFiles(node_modules_path, '@libsql', _arch)
   }
 
   if (platform === 'windows') {
     const node_modules_path = path.join(context.appOutDir, 'resources', 'app.asar.unpacked', 'node_modules')
     if (arch === Arch.arm64) {
+      // Use node_modules files for the specified architecture
       keepPackageNodeFiles(node_modules_path, '@strongtz', ['win32-arm64-msvc'])
       keepPackageNodeFiles(node_modules_path, '@libsql', ['win32-arm64-msvc'])
     }
     if (arch === Arch.x64) {
+      // Use node_modules files for the specified architecture
       keepPackageNodeFiles(node_modules_path, '@strongtz', ['win32-x64-msvc'])
       keepPackageNodeFiles(node_modules_path, '@libsql', ['win32-x64-msvc'])
     }
@@ -39,7 +43,7 @@ exports.default = async function (context) {
 }
 
 /**
- * 使用指定架构的 node_modules 文件
+ * Use node_modules files for the specified architecture
  * @param {*} nodeModulesPath
  * @param {*} packageName
  * @param {*} arch

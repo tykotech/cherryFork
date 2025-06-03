@@ -18,7 +18,7 @@ class ObsidianVaultService {
   private obsidianConfigPath: string
 
   constructor() {
-    // 根据操作系统获取Obsidian配置文件路径
+    // Get Obsidian config file path based on OS
     if (process.platform === 'win32') {
       this.obsidianConfigPath = path.join(app.getPath('appData'), 'obsidian', 'obsidian.json')
     } else if (process.platform === 'darwin') {
@@ -36,7 +36,7 @@ class ObsidianVaultService {
   }
 
   /**
-   * 获取所有的Obsidian Vault
+   * Get all Obsidian Vaults
    */
   getVaults(): VaultInfo[] {
     try {
@@ -56,45 +56,45 @@ class ObsidianVaultService {
         name: vault.name || path.basename(vault.path)
       }))
     } catch (error) {
-      console.error('获取Obsidian Vault失败:', error)
+      console.error('Failed to get Obsidian Vaults:', error)
       return []
     }
   }
 
   /**
-   * 获取Vault中的文件夹和Markdown文件结构
+   * Get folder and Markdown file structure in a Vault
    */
   getVaultStructure(vaultPath: string): FileInfo[] {
     const results: FileInfo[] = []
 
     try {
-      // 检查vault路径是否存在
+      // Check if vault path exists
       if (!fs.existsSync(vaultPath)) {
-        console.error('Vault路径不存在:', vaultPath)
+        console.error('Vault path does not exist:', vaultPath)
         return []
       }
 
-      // 检查是否是目录
+      // Check if it is a directory
       const stats = fs.statSync(vaultPath)
       if (!stats.isDirectory()) {
-        console.error('Vault路径不是一个目录:', vaultPath)
+        console.error('Vault path is not a directory:', vaultPath)
         return []
       }
 
       this.traverseDirectory(vaultPath, '', results)
     } catch (error) {
-      console.error('读取Vault文件夹结构失败:', error)
+      console.error('Failed to read Vault folder structure:', error)
     }
 
     return results
   }
 
   /**
-   * 递归遍历目录获取所有文件夹和Markdown文件
+   * Recursively traverse directory to get all folders and Markdown files
    */
   private traverseDirectory(dirPath: string, relativePath: string, results: FileInfo[]) {
     try {
-      // 首先添加当前文件夹
+      // Add current folder first
       if (relativePath) {
         results.push({
           path: relativePath,
@@ -103,9 +103,9 @@ class ObsidianVaultService {
         })
       }
 
-      // 确保目录存在且可访问
+      // Ensure directory exists and is accessible
       if (!fs.existsSync(dirPath)) {
-        console.error('目录不存在:', dirPath)
+        console.error('Directory does not exist:', dirPath)
         return
       }
 
@@ -113,12 +113,12 @@ class ObsidianVaultService {
       try {
         items = fs.readdirSync(dirPath, { withFileTypes: true })
       } catch (err) {
-        console.error(`无法读取目录 ${dirPath}:`, err)
+        console.error(`Cannot read directory ${dirPath}:`, err)
         return
       }
 
       for (const item of items) {
-        // 忽略以.开头的隐藏文件夹和文件
+        // Ignore hidden folders and files starting with .
         if (item.name.startsWith('.')) {
           continue
         }
@@ -129,7 +129,7 @@ class ObsidianVaultService {
         if (item.isDirectory()) {
           this.traverseDirectory(fullPath, newRelativePath, results)
         } else if (item.isFile() && item.name.endsWith('.md')) {
-          // 收集.md文件
+          // Collect .md files
           results.push({
             path: newRelativePath,
             type: 'markdown',
@@ -138,13 +138,13 @@ class ObsidianVaultService {
         }
       }
     } catch (error) {
-      console.error(`遍历目录出错 ${dirPath}:`, error)
+      console.error(`Error traversing directory ${dirPath}:`, error)
     }
   }
 
   /**
-   * 获取指定Vault的文件夹和Markdown文件结构
-   * @param vaultName vault名称
+   * Get folder and Markdown file structure for a specified Vault
+   * @param vaultName Vault name
    */
   getFilesByVaultName(vaultName: string): FileInfo[] {
     try {
@@ -152,14 +152,14 @@ class ObsidianVaultService {
       const vault = vaults.find((v) => v.name === vaultName)
 
       if (!vault) {
-        console.error('未找到指定名称的Vault:', vaultName)
+        console.error('Vault with specified name not found:', vaultName)
         return []
       }
 
-      Logger.log('获取Vault文件结构:', vault.name, vault.path)
+      Logger.log('Getting Vault file structure:', vault.name, vault.path)
       return this.getVaultStructure(vault.path)
     } catch (error) {
-      console.error('获取Vault文件结构时发生错误:', error)
+      console.error('Error getting Vault file structure:', error)
       return []
     }
   }

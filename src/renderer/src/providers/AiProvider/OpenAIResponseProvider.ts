@@ -294,7 +294,7 @@ export abstract class BaseOpenAiProvider extends BaseProvider {
   }
 
   /**
-   * Generate completions for the assistant use Response API
+   * Generate completions for the assistant using the Response API
    * @param messages - The messages
    * @param assistant - The assistant
    * @param mcpTools
@@ -311,7 +311,7 @@ export abstract class BaseOpenAiProvider extends BaseProvider {
     const model = assistant.model || defaultModel
     const { contextCount, maxTokens, streamOutput, enableToolUse } = getAssistantSettings(assistant)
     const isEnabledBuiltinWebSearch = assistant.enableWebSearch
-    // 退回到 OpenAI 兼容模式
+    // Fallback to OpenAI compatible mode
     if (isOpenAIWebSearch(model)) {
       const systemMessage = { role: 'system', content: assistant.prompt || '' }
       const userMessages: ChatCompletionMessageParam[] = []
@@ -323,7 +323,7 @@ export abstract class BaseOpenAiProvider extends BaseProvider {
       for (const message of _messages) {
         userMessages.push(await this.getMessageParam(message, model))
       }
-      //当 systemMessage 内容为空时不发送 systemMessage
+      // Do not send systemMessage if its content is empty
       let reqMessages: ChatCompletionMessageParam[]
       if (!systemMessage.content) {
         reqMessages = [...userMessages]
@@ -467,7 +467,7 @@ export abstract class BaseOpenAiProvider extends BaseProvider {
     const { abortController, cleanup, signalPromise } = this.createAbortController(lastUserMessage?.id, true)
     const { signal } = abortController
 
-    // 当 systemMessage 内容为空时不发送 systemMessage
+    // Do not send systemMessage if its content is empty
     let reqMessages: OpenAI.Responses.ResponseInput
     if (!systemMessage.content) {
       reqMessages = [...userMessage]
@@ -807,7 +807,7 @@ export abstract class BaseOpenAiProvider extends BaseProvider {
 
     await processStream(stream, 0).finally(cleanup)
 
-    // 捕获signal的错误
+    // Catch errors from signal
     await signalPromise?.promise?.catch((error) => {
       throw error
     })

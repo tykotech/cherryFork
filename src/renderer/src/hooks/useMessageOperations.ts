@@ -50,15 +50,15 @@ export const selectNewDisplayCount = createSelector(
 )
 
 /**
- * Hook 提供针对特定主题的消息操作方法。 / Hook providing various operations for messages within a specific topic.
- * @param topic 当前主题对象。 / The current topic object.
- * @returns 包含消息操作函数的对象。 / An object containing message operation functions.
+ * Hook providing various operations for messages within a specific topic.
+ * @param topic The current topic object.
+ * @returns An object containing message operation functions.
  */
 export function useMessageOperations(topic: Topic) {
   const dispatch = useAppDispatch()
 
   /**
-   * 删除单个消息。 / Deletes a single message.
+   * Deletes a single message.
    * Dispatches deleteSingleMessageThunk.
    */
   const deleteMessage = useCallback(
@@ -69,7 +69,7 @@ export function useMessageOperations(topic: Topic) {
   )
 
   /**
-   * 删除一组消息（基于 askId）。 / Deletes a group of messages (based on askId).
+   * Deletes a group of messages (based on askId).
    * Dispatches deleteMessageGroupThunk.
    */
   const deleteGroupMessages = useCallback(
@@ -80,8 +80,8 @@ export function useMessageOperations(topic: Topic) {
   )
 
   /**
-   * 编辑消息。 / Edits a message.
-   * 使用 newMessagesActions.updateMessage.
+   * Edits a message.
+   * Uses newMessagesActions.updateMessage.
    */
   const editMessage = useCallback(
     async (messageId: string, updates: Partial<Omit<Message, 'id' | 'topicId' | 'blocks'>>) => {
@@ -103,7 +103,7 @@ export function useMessageOperations(topic: Topic) {
   )
 
   /**
-   * 重新发送用户消息，触发其所有助手回复的重新生成。 / Resends a user message, triggering regeneration of all its assistant responses.
+   * Resends a user message, triggering regeneration of all its assistant responses.
    * Dispatches resendMessageThunk.
    */
   const resendMessage = useCallback(
@@ -114,7 +114,7 @@ export function useMessageOperations(topic: Topic) {
   )
 
   /**
-   * 在用户消息的主文本块被编辑后重新发送该消息。 / Resends a user message after its main text block has been edited.
+   * Resends a user message after its main text block has been edited.
    * Dispatches resendUserMessageWithEditThunk.
    */
   const resendUserMessageWithEdit = useCallback(
@@ -137,14 +137,14 @@ export function useMessageOperations(topic: Topic) {
       await dispatch(
         newMessagesActions.updateMessage({ topicId: topic.id, messageId: message.id, updates: messageUpdates })
       )
-      // 对于message的修改会在下面的thunk中保存
+      // The modification of the message will be saved in the thunk below
       await dispatch(resendUserMessageWithEditThunk(topic.id, message, mainTextBlockId, editedContent, assistant))
     },
     [dispatch, topic.id]
   )
 
   /**
-   * 清除当前或指定主题的所有消息。 / Clears all messages for the current or specified topic.
+   * Clears all messages for the current or specified topic.
    * Dispatches clearTopicMessagesThunk.
    */
   const clearTopicMessages = useCallback(
@@ -156,7 +156,7 @@ export function useMessageOperations(topic: Topic) {
   )
 
   /**
-   * 发出事件以表示创建新上下文（清空消息 UI）。 / Emits an event to signal creating a new context (clearing messages UI).
+   * Emits an event to signal creating a new context (clearing messages UI).
    */
   const createNewContext = useCallback(async () => {
     EventEmitter.emit(EVENT_NAMES.NEW_CONTEXT)
@@ -165,7 +165,7 @@ export function useMessageOperations(topic: Topic) {
   const displayCount = useAppSelector(selectNewDisplayCount)
 
   /**
-   * 暂停当前主题正在进行的消息生成。 / Pauses ongoing message generation for the current topic.
+   * Pauses ongoing message generation for the current topic.
    */
   const pauseMessages = useCallback(async () => {
     const state = store.getState()
@@ -182,7 +182,7 @@ export function useMessageOperations(topic: Topic) {
   }, [topic.id, dispatch])
 
   /**
-   * 恢复/重发用户消息（目前复用 resendMessage 逻辑）。 / Resumes/Resends a user message (currently reuses resendMessage logic).
+   * Resumes/Resends a user message (currently reuses resendMessage logic).
    */
   const resumeMessage = useCallback(
     async (message: Message, assistant: Assistant) => {
@@ -192,7 +192,7 @@ export function useMessageOperations(topic: Topic) {
   )
 
   /**
-   * 重新生成指定的助手消息回复。 / Regenerates a specific assistant message response.
+   * Regenerates a specific assistant message response.
    * Dispatches regenerateAssistantResponseThunk.
    */
   const regenerateAssistantMessage = useCallback(
@@ -207,7 +207,7 @@ export function useMessageOperations(topic: Topic) {
   )
 
   /**
-   * 使用指定模型追加一个新的助手回复，回复与现有助手消息相同的用户查询。 / Appends a new assistant response using a specified model, replying to the same user query as an existing assistant message.
+   * Appends a new assistant response using a specified model, replying to the same user query as an existing assistant message.
    * Dispatches appendAssistantResponseThunk.
    */
   const appendAssistantResponse = useCallback(
@@ -226,12 +226,12 @@ export function useMessageOperations(topic: Topic) {
   )
 
   /**
-   * 初始化翻译块并返回一个更新函数。 / Initiates a translation block and returns an updater function.
-   * @param messageId 要翻译的消息 ID。 / The ID of the message to translate.
-   * @param targetLanguage 目标语言代码。 / The target language code.
-   * @param sourceBlockId (可选) 源块的 ID。 / (Optional) The ID of the source block.
-   * @param sourceLanguage (可选) 源语言代码。 / (Optional) The source language code.
-   * @returns 用于更新翻译块的异步函数，如果初始化失败则返回 null。 / An async function to update the translation block, or null if initiation fails.
+   * Initiates a translation block and returns an updater function.
+   * @param messageId The ID of the message to translate.
+   * @param targetLanguage The target language code.
+   * @param sourceBlockId (Optional) The ID of the source block.
+   * @param sourceLanguage (Optional) The source language code.
+   * @returns An async function to update the translation block, or null if initiation fails.
    */
   const getTranslationUpdater = useCallback(
     async (
@@ -293,12 +293,11 @@ export function useMessageOperations(topic: Topic) {
   )
 
   /**
-   * 创建一个主题分支，克隆消息到新主题。
    * Creates a topic branch by cloning messages to a new topic.
-   * @param sourceTopicId 源主题ID / Source topic ID
-   * @param branchPointIndex 分支点索引，此索引之前的消息将被克隆 / Branch point index, messages before this index will be cloned
-   * @param newTopic 新的主题对象，必须已经创建并添加到Redux store中 / New topic object, must be already created and added to Redux store
-   * @returns 操作是否成功 / Whether the operation was successful
+   * @param sourceTopicId Source topic ID
+   * @param branchPointIndex Branch point index, messages before this index will be cloned
+   * @param newTopic New topic object, must be already created and added to Redux store
+   * @returns Whether the operation was successful
    */
   const createTopicBranch = useCallback(
     (sourceTopicId: string, branchPointIndex: number, newTopic: Topic) => {

@@ -25,7 +25,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children, defaultT
   const [effectiveTheme, setEffectiveTheme] = useState(theme)
 
   const toggleTheme = () => {
-    // 主题顺序是light, dark, auto, 所以需要先判断当前主题，然后取下一个主题
+    // Theme order is light, dark, auto, so determine current theme then set next
     switch (theme) {
       case ThemeMode.light:
         setTheme(ThemeMode.dark)
@@ -48,6 +48,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children, defaultT
   }, [effectiveTheme])
 
   useEffect(() => {
+    // Set OS attribute and listen for theme changes via IPC
     document.body.setAttribute('os', isMac ? 'mac' : 'windows')
     const themeChangeListenerRemover = window.electron.ipcRenderer.on(
       IpcChannel.ThemeChange,

@@ -1,3 +1,3 @@
-# 消息的生命周期
+# Message Lifecycle
 
 ![image](./message-lifecycle.png)

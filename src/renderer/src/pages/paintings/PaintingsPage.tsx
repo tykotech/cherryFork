@@ -318,6 +318,23 @@ const PaintingsPage: FC = () => {
     }
   }
 
+  // Initialize component properly and handle data flow
+  const [isInitialized, setIsInitialized] = useState(false)
+
+  useEffect(() => {
+    // Reset current image index when painting changes
+    setCurrentImageIndex(0)
+
+    // Log component state for debugging
+    console.log('Paintings loaded:', paintings.length)
+    console.log('Current painting:', painting)
+
+    // Force re-render if data is available but not showing
+    if (paintings.length > 0 && !painting.id) {
+      setPainting(paintings[0])
+    }
+  }, [painting, paintings])
+
   useEffect(() => {
     if (paintings.length === 0) {
       const newPainting = getNewPainting()
@@ -325,12 +342,33 @@ const PaintingsPage: FC = () => {
       setPainting(newPainting)
     }
 
+    // Set initialized state when we have data
+    if (paintings.length > 0 || painting.id) {
+      setIsInitialized(true)
+    }
+
     return () => {
       if (spaceClickTimer.current) {
         clearTimeout(spaceClickTimer.current)
       }
     }
-  }, [paintings.length, addPainting])
+  }, [paintings.length, addPainting, painting.id])
+
+  // Show loading state if not initialized
+  if (!isInitialized) {
+    return (
+      <Container>
+        <Navbar>
+          <NavbarCenter style={{ borderRight: 'none' }}>{t('paintings.title')}</NavbarCenter>
+        </Navbar>
+        <ContentContainer id="content-container">
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+            Loading paintings...
+          </div>
+        </ContentContainer>
+      </Container>
+    )
+  }
 
   return (
     <Container>
@@ -394,7 +432,7 @@ const PaintingsPage: FC = () => {
             suffix={
               <RedoOutlined
                 onClick={() => updatePaintingState({ seed: Math.floor(Math.random() * 1000000).toString() })}
-                style={{ cursor: 'pointer', color: 'var(--color-text-2)' }}
+                style={{ cursor: 'pointer', color: 'var(--color-text-2, #666666)' }}
               />
             }
           />
@@ -513,35 +551,45 @@ const Container = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  height: 100%;
+  height: 100vh; /* Use viewport height instead of percentage */
+
+  /* Define CSS variables inline if they're missing */
+  --assistants-width: 280px;
+  --navbar-height: 60px;
+  --color-border: rgba(0, 0, 0, 0.1);
+  --color-border-soft: rgba(0, 0, 0, 0.05);
+  --color-background: var(--color-background, #ffffff);
+  --color-text-2: var(--color-text-2, #666666);
 `
 
 const ContentContainer = styled.div`
   display: flex;
   flex: 1;
   flex-direction: row;
-  height: 100%;
-  background-color: var(--color-background);
+  height: calc(100vh - var(--navbar-height, 60px)); /* Fixed height calculation */
+  background-color: var(--color-background, #ffffff);
   overflow: hidden;
 `
 
 const LeftContainer = styled(Scrollbar)`
   display: flex;
-  flex: 1;
+  flex: 0 0 var(--assistants-width, 280px); /* Use flex-basis for fixed width */
   flex-direction: column;
   height: 100%;
   padding: 20px;
-  background-color: var(--color-background);
-  max-width: var(--assistants-width);
-  border-right: 0.5px solid var(--color-border);
+  background-color: var(--color-background, #ffffff);
+  border-right: 0.5px solid var(--color-border, rgba(0, 0, 0, 0.1));
+  overflow-y: auto;
+  overflow-x: hidden;
 `
 
 const MainContainer = styled.div`
   display: flex;
-  flex: 1;
+  flex: 1 1 auto; /* Allow container to grow and shrink */
   flex-direction: column;
   height: 100%;
-  background-color: var(--color-background);
+  background-color: var(--color-background, #ffffff);
+  min-width: 0; /* Prevent flex item from overflowing */
 `
 
 const InputContainer = styled.div`
@@ -550,7 +598,7 @@ const InputContainer = styled.div`
   min-height: 95px;
   max-height: 95px;
   position: relative;
-  border: 1px solid var(--color-border-soft);
+  border: 1px solid var(--color-border-soft, rgba(0, 0, 0, 0.05));
   transition: all 0.3s ease;
   margin: 0 20px 15px 20px;
   border-radius: 10px;
@@ -602,7 +650,7 @@ const RadioButton = styled(Radio.Button)`
 const InfoIcon = styled(Info)`
   margin-left: 5px;
   cursor: help;
-  color: var(--color-text-2);
+  color: var(--color-text-2, #666666);
   opacity: 0.6;
   width: 16px;
   height: 16px;

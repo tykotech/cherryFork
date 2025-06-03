@@ -129,7 +129,7 @@ class FileStorage {
       const stats = fs.statSync(sourcePath)
       const fileSizeInMB = stats.size / MB
 
-      // 如果图片大于1MB才进行压缩
+      // Only compress images larger than 1MB
       if (fileSizeInMB > 1) {
         try {
           await fs.promises.copyFile(sourcePath, destPath)
@@ -139,12 +139,12 @@ class FileStorage {
           await fs.promises.copyFile(sourcePath, destPath)
         }
       } else {
-        // 小图片直接复制
+        // Directly copy small images
         await fs.promises.copyFile(sourcePath, destPath)
       }
     } catch (error) {
       logger.error('[FileStorage] Image handling failed:', error)
-      // 错误情况下直接复制原文件
+      // In case of error, directly copy the original file
       await fs.promises.copyFile(sourcePath, destPath)
     }
   }
@@ -163,7 +163,7 @@ class FileStorage {
 
     logger.info('[FileStorage] Uploading file:', file.path)
 
-    // 根据文件类型选择处理方式
+    // Select processing method based on file type
     if (imageExts.includes(ext)) {
       await this.compressImage(file.path, destPath)
     } else {
@@ -299,9 +299,9 @@ class FileStorage {
   ): Promise<{ fileName: string; filePath: string; content: Buffer } | null> => {
     try {
       const result: OpenDialogReturnValue = await dialog.showOpenDialog({
-        title: '打开文件',
+        title: 'Open File',
         properties: ['openFile'],
-        filters: [{ name: '所有文件', extensions: ['*'] }],
+        filters: [{ name: 'All Files', extensions: ['*'] }],
         ...options
       })
 
@@ -331,7 +331,7 @@ class FileStorage {
   ): Promise<string | null> => {
     try {
       const result: SaveDialogReturnValue = await dialog.showSaveDialog({
-        title: '保存文件',
+        title: 'Save File',
         defaultPath: fileName,
         ...options
       })
@@ -366,7 +366,7 @@ class FileStorage {
   public selectFolder = async (_: Electron.IpcMainInvokeEvent, options: OpenDialogOptions): Promise<string | null> => {
     try {
       const result: OpenDialogReturnValue = await dialog.showOpenDialog({
-        title: '选择文件夹',
+        title: 'Select Folder',
         properties: ['openDirectory'],
         ...options
       })
@@ -389,7 +389,7 @@ class FileStorage {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
 
-      // 尝试从Content-Disposition获取文件名
+      // Try to get filename from Content-Disposition
       const contentDisposition = response.headers.get('Content-Disposition')
       let filename = 'download'
 
@@ -400,13 +400,13 @@ class FileStorage {
         }
       }
 
-      // 如果URL中有文件名，使用URL中的文件名
+      // If the URL contains a filename, use the filename from the URL
       const urlFilename = url.split('/').pop()?.split('?')[0]
       if (urlFilename && urlFilename.includes('.')) {
         filename = urlFilename
       }
 
-      // 如果文件名没有后缀，根据Content-Type添加后缀
+      // If the filename has no extension, add extension based on Content-Type
       if (!filename.includes('.')) {
         const contentType = response.headers.get('Content-Type')
         const ext = this.getExtensionFromMimeType(contentType)
@@ -417,7 +417,7 @@ class FileStorage {
       const ext = path.extname(filename)
       const destPath = path.join(this.storageDir, uuid + ext)
 
-      // 将响应内容写入文件
+      // Write response content to file
       const buffer = Buffer.from(await response.arrayBuffer())
       await fs.promises.writeFile(destPath, buffer)
 
@@ -466,13 +466,13 @@ class FileStorage {
     try {
       const sourcePath = path.join(this.storageDir, id)
 
-      // 确保目标目录存在
+      // Ensure target directory exists
       const destDir = path.dirname(destPath)
       if (!fs.existsSync(destDir)) {
         await fs.promises.mkdir(destDir, { recursive: true })
       }
 
-      // 复制文件
+      // Copy file
       await fs.promises.copyFile(sourcePath, destPath)
       logger.info('[FileStorage] File copied successfully:', { from: sourcePath, to: destPath })
     } catch (error) {
@@ -486,7 +486,7 @@ class FileStorage {
       const filePath = path.join(this.storageDir, id)
       logger.info('[FileStorage] Writing file:', filePath)
 
-      // 确保目录存在
+      // Ensure directory exists
       if (!fs.existsSync(this.storageDir)) {
         logger.info('[FileStorage] Creating storage directory:', this.storageDir)
         fs.mkdirSync(this.storageDir, { recursive: true })

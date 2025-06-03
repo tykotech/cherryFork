@@ -113,7 +113,7 @@ export async function upgradeToV7(tx: Transaction): Promise<void> {
       let hasCitationData = false
 
       // 2. Thinking Block (Status is SUCCESS)
-      // 挪到前面,尽量保持与旧版本的一致性
+      // Move to the front to keep consistency with the old version as much as possible
       if (oldMessage.reasoning_content?.trim()) {
         const block = createThinkingBlock(oldMessage.id, oldMessage.reasoning_content, {
           createdAt: oldMessage.createdAt,
@@ -125,7 +125,7 @@ export async function upgradeToV7(tx: Transaction): Promise<void> {
       }
 
       // 7. Tool Blocks (Status based on original mcpTool status)
-      // 挪到前面,尽量保持与旧版本的一致性
+      // Move to the front to keep consistency with the old version as much as possible
       if (oldMessage.metadata?.mcpTools?.length) {
         oldMessage.metadata.mcpTools.forEach((mcpTool) => {
           const block = createToolBlock(oldMessage.id, mcpTool.id, {
@@ -220,7 +220,7 @@ export async function upgradeToV7(tx: Transaction): Promise<void> {
         hasCitationData = true
         citationDataToCreate.response = {
           results: oldMessage.metadata.citations,
-          // 无法区分，统一为Openrouter
+          // Cannot distinguish, unified as Openrouter
           source: WebSearchSource.OPENROUTER
         }
       }
@@ -235,7 +235,7 @@ export async function upgradeToV7(tx: Transaction): Promise<void> {
         hasCitationData = true
         citationDataToCreate.response = {
           results: oldMessage.metadata.webSearchInfo,
-          // 无法区分，统一为zhipu
+          // Cannot distinguish, unified as zhipu
           source: WebSearchSource.ZHIPU
         }
       }

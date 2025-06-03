@@ -1,29 +1,36 @@
 @use './container.scss';
 
+// Set the input bar to not be resizable
 #inputbar {
   resize: none;
 }
 
+// Remove drag region for image preview switch button
 .ant-image-preview-switch-left {
   -webkit-app-region: no-drag;
 }
 
+// Remove outline for focused buttons
 .ant-btn:not(:disabled):focus-visible {
   outline: none;
 }
 
+// Remove outline for focused tab panes
 .ant-tabs-tabpane:focus-visible {
   outline: none;
 }
 
+// Remove outline for tab buttons
 .ant-tabs-tab-btn {
   outline: none;
 }
 
+// Set gap for segmented group
 .ant-segmented-group {
   gap: 4px;
 }
 
+// Drawer for minapp
 .minapp-drawer {
   max-width: calc(100vw - var(--sidebar-width));
   .ant-drawer-content-wrapper {
@@ -48,16 +55,19 @@
   }
 }
 
+// Remove drag region for drawer header
 .ant-drawer-header {
   -webkit-app-region: no-drag;
 }
 
+// Prevent background color change on hover for message attachments
 .message-attachments {
   .ant-upload-list-item:hover {
     background-color: initial !important;
   }
 }
 
+// Mention models dropdown styles
 .mention-models-dropdown {
   &.ant-dropdown {
     background: rgba(var(--color-base-rgb), 0.65) !important;
@@ -65,7 +75,7 @@
     animation-duration: 0.15s !important;
   }
 
-  /* 移动其他样式到 mention-models-dropdown 类下 */
+  /* Move other styles under mention-models-dropdown class */
   .ant-slide-up-enter .ant-dropdown-menu,
   .ant-slide-up-appear .ant-dropdown-menu,
   .ant-slide-up-leave .ant-dropdown-menu,
@@ -76,8 +86,9 @@
     backdrop-filter: blur(35px) saturate(150%) !important;
   }
 
+  // Keep original dropdown menu styles but limit under mention-models-dropdown class
   .ant-dropdown-menu {
-    /* 保持原有的下拉菜单样式，但限定在 mention-models-dropdown 类下 */
+    /* Keep original dropdown menu styles but limit under mention-models-dropdown class */
     max-height: 400px;
     overflow-y: auto;
     overflow-x: hidden;

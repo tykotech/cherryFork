@@ -108,7 +108,7 @@ export function WebdavBackupManager({ visible, onClose, webdavConfig, restoreMet
       onOk: async () => {
         setDeleting(true)
         try {
-          // 依次删除选中的文件
+          // Delete the selected files one by one
           for (const key of selectedRowKeys) {
             await window.api.backup.deleteWebdavFile(key.toString(), {
               webdavHost,
@@ -182,7 +182,7 @@ export function WebdavBackupManager({ visible, onClose, webdavConfig, restoreMet
         try {
           await (restoreMethod || restoreFromWebdav)(fileName)
           message.success(t('settings.data.webdav.backup.manager.restore.success'))
-          onClose() // 关闭模态框
+          onClose() // Close the modal
         } catch (error: any) {
           message.error(`${t('settings.data.webdav.backup.manager.restore.error')}: ${error.message}`)
         } finally {

@@ -1,6 +1,6 @@
 const sqlite3 = require('sqlite3').verbose()
 
-// 连接到数据库
+// Connect to the database
 const db = new sqlite3.Database('./data/CherryStudio.sqlite3', (err) => {
   if (err) {
     console.error('Error connecting to the database:', err.message)
@@ -8,7 +8,7 @@ const db = new sqlite3.Database('./data/CherryStudio.sqlite3', (err) => {
   }
 })
 
-// 查询数据并转换为JSON
+// Query data and convert to JSON
 db.all('SELECT * FROM emails WHERE sent = 0', [], (err, rows) => {
   if (err) {
     console.error('Error querying the database:', err.message)
@@ -26,7 +26,7 @@ db.all('SELECT * FROM emails WHERE sent = 0', [], (err, rows) => {
     })
   }
 
-  // 关闭数据库连接
+  // Close the database connection
   db.close((err) => {
     if (err) {
       console.error('Error closing the database:', err.message)
