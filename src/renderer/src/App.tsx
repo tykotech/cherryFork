@@ -15,6 +15,8 @@ import { ThemeProvider } from './context/ThemeProvider'
 import NavigationHandler from './handler/NavigationHandler'
 import AgentsPage from './pages/agents/AgentsPage'
 import AppsPage from './pages/apps/AppsPage'
+import ChatPage from './pages/chat/ChatPage'
+import FilePage from './pages/file/FilePage'
 import FilesPage from './pages/files/FilesPage'
 import HomePage from './pages/home/HomePage'
 import KnowledgePage from './pages/knowledge/KnowledgePage'
@@ -41,6 +43,8 @@ function App(): React.ReactElement {
                       <Route path="/paintings/*" element={<PaintingsRoutePage />} />
                       <Route path="/translate" element={<TranslatePage />} />
                       <Route path="/files" element={<FilesPage />} />
+                      <Route path="/chat" element={<ChatPage />} />
+                      <Route path="/file" element={<FilePage />} />
                       <Route path="/knowledge" element={<KnowledgePage />} />
                       <Route path="/apps" element={<AppsPage />} />
                       <Route path="/settings/*" element={<SettingsPage />} />
