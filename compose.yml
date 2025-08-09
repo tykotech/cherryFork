@@ -1,0 +1,17 @@
+services:
+  web:
+    image: denoland/deno:alpine
+    working_dir: /app
+    volumes:
+      - ./web:/app
+    command: deno task start
+    ports:
+      - "8000:8000"
+  background:
+    image: denoland/deno:alpine
+    working_dir: /app
+    volumes:
+      - ./background:/app
+    command: deno task start
+    ports:
+      - "8080:8080"
