@@ -51,3 +51,6 @@ local
 coverage
 .vitest-cache
 vitest.config.*.timestamp-*
+
+# Screenshot outputs
+docs/screenshots/*.png
