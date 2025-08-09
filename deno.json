@@ -1,0 +1,13 @@
+{
+  "tasks": {
+    "dev": "deno run --watch app/main/main.ts"
+  },
+  "imports": {
+    "@main/": "./app/main/",
+    "@renderer/": "./app/renderer/",
+    "@common/": "./app/common/"
+  },
+  "compilerOptions": {
+    "strict": true
+  }
+}
