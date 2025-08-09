@@ -6,6 +6,7 @@ import installExtension, { REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } from 'electro
 import Logger from 'electron-log'
 
 import { registerIpc } from './ipc'
+import { startSearchServer } from './search/server'
 import { configManager } from './services/ConfigManager'
 import mcpService from './services/MCPService'
 import {
@@ -142,6 +143,8 @@ if (!app.requestSingleInstanceLock()) {
     registerShortcuts(mainWindow)
 
     registerIpc(mainWindow, app)
+
+    startSearchServer()
 
     replaceDevtoolsFont(mainWindow)
 
